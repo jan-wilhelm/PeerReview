@@ -26,8 +26,7 @@ if ($conn->connect_error) {
 	die("Database connection failed: " . $conn->connect_error);
 }
 
-function randomPassword($length)
-{
+function randomPassword($length){
 	$alphabet    = 'abcdefghjkmnopqrstuvwxyzABCDEFGHJKMNOPQRSTUVWXYZ1234567890';
 	$pass        = array();
 	$alphaLength = strlen($alphabet) - 1;

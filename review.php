@@ -96,7 +96,7 @@ function getUsers($conn) {
 
 function getUsersForReviews($conn) {
 	$ret = array();
-	if($stmt    = $conn->prepare("SELECT id FROM users WHERE level != 1")) {
+	if($stmt    = $conn->prepare("SELECT id FROM users WHERE level != 1 ORDER BY RAND()")) {
 		$stmt->execute();
 		$result = $stmt->get_result();
 		if ($result->num_rows > 0) {
