@@ -1,8 +1,8 @@
 <?php
 
-include '../../info/check_auth.php';
-include '../../info/config.php';
-include "../../info/review.php";
+include '../check_auth.php';
+include '../config.php';
+include "../review.php";
 if(!isset($_GET['id'])) {
 	header("Location: /info");
 }
