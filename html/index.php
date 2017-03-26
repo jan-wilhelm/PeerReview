@@ -1,29 +1,21 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-
-  <meta charset="utf-8">
-  <title>Informatik Peer Review</title>
-  <meta name="description" content="">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  
-  <!-- CSS  -->
-	<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-	<link href="css/materialize.css" type="text/css" rel="stylesheet" media="screen,projection"/>
-	<link rel="stylesheet" type="text/css" href="css/font-awesome.min.css">
-	<link rel="stylesheet" type="text/css" href="css/font-awesome.min.css">
-	<link rel="stylesheet" type="text/css" href="style.css">
-
-</head>
-
 <?php
 include '../check_auth.php';
 include '../config.php';
 include "../review.php";
+include "../header.php";
 $conn = new mysqli($cfg['db_host'], $cfg['db_user'], $cfg['db_password'], $cfg['db_name']);
 
 if ($conn->connect_error) {
 	die("Database connection failed: " . $conn->connect_error);
+}
+
+if(!isset($_GET['course']) && !isset($_POST['course'])) {
+	die("No course get set");
+}
+if(isset($_GET['course'])) {
+	$course = $_GET['course'];
+} else {
+	$course = $_POST['course'];
 }
 
 function randomPassword($length){
@@ -104,7 +96,7 @@ function randomPassword($length){
 			<h4 class="header">Edit users</h4>
 			<ul class="collapsible" data-collapsible="accordion">
 			<?php
-			foreach (getUsers($conn) as $users) {
+			foreach (getUsersOfCourse($conn, $course) as $users) {
 			?>
 			    <li>
 				    <div class="collapsible-header">
@@ -140,6 +132,15 @@ function randomPassword($length){
 		    </div>
 		  </div>
 		</form>
+		<?php
+		if(isset($_POST['codes-set']) && isset($_POST['limit'])) {
+	    	if(!setTargets($conn, $course, intval($_POST['limit']))) {
+	    		echo "<p class=\"element red-text darken-4 z-depth-4\">Die Codes konnten nicht verteilt werden. <br />Vielleicht wurden nicht genügend (4) Benutzer eingetragen?</p>";
+	    	} else {
+	    		echo "<p class=\"element green-text lighten-2 z-depth-4\">Die Codes wurden erfolgreich verteilt.<br />Jeder Schüler kann nun bewerten!</p>";
+	    	}
+	    }
+		?>
 		<script type="text/javascript">
 			$('#set-codes').click(function(event) {
 				event.preventDefault();
@@ -158,7 +159,8 @@ function randomPassword($length){
 			        url: 'index.php',
 			        data: {
 			        	"codes-set": null,
-			        	"limit": limit
+			        	"limit": limit,
+			        	"course": <?php echo $course;?>
 			    	},
 			        type: 'post',
 			        success: function(result) {
@@ -183,23 +185,16 @@ function randomPassword($length){
 
 		<?php
     	    if(isset($_POST['link-set']) && isset($_POST['link'])) {
-    	    	setCode($conn, $_SESSION['user_id'], $_POST['link']);
+    	    	setCode($conn, $_SESSION['user_id'], $_POST['link'], $course);
     	    	echo "<p class=\"element green-text lighten-2 z-depth-4\">Vielen Dank dass du den Link zu deinem Code eingegeben hast!</p>";
-
     	    }
-    	    if(isset($_POST['codes-set']) && isset($_POST['limit'])) {
-    	    	if(!setTargets($conn, intval($_POST['limit']))) {
-    	    		echo "<p class=\"element red-text darken-4 z-depth-4\">Die Codes konnten nicht verteilt werden. <br />Vielleicht wurden nicht genügend (4) Benutzer eingetragen?</p>";
-    	    	} else {
-    	    		echo "<p class=\"element green-text lighten-2 z-depth-4\">Die Codes wurden erfolgreich verteilt.<br />Jeder Schüler kann nun bewerten!</p>";
-    	    	}
-    	    }?>
+    	    ?>
 			<form action="" method="post" class="element z-depth-4">
 				<h4 class="header">Link zu deinem Code bearbeiten</h4>
 				<span>
 				Bitte gib den richtigen Link zu deinem Code ein, damit für dich ein Review verfasst werden kann!
 				</span>
-				<input  id="link-set-link" name="link" type="text" placeholder="Link" value=<?php echo "\"". getCode($conn, $_SESSION['user_id'])."\"";?>>
+				<input id="link-set-link" name="link" type="text" placeholder="Link" value=<?php echo "\"". getCode($conn, $_SESSION['user_id'], $course)."\"";?>>
 				<br/>
 				<a class="waves-effect waves-light btn red darken-2"><i class="material-icons right">send</i>
 						<input type="submit" name="link-set" value="Link absenden" id="link-set-button"></a>
@@ -207,14 +202,21 @@ function randomPassword($length){
 			
     		<?php
     		if($_SESSION['user_level'] !== 1) {			
-				$review = getReviews($conn, $_SESSION['user_id']);
+				$review = getReviews($conn, $course, $_SESSION['user_id']);
 				echo "<div class=\"element z-depth-4\">";
 				echo "<h4 class=\"header\">Deine Reviews</h4>";
 				if(count($review) == 0) {
 					echo "<p class=\"red-text darken-4\">Es wurde für dich noch keine Review ausgefüllt!</hp>";
 				} else {?> <ul class="collapsible" data-collapsible="expandable"> <?php
+					$json = json_decode(getReviewScheme($conn, $course), JSON_UNESCAPED_UNICODE);
+					$max_points = 0;
+					foreach ($json as $cats) {
+						foreach ($cats['categories'] as $cat) {
+							$max_points = $max_points + $cat['max_points'];
+						}
+					}
 					foreach ($review as $rv) {
-					if(!is_null($rv['isset'])) {
+					if($rv['review']!="{}" && strlen($rv['review']) > 2) {
 						    ?>
 						    <li>
 						    <div class="collapsible-header">
@@ -225,293 +227,34 @@ function randomPassword($length){
 							</div>
 							<div class="collapsible-body indigo lighten-5">
 								<h4 class="green-text lighten-2"><?php
-								$points = getPoints($conn,$rv['id'],$rv['code_reviewer']);
-								echo $points." von 45 Punkten (".((int)(100 * $points / 45))."%)"?></h4>
-
-								<!-- MAKE MOVE -->
-								<div class="sect">
-									<p>makeMove(board,row,col)</p>
-
-									<div class="cat">
-									<span class="desc">Überprüft, ob board[row][col] frei ist.</span>
-									<div class="points">
-									<span><?php echo $rv['make_move_0'];?>/1</span>
-									</div>
-									</div>
-
-									<div class="cat">
-									<span class="desc">Setzt dann je nach Spieler board[row][col] = +/- 1.</span>
-									<div class="points">
-									<span><?php echo $rv['make_move_1'];?>/1</span>
-									</div>
-
-									</div>
-									<div class="cat">
-									<span class="comment"><?php echo $rv['make_move_c'];?></span>
-									</div>
-
-								</div>
-
-
-
-								<!-- CHANGEPLAYER -->
-								<div class="sect">
-									<p>changePlayer()</p>
-
-									<div class="cat">
-									<span class="desc">Wechselt die globale Variable player.</span>
-									<div class="points">
-									<span><?php echo $rv['change_player_0'];?>/2</span>
-									</div>
-									</div>
-									<div class="cat">
-									<span class="comment"><?php echo $rv['change_player_c'];?></span>
-									</div>
-
-								</div>
-
-
-								<!-- testLine -->
-								<div class="sect">
-									<p>testLine( line )</p>
-
-									<div class="cat">
-									<span class="desc">Rückgabe 1, wenn alle 3 Einträge == 1.</span>
-									<div class="points">
-									<span><?php echo $rv['test_line_0'];?>/1</span>
-									</div>
-									</div>
-
-									<div class="cat">
-									<span class="desc">Rückgabe -1, wenn alle 3 Einträge == -1.</span>
-									<div class="points">
-									<span><?php echo $rv['test_line_1'];?>/1</span>
-									</div>
-									</div>
-
-
-									<div class="cat">
-									<span class="desc">Rückgabe 0, sonst.</span>
-									<div class="points">
-									<span><?php echo $rv['test_line_2'];?>/1</span>
-									</div>
-									</div>
-
-									<div class="cat">
-									<span class="comment"><?php echo $rv['test_line_c'];?></span>
-									</div>
-
-								</div>
-
-
-
-
-								<!-- testWin -->
-								<div class="sect">
-									<p>testWin( board )</p>
-
-									<div class="cat">
-									<span class="desc">Alle Zeilen richtig getestet.</span>
-									<div class="points">
-									<span><?php echo $rv['test_win_0'];?>/2</span>
-									</div>
-									</div>
-
-									<div class="cat">
-									<span class="desc">Alle Spalten richtig getestet.</span>
-									<div class="points">
-									<span><?php echo $rv['test_win_1'];?>/2</span>
-									</div>
-									</div>
-
-									<div class="cat">
-									<span class="desc">Alle Diagonalen richtig getestet.</span>
-									<div class="points">
-									<span><?php echo $rv['test_win_2'];?>/2</span>
-									</div>
-									</div>
-
-									<div class="cat">
-									<span class="desc">Winner richtig gesetzt.</span>
-									<div class="points">
-									<span><?php echo $rv['test_win_3'];?>/2</span>
-									</div>
-									</div>
-
-									<div class="cat">
-									<span class="desc">Richtige Rückgabe True/False</span>
-									<div class="points">
-									<span><?php echo $rv['test_win_4'];?>/1</span>
-									</div>
-									</div>
-
-									<div class="cat">
-									<span class="comment"><?php echo $rv['test_win_c'];?></span>
-									</div>
-
-								</div>
-
-
-								<!-- endGame -->
-								<div class="sect">
-									<p>endGame( board )</p>
-
-									<div class="cat">
-									<span class="desc">Ruft testWin() auf.</span>
-									<div class="points">
-									<span><?php echo $rv['end_game_0'];?>/1</span>
-									</div>
-									</div>
-
-									<div class="cat">
-									<span class="desc">Testet, ob noch Felder frei sind</span>
-									<div class="points">
-									<span><?php echo $rv['end_game_1'];?>/4</span>
-									</div>
-									</div>
-
-									<div class="cat">
-									<span class="desc">Richtige Rückgabe True/False</span>
-									<div class="points">
-									<span><?php echo $rv['end_game_2'];?>/1</span>
-									</div>
-									</div>
-
-									<div class="cat">
-									<span class="comment"><?php echo $rv['end_game_c'];?></span>
-									</div>
-
-								</div>
-
-
-								<!-- convertMove -->
-								<div class="sect">
-									<p>convertMove()</p>
-
-									<div class="cat">
-									<span class="desc">Festlegung auf sinnvolles Eingabeformat</span>
-									<div class="points">
-									<span><?php echo $rv['convert_move_0'];?>/2</span>
-									</div>
-									</div>
-
-									<div class="cat">
-									<span class="desc">Richtige Umwandlung in Reihe und Spalte</span>
-									<div class="points">
-									<span><?php echo $rv['convert_move_1'];?>/2</span>
-									</div>
-									</div>
-
-									<div class="cat">
-									<span class="desc">Fehlerbehandlung (Rückgabe (-1,-1)) bei falscher Eingabe</span>
-									<div class="points">
-									<span><?php echo $rv['convert_move_2'];?>/1</span>
-									</div>
-									</div>
-
-									<div class="cat">
-									<span class="comment"><?php echo $rv['convert_move_c'];?></span>
-									</div>
-
-								</div>
-
-
-
-
-								<!-- getMove -->
-								<div class="sect">
-									<p>getMove()</p>
-
-									<div class="cat">
-									<span class="desc">Ruft convertMove() auf, um Reihe und Spalte zu bekommen</span>
-									<div class="points">
-									<span><?php echo $rv['get_move_0'];?>/1</span>
-									</div>
-									</div>
-
-									<div class="cat">
-									<span class="desc">Testet, ob Move legal war</span>
-									<div class="points">
-									<span><?php echo $rv['get_move_1'];?>/1</span>
-									</div>
-									</div>
-
-									<div class="cat">
-									<span class="desc">Ruft makeMove() auf</span>
-									<div class="points">
-									<span><?php echo $rv['get_move_2'];?>/1</span>
-									</div>
-									</div>
-
-									<div class="cat">
-									<span class="desc">Testet, ob endGame()</span>
-									<div class="points">
-									<span><?php echo $rv['get_move_3'];?>/1</span>
-									</div>
-									</div>
-
-									<div class="cat">
-									<span class="desc">Gibt ggf. Gewinner / Unentschieden aus</span>
-									<div class="points">
-									<span><?php echo $rv['get_move_4'];?>/2</span>
-									</div>
-									</div>
-
-									<div class="cat">
-									<span class="desc">Ruft changePlayer() auf</span>
-									<div class="points">
-									<span><?php echo $rv['get_move_5'];?>/1</span>
-									</div>
-									</div>
-
-									<div class="cat">
-									<span class="desc">spielerAnzeige wird entsprechend Spieler angepasst.</span>
-									<div class="points">
-									<span><?php echo $rv['get_move_6'];?>/1</span>
-									</div>
-									</div>
-
-									<div class="cat">
-									<span class="comment"><?php echo $rv['get_move_c'];?></span>
-									</div>
-
-								</div>
-
-
-
-
-								<!-- stil -->
-								<div class="sect">
-									<p>Code-Stil</p>
-
-									<div class="cat">
-									<span class="desc">Alle Funktionen ausführlich getestet.</span>
-									<div class="points">
-									<span><?php echo $rv['stil_0'];?>/5</span>
-									</div>
-									</div>
-
-									<div class="cat">
-									<span class="desc">Alle Funktionen vollständig kommentiert (Docstrings)</span>
-									<div class="points">
-									<span><?php echo $rv['stil_1'];?>/4</span>
-									</div>
-									</div>
-
-									<div class="cat">
-									<span class="desc">Ein sinnvolles assert-statement eingefügt.</span>
-									<div class="points">
-									<span><?php echo $rv['stil_2'];?>/1</span>
-									</div>
-									</div>
-
-									<div class="cat">
-									<span class="comment"><?php echo $rv['stil_c'];?></span>
-									</div>
-
-								</div>
-
-
+								//$points = getPoints($conn,$rv['id'],$rv['code_reviewer'], $course);
+								$points = 0;
+								$rev = json_decode($rv['review'], JSON_UNESCAPED_UNICODE);
+								for ($i=0; $i < sizeof($rev); $i++) { 
+									foreach($rev[$i]['reviews'] as $p) { 
+										$points = $points + $p['points'];
+									}
+								}
+								echo $points." von ".$max_points." Punkten (".((int)(100 * $points / $max_points))."%)</h4>";
+
+								$itemcount = 0;
+								foreach ($json as $item) {
+									echo '<div class="sect">';
+									echo '<p>'.$item["name"].'</p>';
+									$idx = 0;
+									foreach($item["categories"] as $cat) {
+										echo '<div class="cat"><span class="desc">'.$cat['description']."</span>";
+										echo '<div class="points"><span>'.$rev[$itemcount]['reviews'][$idx]['points'].'/ '.$cat['max_points'].'</span></div>';
+										$idx = $idx + 1;
+									}
+									echo '<div class="cat"><span class="comment">'.$rev[$itemcount]['comment'].'</span></div>';
+									$itemcount = $itemcount + 1;
+									echo '</div></div>';
+								?>
+							</div>
+								<?php
+								}
+								?>
 							</div>
 							</li>
 					<?php
@@ -531,7 +274,7 @@ function randomPassword($length){
 		<div class="element z-depth-4">
 			<h4 class="header">Bewertungen verfassen</h4>
 			<?php
-			    $tar = getReviewTargets($conn, $_SESSION['user_id']);
+			    $tar = getReviewTargets($conn, $_SESSION['user_id'], $course);
 			    # noch kein target
 			    if($_SESSION['user_level'] === 1) {
 					echo "<p class=\"red-text darken-4\">Als Administrator kannst du keine Reviews schreiben.</hp>";
@@ -541,19 +284,19 @@ function randomPassword($length){
 			    	?>
 			    	<ul class="collapsible" data-collapsible="accordion"> <?php
 					foreach ($tar as $rev) {
-						    ?>
-						    <li>
-						    <div class="collapsible-header">
-						    	<i class="material-icons circle left-align">chat_bubble</i>
-						     	<a class="red-text darken-4">Review für 
-								<?php
-								echo $rev['name'] . "</a>   (Klick)"?>
-							</div>
-							<div class="collapsible-body white"><?php
-								echo "<a href=\"review.php?id=".$rev['id']."\">Review für " . $rev['name'] . " bearbeiten</a>";
-								?>
-							</div>
-							</li>
+					    ?>
+					    <li>
+					    <div class="collapsible-header">
+					    	<i class="material-icons circle left-align">chat_bubble</i>
+					     	<a class="red-text darken-4">Review für 
+							<?php
+							echo $rev['name'] . "</a>   (Klick)"?>
+						</div>
+						<div class="collapsible-body white"><?php
+							echo "<a href=\"review.php?id=".$rev['id']."&course=".$course."\">Review für " . $rev['name'] . " bearbeiten</a>";
+							?>
+						</div>
+						</li>
 					<?php
 			    	}
 			    	echo "</ul>";
@@ -570,10 +313,11 @@ function randomPassword($length){
 	    var link = $('#link-set-link').val();
 	    $.ajax
 	    ({ 
-	        url: 'index.php',
+	        url: "index.php",
 	        data: {
 	        	"link-set": null,
-	        	"link": link
+	        	"link": link,
+	        	"course": <?php echo $course;?>
 	    	},
 	        type: 'post',
 	        success: function(result) {

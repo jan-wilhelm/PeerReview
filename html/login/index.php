@@ -47,7 +47,7 @@
 						$_SESSION['user_level'] = $row['level'];
 
 						// Once the sessions variables have been set, redirect them to the landing page / home page.
-						header('Location: /info/');
+						header('Location: /');
 						exit;
 					} else {
 						$error = "Ungültiger Name oder Password. Bitte nochmal versuchen!";
