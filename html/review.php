@@ -80,6 +80,34 @@ $target = array(
 	if(isset($_POST['save-review'])) {
 		$i = $target['id'];
 		$a = $_SESSION['user_id'];
+		$review = array();
+		$idx = 0;
+		$jdx = 0;
+		$json = json_decode(getReviewScheme($conn, $course), JSON_UNESCAPED_UNICODE);
+		foreach ($_POST as $name => $value) {
+			if($name == "save-review" || startsWith($name, "comment")) {
+				continue;
+			}
+			$n = str_replace("points_", "", $name);
+			$idx = ((int) explode("_", $n)[0]);
+			$jdx = ((int) explode("_", $n)[1]);
+			if(!isset($review[$idx])) {
+				$review[] = array();
+			}
+			if(!isset($review[$idx]['reviews'])) {
+				$review[$idx]['reviews'] = array();
+			}
+			if(!isset($review[$idx]['reviews'][$jdx])) {
+				$review[$idx]['reviews'][] = array();
+			}
+			$review[$idx]['comment'] = $_POST['comment_'.$idx];
+			$v = ((int)$value);
+			$v = max($v, 0);
+			$v = min($v, $json[$idx]['categories'][$jdx]['max_points']);
+			$review[$idx]['reviews'][$jdx] = array("points" => ($v));
+		}
+		setReview($conn, $i, $a, $course, json_encode($review));
+
 		echo "<div class=\"element z-depth-4\"><span class=\"green-text darken-2\">Vielen Dank, dass du deine Bewertung abgegeben hast!</span></div>";
 	}
 
@@ -105,17 +133,15 @@ $target = array(
 			$json = json_decode(getReviewScheme($conn, $course), JSON_UNESCAPED_UNICODE);
 			echo '<form action="" method="post">';
 			$itemcount = 0;
-			$x = 0;
 			foreach ($json as $categories) {
 				$idx = 0;
 				echo '<div class="sect"><p>'.$categories['name'].'</p>';
 				foreach ($categories['categories'] as $cat) {
 					echo '<div class="cat"><span class="desc">'.$cat['description'].'</span>';
 					echo '<div class="points"><input type="number" min="0" max="'.$cat['max_points'].'" ';
-					echo 'value="'.$rv[$itemcount]['reviews'][$idx]['points'].'" name="points_'.$x.'">';
-					echo '<span>'.$cat['max_points'].'</span></div></div>';
+					echo 'value="'.$rv[$itemcount]['reviews'][$idx]['points'].'" name="points_'.$itemcount.'_'.$idx.'">';
+					echo '<span> / '.$cat['max_points'].'</span></div></div>';
 					$idx = $idx + 1;
-					$x = $x + 1;
 				}
 				echo '<div class="cat"><span class="desc">Kommentar '.$json[$itemcount]['name'].'</span>';
 				echo '<div class="input-field"><textarea class="materialize-textarea" name="comment_'.$itemcount.'" ';

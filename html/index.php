@@ -244,12 +244,11 @@ function randomPassword($length){
 									$idx = 0;
 									foreach($item["categories"] as $cat) {
 										echo '<div class="cat"><span class="desc">'.$cat['description']."</span>";
-										echo '<div class="points"><span>'.$rev[$itemcount]['reviews'][$idx]['points'].'/ '.$cat['max_points'].'</span></div>';
+										echo '<div class="points"><span>'.$rev[$itemcount]['reviews'][$idx]['points'].' / '.$cat['max_points'].'</span></div></div>';
 										$idx = $idx + 1;
 									}
 									echo '<div class="cat"><span class="comment">'.$rev[$itemcount]['comment'].'</span></div>';
 									$itemcount = $itemcount + 1;
-									echo '</div></div>';
 								?>
 							</div>
 								<?php
