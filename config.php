@@ -1,4 +1,6 @@
 <?php
+
+require "review.class.php";
 $cfg = array();
 
 // Der Name der Datenbank

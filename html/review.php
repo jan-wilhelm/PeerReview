@@ -83,6 +83,8 @@ $target = array(
 		$review = array();
 		$idx = 0;
 		$jdx = 0;
+
+		// I could probably make this OOP as well using Review::fromJSON( getReviewScheme($conn, $course) );, but that's quite a lot of work.
 		$json = json_decode(getReviewScheme($conn, $course), JSON_UNESCAPED_UNICODE);
 		foreach ($_POST as $name => $value) {
 			if($name == "save-review" || startsWith($name, "comment")) {
@@ -127,23 +129,29 @@ $target = array(
   		<h4>Review verfassen</h4>
   		<br>
 		<?php
+			
 			$rv = json_decode(
 				getReview($conn, $target["id"], $_SESSION['user_id'], $course)['review'],
 				JSON_UNESCAPED_UNICODE);
-			$json = json_decode(getReviewScheme($conn, $course), JSON_UNESCAPED_UNICODE);
+			$review = Review::fromJSON( getReviewScheme($conn, $course) );
+
 			echo '<form action="" method="post">';
+
 			$itemcount = 0;
-			foreach ($json as $categories) {
+
+			foreach ($review->objects as $object) {
 				$idx = 0;
-				echo '<div class="sect"><p>'.$categories['name'].'</p>';
-				foreach ($categories['categories'] as $cat) {
-					echo '<div class="cat"><span class="desc">'.$cat['description'].'</span>';
-					echo '<div class="points"><input type="number" min="0" max="'.$cat['max_points'].'" ';
+
+				echo '<div class="sect"><p>'.$object->name.'</p>';
+
+				foreach ($object->categories as $cat) {
+					echo '<div class="cat"><span class="desc">'	.$cat->description.	'</span>';
+					echo '<div class="points"><input type="number" min="0" max="' .$cat->max_points. '" ';
 					echo 'value="'.$rv[$itemcount]['reviews'][$idx]['points'].'" name="points_'.$itemcount.'_'.$idx.'">';
-					echo '<span> / '.$cat['max_points'].'</span></div></div>';
+					echo '<span> / ' .$cat->max_points. '</span></div></div>';
 					$idx = $idx + 1;
 				}
-				echo '<div class="cat"><span class="desc">Kommentar '.$json[$itemcount]['name'].'</span>';
+				echo '<div class="cat"><span class="desc">Kommentar ' .$object->name. '</span>';
 				echo '<div class="input-field"><textarea class="materialize-textarea" name="comment_'.$itemcount.'" ';
 				echo 'placeholder="Kommentar">'.$rv[$itemcount]['comment'].'</textarea></div></div></div>';
 				$itemcount = $itemcount + 1;
