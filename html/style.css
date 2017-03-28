@@ -160,3 +160,13 @@ h3 .small {
 .comment:after {
 	content: "\"";
 }
+.sign-up-course-form {
+  width: 70%;
+}
+
+.absolute-centered {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}

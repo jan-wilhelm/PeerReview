@@ -278,9 +278,57 @@ function userExists($conn, $id) {
 		$stmt->execute();
 		$result = $stmt->get_result();
 		if ($result->num_rows > 0) {
+			return true;
+		}
+		$stmt->free_result();
+	} else {
+		echo $conn->error;
+	}
+	return false;
+}
+
+function getCourseByKey($conn, $key) {
+	if($stmt = $conn->prepare("SELECT course FROM course_data WHERE signin_key = ?")) {
+		$stmt->bind_param("s", $key);
+		$stmt->execute();
+		$result = $stmt->get_result();
+		if ($result->num_rows > 0) {
 			if ($row = $result->fetch_assoc()) {
-				return true;
+				return $row['course'];
 			}
+		}
+		$stmt->free_result();
+	} else {
+		echo $conn->error;
+	}
+	return 0;
+}
+
+function getCourseName($conn, $id) {
+	if($stmt = $conn->prepare("SELECT name FROM course_data WHERE course = ?")) {
+		$stmt->bind_param("i", $id);
+		$stmt->execute();
+		$result = $stmt->get_result();
+		if ($result->num_rows > 0) {
+			if ($row = $result->fetch_assoc()) {
+				return $row['name'];
+			}
+		}
+		$stmt->free_result();
+	} else {
+		echo $conn->error;
+	}
+	return "";
+}
+
+
+function isUserInCourse($conn, $id, $course) {
+	if($stmt = $conn->prepare("SELECT 1 from courses WHERE id = ? AND course = ?")) {
+		$stmt->bind_param("ii", $id, $course);
+		$stmt->execute();
+		$result = $stmt->get_result();
+		if ($result->num_rows > 0) {
+			return true;
 		}
 		$stmt->free_result();
 	} else {
@@ -313,6 +361,33 @@ function setReview($conn, $id, $autor, $course, $review) {
 		$stmt->bind_param("siii", $review, $id, $course, $autor);
 		$stmt->execute();
 		unset($stmt);
+	}
+}
+
+function addUserToCourse($conn, $id, $course) {
+	if($stmt = $conn->prepare("INSERT INTO courses (id, course) VALUES (?,?)")) {
+		$stmt->bind_param("ii", $id, $course);
+		$stmt->execute();
+		unset($stmt);
+	} else {
+		echo $conn->error;
+		return false;
+	}
+	return true;
+}
+
+function handleKeyTyped($conn, $id, $key) {
+	$course = getCourseByKey($conn, $key);
+	if($course == "") {
+		return -3;
+	} elseif (isUserInCourse($conn, $id, $course)) {
+		return -2;
+	} else {
+		if (addUserToCourse($conn, $id, $course) != true){
+			return -1;
+		} else {
+			return 0;
+		}
 	}
 }
 
