@@ -10,30 +10,22 @@ if ($conn->connect_error) {
 }
 ?>
 <body>
-	<nav class="navbar navbar-inverse navbar-fixed-top">
-      <div class="container-fluid">
-        <div class="navbar-header">
-          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="true" aria-controls="navbar">
-            <span class="sr-only">Navigation ein-/ausblenden</span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-          </button>
-          <a class="navbar-brand" href="#">Projekt-Titel</a>
-        </div>
-        <div id="navbar" class="navbar-collapse collapse">
-          <ul class="nav navbar-nav navbar-right">
-            <li><a href="#">Dashboard</a></li>
-            <li><a href="#">Einstellungen</a></li>
-            <li><a href="#">Profil</a></li>
-            <li><a href="#">Hilfe</a></li>
-          </ul>
-          <form class="navbar-form navbar-right">
-            <input type="text" class="form-control" placeholder="Suchen...">
-          </form>
-        </div>
-      </div>
-    </nav>
+    <script type="text/javascript" src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.98.1/js/materialize.min.js"></script>
+	<nav>
+	    <div class="nav-wrapper grey darken-3" id="navbar">
+	    	<a href="#" class="brand-logo center">Informatik Peer Review</a>
+	    	<a href="#" data-activates="mobile-men" class="button-collapse"><i class="material-icons">menu</i></a>
+	    	<ul class="right hide-on-med-and-down">
+		        <li><a href="logout.php">Logout
+		        <i class="material-icons right">power_settings_new</i></a>
+	    	</ul>
+	    	<ul class="side-nav" id="mobile-men">
+		        <li><a href="logout.php">Logout
+		        <i class="material-icons right">power_settings_new</i></a>
+	    	</ul>
+		</div>
+	</nav>
 
   	<div class="absolute-centered container">
 		<?php
