@@ -357,7 +357,7 @@ function getReviewScheme($conn, $course) {
 
 function setReview($conn, $id, $autor, $course, $review) {
 	setUTF8($conn);
-	if($stmt = $conn->prepare("UPDATE reviews SET review = ? WHERE id = ? AND course = ? AND code_reviewer = ?")) {
+	if($stmt = $conn->prepare("UPDATE reviews SET review = ?, modified = CURDATE() WHERE id = ? AND course = ? AND code_reviewer = ?")) {
 		$stmt->bind_param("siii", $review, $id, $course, $autor);
 		$stmt->execute();
 		unset($stmt);
@@ -390,5 +390,43 @@ function handleKeyTyped($conn, $id, $key) {
 		}
 	}
 }
+
+function getReviewsOfToday($conn, $course) {
+	$d = 0;
+	if($stmt = $conn->prepare("SELECT * FROM reviews WHERE course = ? AND modified = CURDATE()")) {
+		$stmt->bind_param("i", $course);
+		$stmt->execute();
+		$result = $stmt->get_result();
+		if ($result->num_rows > 0) {
+			while ($row = $result->fetch_assoc()) {
+				$d = $d + 1;
+			}
+		}
+		$stmt->free_result();
+	} else {
+		echo $conn->error;
+	}
+	return $d;
+}
+
+function getLoginsOfLastMonth($conn) {
+	$sql = "SELECT DATE(`users`.`last_login`) AS `date`, COUNT(`users`.`id`) AS `count` FROM `users` WHERE `users`.`last_login` BETWEEN DATE_SUB(NOW(), INTERVAL 1 MONTH) AND NOW() GROUP BY `date` ORDER BY `date`";
+	$ret = array();
+	if($stmt = $conn->prepare($sql)) {
+		$stmt->execute();
+		$result = $stmt->get_result();
+		if ($result->num_rows > 0) {
+			while ($row = $result->fetch_assoc()) {
+				$ret[$row['date']] = $row['count'];
+			}
+		}
+		$stmt->free_result();
+	} else {
+		echo $conn->error;
+	}
+	return $ret;
+}
+
+
 
 ?>

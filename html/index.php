@@ -35,8 +35,97 @@ function randomPassword($length){
     <?php include "../sidenav.php"; ?>
 
     <div class="right-col">
+
+	<?php
+	if (isset($_SESSION['user_level']) && $_SESSION['user_level'] == 1) {?>
+
+
+		<div class="row tiles_count">
+			<div class="tiles_col col-md-2 col-sm-4 col-xs-6">
+				<span class="tiles_desc">Users</span>
+				<span class="tiles_number">1.509</span>
+			</div>
+			<div class="tiles_col col-md-2 col-sm-4 col-xs-6">
+				<span class="tiles_desc">Users</span>
+				<span class="tiles_number">1.509</span>
+			</div>
+			<div class="tiles_col col-md-2 col-sm-4 col-xs-6">
+				<span class="tiles_desc">Users</span>
+				<span class="tiles_number">1.509</span>
+			</div>
+			<div class="tiles_col col-md-2 col-sm-4 col-xs-6">
+				<span class="tiles_desc">Users</span>
+				<span class="tiles_number">1.509</span>
+			</div>
+			<div class="tiles_col col-md-2 col-sm-4 col-xs-6">
+				<span class="tiles_desc">Users</span>
+				<span class="tiles_number">1.509</span>
+			</div>
+			<div class="tiles_col col-md-2 col-sm-4 col-xs-6">
+				<span class="tiles_desc">Users</span>
+				<span class="tiles_number">1.509</span>
+			</div>
+		</div>
+
+
+	    <div class="row equal">
+		  	<div class="col-md-4 col-sm-12">
+		  		<div class="admin-cart">
+					<canvas id="logins_chart" height="100"></canvas>
+					<script type="text/javascript">
+						const ctx = $('#logins_chart');
+						const options = {
+							legend: {
+								display: false
+							},
+							responsive: true
+						};
+						const dataset = [<?php 
+								$data = getLoginsOfLastMonth($conn);
+								$counts = array();
+								foreach ($data as $time => $logins) {
+									$counts[] = $logins;
+								}
+								echo implode(",", $counts);
+						        ?>];
+						const times = [
+						    	<?php
+								$times = array();
+								foreach ($data as $time => $logins) {
+									$dt = new DateTime(((string) $time));
+									$times[] = "'".$dt->format('d.m')."'";
+								}
+								echo implode(",", $times);
+						        ?>
+						    ];
+						console.log((times));
+						console.log(JSON.stringify(times));
+						const data = {
+						    datasets: [{
+						        data: dataset
+						    }],
+						    labels: times
+						};
+
+						console.log(JSON.stringify(data));
+
+						var loginsChart = new Chart(ctx, {
+						    type: 'line',
+						    data: data,
+						    options: options
+						});
+					</script>
+				</div>
+			</div>
+		  	<div class="col-md-8 col-sm-12">
+		  		<div class="admin-cart">
+		  		awdadaw
+		  		</div>
+		  	</div>
+		</div>
+	<?php } ?>
     <div class="row equal">
-	  	<div class="col-md-6">
+	  	<div class="col-md-6 col-sm-12">
 	  		<div class="admin-cart">
 		    <?php
 				echo '<h1> Hallo, ' . $_SESSION["name"] . "!</h1>";
@@ -47,7 +136,7 @@ function randomPassword($length){
 			</div>
 		</div>
 
-	  	<div class="col-md-6">
+	  	<div class="col-md-6 col-sm-12">
 	  		<div class="admin-cart">
 			<?php
 		    if(isset($_POST['link-set']) && isset($_POST['link'])) {
@@ -73,7 +162,7 @@ function randomPassword($length){
 	<?php
 	if (isset($_SESSION['user_level']) && $_SESSION['user_level'] == 1) {
 
-  		echo '<div class="row equal"> <div class="col-md-8"> <div class="admin-cart"> <h3>Neuen Nutzer erstellen</h3>';
+  		echo '<div class="row equal"> <div class="col-md-8 col-sm-12"> <div class="admin-cart"> <h3>Neuen Nutzer erstellen</h3>';
 		if (isset($_POST['user-create'])) {
 			if (!isset($_POST['username']) || !isset($_POST['password'])) {
 				echo "<span>Fülle bitte das gesamte Formular aus!</span>";
@@ -109,7 +198,7 @@ function randomPassword($length){
 		<?php } ?>
 		</div>
 		</div>
-		<div class="col-md-4">
+		<div class="col-md-4 col-sm-12">
 		<div class="admin-cart">
 		<h3>Links verteilen</h3>
 		<span>Hier kannst du die Links an die Benutzer verteilen, damit diese dann die Bewertungen verfassen könen. Bitte erst klicken, wenn alle Nutzer eingetragen sind!</span>
@@ -155,26 +244,32 @@ function randomPassword($length){
 	    }?>
 
 
-		<div>
-			<h3>Edit users</h3>
-			<ul class="collapsible" data-collapsible="accordion">
-			<?php
-			foreach (getUsersOfCourse($conn, $course) as $users) {
-			?>
-			    <li>
-				    <div class="collapsible-header">
-				    	<i class="material-icons circle left-align">perm_identity</i>
-				     	<span class="red-text darken-4">Benutzer 
+		<div class="row">
+			<div class="col-12">
+				<div class="admin-cart">
+					<h3>Edit users</h3>
+					<div class="panel-body">
 						<?php
-						echo getName($conn, $users) . " bearbeiten </span>   (Klick)"?>
-					</div>
-					<div class="collapsible-body white"><?php
-						echo "<a class=\"blue-text lighten-3\" href=\"user.php?id=$users\">Bearbeiten!</a>";
+						foreach (getUsersOfCourse($conn, $course) as $users) {
 						?>
+						    <div class="panel panel-primary">
+	    						<div class="panel-heading panel-collapsed">
+	    							<span class="pull-left clickable"><i class="fa fa-pencil" aria-hidden="true"></i></span>
+							     	<h3 class="panel-title">Benutzer 
+										<?php
+										echo getName($conn, $users) . " bearbeiten </span>   (Klick)"?>
+									</h3>
+								</div>
+								<div class="panel-body indigo lighten-5">
+									<?php
+									echo "<a class=\"blue-text lighten-3\" href=\"user.php?id=$users\">Bearbeiten!</a>";
+									?>
+								</div>
+							</div>
+						<?php } ?>
 					</div>
-				</li>
-			<?php } ?>
-			</ul>
+				</div>
+			</div>
 		</div>
 
 		<script type="text/javascript">

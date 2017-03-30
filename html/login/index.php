@@ -46,6 +46,11 @@
 						$_SESSION['name'] = $row['name'];
 						$_SESSION['user_level'] = $row['level'];
 
+						if($stmt = $conn->prepare("UPDATE users SET last_login = NOW() WHERE id= ?")) {
+							$stmt->bind_param("i", $row['id']);
+							$stmt->execute();
+							unset($stmt);
+						}
 						// Once the sessions variables have been set, redirect them to the landing page / home page.
 						header('Location: /');
 						exit;

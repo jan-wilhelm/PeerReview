@@ -1,6 +1,6 @@
 <div class="col-md-3 sidebar">
   <div class="brand">
-  Informatik Peer Review
+  Peer Review
   </div>
   <ul class="nav nav-sidebar">
     <li class="active"><a href="#">Überblick <span class="sr-only">(aktuell)</span></a></li>

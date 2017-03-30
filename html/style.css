@@ -6,7 +6,7 @@ ul, #review{
 
 body {
 	/*padding-top: 70px;*/
-	background-color: #f4f4f4;
+	background-color: #ddd;
 }
 
 table {
@@ -167,6 +167,11 @@ h3 .small {
     overflow-x: hidden;
     overflow-y: auto; /* Scrollable contents if viewport is shorter than content. */
   }
+
+	.right-col {
+	    padding-right: 20px;
+	    margin-left: 250px;
+	}
 }
 
 /* Sidebar navigation */
@@ -203,31 +208,27 @@ h3 .small {
 	color: #73879C;
 }
 
-.right-col {
-    padding-right: 20px;
-    margin-left: 250px;
-}
-
 .right-col .row > div[class*='col-'], .admin-cart{
 	padding: 20px;
-	min-height: 200px;
 }
 
 .admin-cart {
 	width: 100%;
+	border-top: 12px solid #73879C;
+	/*-webkit-box-shadow: 0px 1px 15px 1px rgba(0,0,0,0.1);
+	-moz-box-shadow: 0px 1px 15px 1px rgba(0,0,0,0.1);
+	box-shadow: 0px 1px 15px 1px rgba(0,0,0,0.1);*/
 }
 
-.equal, .equal > div[class*='col-'] {  
-    display: -webkit-box;
-    display: -moz-box;
-    display: -ms-flexbox;
-    display: -webkit-flex;
-    display: flex;
-    flex:1 0 auto;
-}
-
-.right-col .row div .thin {
-	min-height: 150px;
+@media (min-width: 992px) {
+	.equal, .equal > div[class*='col-'] {  
+	    display: -webkit-box;
+	    display: -moz-box;
+	    display: -ms-flexbox;
+	    display: -webkit-flex;
+	    display: flex;
+	    flex:1 0 auto;
+	}
 }
 
 .form-control {
@@ -245,22 +246,24 @@ h3 .small {
 .sidebar .brand {
 	width: 100%;
 	color: #73879C;
-	font-size: 32px;
+	font-size: 28px;
 	margin-bottom: 20px;
-	font-weight: 700;
+	font-weight: 600;
 	text-align: justify-all;
+	padding: 0;
 }
 
 .admin-cart > h3 {
 	margin-bottom: 30px;
+	margin-top: -10px;
+    font-family: "Helvetica Neue", Roboto, Arial, "Droid Sans", sans-serif;
+    font-weight: 600;
+    text-transform: uppercase;
+    color: #73879C;
 }
 
 .admin-cart .alert {
 	width: 100%;
-}
-
-.admin-cart:hover {
-	background-color: #DFEAF5;
 }
 
 form input, form button{
@@ -268,4 +271,35 @@ form input, form button{
 	width: 100%;
 	margin-bottom: 13px;
 	display: block;
+}
+
+.panel-heading {
+	cursor: pointer;
+}
+
+.tiles_desc, .tiles_number {
+    color: #73879C;
+    display: block;
+}
+
+.tiles_number {
+    font-family: "Helvetica Neue", Roboto, Arial, "Droid Sans", sans-serif;
+    font-weight: 600;
+    font-size: 40px;
+    line-height: 47px;
+}
+
+.tiles_count {
+	background-color: #C9D1D4;
+	margin-top: 20px;
+	margin-left: 8px;
+	margin-right: 8px;
+}
+
+.tiles_col {
+	border-right: 7px solid #ADB2B5;
+}
+
+.tiles_col:last-child{
+	border: none;
 }
