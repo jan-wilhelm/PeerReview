@@ -6,7 +6,7 @@ ul, #review{
 
 body {
 	/*padding-top: 70px;*/
-	background-color: #ddd;
+	background-color: #f7f7f7;
 }
 
 table {
@@ -198,7 +198,8 @@ h3 .small {
 
 .admin-cart {
 	background-color: white;
-	border-radius: 3px;
+	border-top-right-radius: 4px;
+	border-top-left-radius: 4px;
 }
 
 .sidebar {
@@ -214,6 +215,7 @@ h3 .small {
 
 .admin-cart {
 	width: 100%;
+	border: 1px solid #ede;
 	border-top: 12px solid #73879C;
 	/*-webkit-box-shadow: 0px 1px 15px 1px rgba(0,0,0,0.1);
 	-moz-box-shadow: 0px 1px 15px 1px rgba(0,0,0,0.1);
@@ -290,14 +292,14 @@ form input, form button{
 }
 
 .tiles_count {
-	background-color: #C9D1D4;
+	/*background-color: #C9D1D4;*/
 	margin-top: 20px;
 	margin-left: 8px;
 	margin-right: 8px;
 }
 
 .tiles_col {
-	border-right: 7px solid #ADB2B5;
+	border-right: 2px solid #ADB2B5;
 }
 
 .tiles_col:last-child{

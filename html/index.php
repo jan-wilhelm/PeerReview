@@ -72,49 +72,6 @@ function randomPassword($length){
 		  	<div class="col-md-4 col-sm-12">
 		  		<div class="admin-cart">
 					<canvas id="logins_chart" height="100"></canvas>
-					<script type="text/javascript">
-						const ctx = $('#logins_chart');
-						const options = {
-							legend: {
-								display: false
-							},
-							responsive: true
-						};
-						const dataset = [<?php 
-								$data = getLoginsOfLastMonth($conn);
-								$counts = array();
-								foreach ($data as $time => $logins) {
-									$counts[] = $logins;
-								}
-								echo implode(",", $counts);
-						        ?>];
-						const times = [
-						    	<?php
-								$times = array();
-								foreach ($data as $time => $logins) {
-									$dt = new DateTime(((string) $time));
-									$times[] = "'".$dt->format('d.m')."'";
-								}
-								echo implode(",", $times);
-						        ?>
-						    ];
-						console.log((times));
-						console.log(JSON.stringify(times));
-						const data = {
-						    datasets: [{
-						        data: dataset
-						    }],
-						    labels: times
-						};
-
-						console.log(JSON.stringify(data));
-
-						var loginsChart = new Chart(ctx, {
-						    type: 'line',
-						    data: data,
-						    options: options
-						});
-					</script>
 				</div>
 			</div>
 		  	<div class="col-md-8 col-sm-12">
@@ -266,14 +223,13 @@ function randomPassword($length){
 						    <div class="panel panel-primary">
 	    						<div class="panel-heading panel-collapsed">
 	    							<span class="pull-left clickable"><i class="fa fa-pencil" aria-hidden="true"></i></span>
-							     	<h3 class="panel-title">Benutzer 
-										<?php
-										echo getName($conn, $users) . " bearbeiten </span>   (Klick)"?>
+							     	<h3 class="panel-title">Edit user <?php
+										echo getName($conn, $users) . " </span>   (Click)"?>
 									</h3>
 								</div>
 								<div class="panel-body indigo lighten-5">
 									<?php
-									echo "<a class=\"blue-text lighten-3\" href=\"user.php?id=$users\">Bearbeiten!</a>";
+									echo "<a class=\"blue-text lighten-3\" href=\"user.php?id=$users\">Edit!</a>";
 									?>
 								</div>
 							</div>
@@ -424,18 +380,18 @@ function randomPassword($length){
 				    }
 				} // Ende von "if is admin"
 				?>
-				</div>			<!-- Ende admin cart -->
-			</div>			<!-- Ende col-md-4 	-->
-		</div>			<!-- Ende row -->
 		<div class="row equal">
 			<div class="col-md-4 col-sm-6 col-xs-12">
 				<div class="admin-cart">
 					<div class="pie-chart" data-percent="73"></div>
 				</div>
 			</div>
+		</div>			<!-- Ende admin cart -->
 		</div>
 		</div>
 		</div>
+		</div>			<!-- Ende col-md-4 	-->
+		</div>			<!-- Ende row -->
 	</div>
 </body>
 <script type="text/javascript">	
@@ -463,16 +419,61 @@ function randomPassword($length){
 	    //create instance
 	    $('.pie-chart').easyPieChart({
 	        animate: 2000,
-	        lineWidth: 10,
+	        lineWidth: 16,
 	        lineCap: "butt",
-	        barColor: "#2A3F54"
+	        barColor: "#2A3F54",
+	        scaleColor: "#aaa",
+	        trackColor: "#E3E3E3",
+	        scaleLength: 4
 	    });
-	    //update instance after 5 sec
-	    setTimeout(function() {
-	        $('.chart').data('easyPieChart').update(40);
-	    }, 5000);
 	});
 </script>
+
+<?php if($_SESSION['user_level'] === 1) { ?>
+<script type="text/javascript">
+	const ctx = $('#logins_chart');
+	const options = {
+		legend: {
+			display: false
+		},
+		responsive: true,
+		animation: {
+			animateScale: true
+		}
+	};
+	const dataset = [<?php 
+			$data = getLoginsOfLastMonth($conn);
+			$counts = array();
+			foreach ($data as $time => $logins) {
+				$counts[] = $logins;
+			}
+			echo implode(",", $counts);
+	        ?>];
+	const times = [
+	    	<?php
+			$times = array();
+			foreach ($data as $time => $logins) {
+				$dt = new DateTime(((string) $time));
+				$times[] = "'".$dt->format('d.m')."'";
+			}
+			echo implode(",", $times);
+	        ?>
+	    ];
+	const data = {
+	    datasets: [{
+	        data: dataset,
+	        backgroundColor: "rgba(42,63,84,0.6)"
+	    }],
+	    labels: times
+	};
+
+	var loginsChart = new Chart(ctx, {
+	    type: 'line',
+	    data: data,
+	    options: options
+	});
+</script>
+<?php } ?>
 <script type="text/javascript" src="./js/panel.js"></script>
 </html>
 <?php
