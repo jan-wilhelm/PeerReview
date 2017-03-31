@@ -123,6 +123,17 @@ function randomPassword($length){
 		  		</div>
 		  	</div>
 		</div>
+	<?php } else {
+			$r = getReviewsSinceLastLoginForUser($conn, $_SESSION['user_id']);
+		?>
+
+		<div class="row tiles_count">
+			<div class="tiles_col col-md-2 col-sm-4 col-xs-6">
+				<span class="tiles_desc">Reviews since last login</span>
+				<span class="tiles_number"><?php echo $r;?></span>
+			</div>
+		</div>
+
 	<?php } ?>
     <div class="row equal">
 	  	<div class="col-md-6 col-sm-12">
@@ -416,6 +427,13 @@ function randomPassword($length){
 				</div>			<!-- Ende admin cart -->
 			</div>			<!-- Ende col-md-4 	-->
 		</div>			<!-- Ende row -->
+		<div class="row equal">
+			<div class="col-md-4 col-sm-6 col-xs-12">
+				<div class="admin-cart">
+					<div class="pie-chart" data-percent="73"></div>
+				</div>
+			</div>
+		</div>
 		</div>
 		</div>
 	</div>
@@ -439,8 +457,21 @@ function randomPassword($length){
 	        error: function(error) {
 	           	toastr.error(error, 'Fehler');
 	        }
-    });
-});
+    	});
+	});
+	$(function() {
+	    //create instance
+	    $('.pie-chart').easyPieChart({
+	        animate: 2000,
+	        lineWidth: 10,
+	        lineCap: "butt",
+	        barColor: "#2A3F54"
+	    });
+	    //update instance after 5 sec
+	    setTimeout(function() {
+	        $('.chart').data('easyPieChart').update(40);
+	    }, 5000);
+	});
 </script>
 <script type="text/javascript" src="./js/panel.js"></script>
 </html>

@@ -357,7 +357,7 @@ function getReviewScheme($conn, $course) {
 
 function setReview($conn, $id, $autor, $course, $review) {
 	setUTF8($conn);
-	if($stmt = $conn->prepare("UPDATE reviews SET review = ?, modified = CURDATE() WHERE id = ? AND course = ? AND code_reviewer = ?")) {
+	if($stmt = $conn->prepare("UPDATE reviews SET review = ?, modified = NOW() WHERE id = ? AND course = ? AND code_reviewer = ?")) {
 		$stmt->bind_param("siii", $review, $id, $course, $autor);
 		$stmt->execute();
 		unset($stmt);
@@ -392,21 +392,37 @@ function handleKeyTyped($conn, $id, $key) {
 }
 
 function getReviewsOfToday($conn, $course) {
-	$d = 0;
-	if($stmt = $conn->prepare("SELECT * FROM reviews WHERE course = ? AND modified = CURDATE()")) {
+	if($stmt = $conn->prepare("SELECT DATE(`reviews`.`modified`) AS `date`, COUNT(*) AS `count` FROM `reviews` WHERE course = ? AND `reviews`.`modified` BETWEEN DATE_SUB(NOW(), INTERVAL 1 MONTH) AND NOW() GROUP BY `date` ORDER BY `date`")) {
 		$stmt->bind_param("i", $course);
 		$stmt->execute();
 		$result = $stmt->get_result();
 		if ($result->num_rows > 0) {
-			while ($row = $result->fetch_assoc()) {
-				$d = $d + 1;
+			if ($row = $result->fetch_assoc()) {
+				return $row['count'];
 			}
 		}
 		$stmt->free_result();
 	} else {
 		echo $conn->error;
 	}
-	return $d;
+	return 0;
+}
+
+function getReviewsSinceLastLoginForUser($conn, $id) {
+	if($stmt = $conn->prepare("select count(*) from users u left join reviews r on u.id =r.id where r.modified > u.last_login and u.id = ?")) {
+		$stmt->bind_param("i", $id);
+		$stmt->execute();
+		$result = $stmt->get_result();
+		if ($result->num_rows > 0) {
+			if ($row = $result->fetch_assoc()) {
+				return $row['count(*)'];
+			}
+		}
+		$stmt->free_result();
+	} else {
+		echo $conn->error;
+	}
+	return 0;
 }
 
 function getLoginsOfLastMonth($conn) {
