@@ -51,6 +51,12 @@
 							$stmt->execute();
 							unset($stmt);
 						}
+
+						if($stmt = $conn->prepare("INSERT INTO login_history (for_date, user) VALUES (NOW(),?)")) {
+							$stmt->bind_param("i", $row['id']);
+							$stmt->execute();
+							unset($stmt);
+						}
 						// Once the sessions variables have been set, redirect them to the landing page / home page.
 						header('Location: /');
 						exit;

@@ -426,7 +426,7 @@ function getReviewsSinceLastLoginForUser($conn, $id) {
 }
 
 function getLoginsOfLastMonth($conn) {
-	$sql = "SELECT DATE(`users`.`last_login`) AS `date`, COUNT(`users`.`id`) AS `count` FROM `users` WHERE `users`.`last_login` BETWEEN DATE_SUB(NOW(), INTERVAL 1 MONTH) AND NOW() GROUP BY `date` ORDER BY `date`";
+	$sql = "SELECT DATE(`login_history`.`for_date`) AS `date`, COUNT(`login_history`.`user`) AS `count` FROM `login_history` WHERE `login_history`.`for_date` BETWEEN DATE_SUB(NOW(), INTERVAL 1 MONTH) AND NOW() GROUP BY `date` ORDER BY `date`";
 	$ret = array();
 	if($stmt = $conn->prepare($sql)) {
 		$stmt->execute();

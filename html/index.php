@@ -69,12 +69,19 @@ function randomPassword($length){
 
 
 	    <div class="row equal">
-		  	<div class="col-md-4 col-sm-12">
+		  	<div class="col-md-4 col-xs-12">
 		  		<div class="admin-cart">
+					<h3>Logins pro Tag</h3>
 					<canvas id="logins_chart" height="100"></canvas>
 				</div>
 			</div>
-		  	<div class="col-md-8 col-sm-12">
+			<div class="col-md-4 col-xs-12">
+				<div class="admin-cart">
+					<h3>Fertige Reviews in diesem Kurs</h3>
+					<div class="pie-chart" data-percent="73"></div>
+				</div>
+			</div>
+		  	<div class="col-md-4 col-xs-12">
 		  		<div class="admin-cart">
 		  		awdadaw
 		  		</div>
@@ -472,6 +479,19 @@ function randomPassword($length){
 	    data: data,
 	    options: options
 	});
+
+	$(document).on('click', '.panel-heading', function(e){
+		e.preventDefault();
+	    var $this = $(this);
+		if($this.hasClass('panel-collapsed')) {
+			const link = $this.parents('.panel').find('.panel-body').find('a').attr('href');
+			if(link != null && link != undefined) {
+				$this.parents('.panel').find('.panel-body').load(link + " .element");
+			}
+		}
+	})
+	$( "#result" ).load( "ajax/test.html #container" );
+
 </script>
 <?php } ?>
 <script type="text/javascript" src="./js/panel.js"></script>
