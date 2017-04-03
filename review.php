@@ -10,7 +10,7 @@ function setUTF8($conn) {
 function getReviews($conn, $course, $id) {
 	$ret = array();
 	setUTF8($conn);
-	if($stmt    = $conn->prepare("SELECT * FROM reviews WHERE id = ? AND course = ?")) {
+	if($stmt    = $conn->prepare("SELECT * FROM reviews WHERE id = ? AND course = ? ORDER BY review DESC")) {
 		$stmt->bind_param("ii", $id, $course);
 		$stmt->execute();
 		$result = $stmt->get_result();
@@ -249,8 +249,8 @@ function getName($conn, $id) {
 	return "";
 }
 
-function getPoints($conn, $id, $autor, $course) {
-	if($stmt    = $conn->prepare("SELECT * FROM reviews WHERE id = ? AND code_reviewer = ? AND course = ?")) {
+function getFinishedReviewsOfCourse($conn, $course) {
+	if($stmt = $conn->prepare("(SELECT COUNT(review) as free FROM reviews WHERE NOT review IS NULL) / (SELECT COUNT(review) FROM reviews) ")) {
 		$stmt->bind_param("iii", $id, $autor, $course);
 		$stmt->execute();
 		$result = $stmt->get_result();

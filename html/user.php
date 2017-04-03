@@ -3,7 +3,7 @@
 include '../check_auth.php';
 include '../config.php';
 include "../review.php";
-if(!isset($_GET['id'])) {
+if(!isset($_GET['id']) || !isset($_GET['course'])) {
 	header("Location: /info");
 }
 if (!isset($_SESSION['user_level']) || $_SESSION['user_level'] > 1) {
@@ -21,6 +21,8 @@ $target = array(
 	"name" => getName($conn,$_GET['id']),
 	"code" => getCode($conn,$_GET['id'])
 );
+
+$course = $_GET['course'];
 
 ?>
 <!DOCTYPE html>
@@ -74,7 +76,7 @@ $target = array(
   		<div class="edit-el">
   			<h4>Link zum Code</h4>
 		<?php
-			$code = getCode($conn, $target['id']);
+			$code = getCode($conn, $target['id'], $course);
 			if(is_null($code) or empty($code)) {
 				echo "<span class=\"red-text darken-4\">".$target["name"]." hat noch keinen Link angegeben</span>";
     	    } else {
@@ -85,7 +87,7 @@ $target = array(
 		<div class="edit-el">
   			<h4>Reviews für <?php echo $target["name"]; ?></h4>
 		<?php
-			$review = getReviews($conn, $target["id"]);
+			$review = getReviews($conn, $target["id"], $course);
 			if(count($review) == 0) {
 				echo "<p class=\"red-text darken-4\">Es wurde für ".$target["name"]." noch keine Review ausgefüllt!</hp>";
 			} else {?>
@@ -410,7 +412,7 @@ $target = array(
 		<div class="edit-el">
   			<h4>Reviews von <?php echo $target["name"]; ?></h4>
 			<?php
-			    $tar = getReviewsBy($conn, $target['id']);
+			    $tar = getReviewsBy($conn, $course, $target['id']);
 			    # noch kein target
 			    if (count($tar) == 0) {
 					echo "<p class=\"red-text darken-4\">Es wurde für ".$target["name"]." noch kein Benutzer zum Review ausgewählt!</p>";

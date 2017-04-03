@@ -163,14 +163,15 @@ function randomPassword($length){
 					echo "<span class=\"alert alert-danger\"><strong>Fehler</strong>: Ein Benutzer mit dem Namen $new_user_name existiert bereits.</span>";
 				}
 			}
-		} else {
-	?>
-		<form action="" method="post" class="form-horizontal">
-			<input name="username" type="text" placeholder="Username">
-			<input name="password" type="text" placeholder="Password" value="<?php echo randomPassword(8); ?>">
-			<button type="button" class="btn btn-primary" name="user-create">Benutzer erstellen</button>
-		</form>
-		<?php } ?>
+		} else { 			?>
+			<form action="" method="post" class="form-horizontal">
+				<input name="username" type="text" placeholder="Username">
+				<input name="password" type="text" placeholder="Password" value="<?php echo randomPassword(8); ?>">
+				<button type="button" class="btn btn-primary" name="user-create">Benutzer erstellen</button>
+			</form>
+		<?php
+		}
+		?>
 		</div>
 		</div>
 		<div class="col-md-4 col-sm-12">
@@ -236,7 +237,7 @@ function randomPassword($length){
 								</div>
 								<div class="panel-body indigo lighten-5">
 									<?php
-									echo "<a class=\"blue-text lighten-3\" href=\"user.php?id=$users\">Edit!</a>";
+									echo "<a class=\"blue-text lighten-3\" href=\"user.php?id=$users&course=$course\">Edit!</a>";
 									?>
 								</div>
 							</div>
@@ -281,112 +282,125 @@ function randomPassword($length){
     <!-- NORMAL -->
     <!-- NORMAL -->
 
-			
-    		<?php
-    		if($_SESSION['user_level'] !== 1) {			
-				$review = getReviews($conn, $course, $_SESSION['user_id']);
-				echo "<div class=\"row equal\"><div class=\"col-md-8\"><div class=\"admin-cart\">";
-				echo "<h3>Deine Reviews</h3>";
-				if(count($review) == 0) {
-					echo "<span class=\"red-text darken-4\">Es wurde für dich noch keine Review ausgefüllt!</span>";
-				} else {?>
-					<div class="panel panel-primary">
-
-					<?php
-					$json = json_decode(getReviewScheme($conn, $course), JSON_UNESCAPED_UNICODE);
-					$max_points = 0;
-					foreach ($json as $cats) {
-						foreach ($cats['categories'] as $cat) {
-							$max_points = $max_points + $cat['max_points'];
-						}
-					}
-					foreach ($review as $rv) {
-					if($rv['review']!="{}" && strlen($rv['review']) > 2) {
-						    ?>
-						    <div class="panel-heading panel-collapsed">
-						    	
-								<span class="pull-left clickable"><i class="fa fa-commenting" aria-hidden="true"></i></span>
-						     	<h3 class="panel-title">Review von 
-								<?php
-								echo getName($conn, $rv['code_reviewer']) . "</h3>"?>
-							</div>
-							<div class="panel-body indigo lighten-5">
-								<h4 class="green-text lighten-2"><?php
-								//$points = getPoints($conn,$rv['id'],$rv['code_reviewer'], $course);
-								$points = 0;
-								$rev = json_decode($rv['review'], JSON_UNESCAPED_UNICODE);
-								for ($i=0; $i < sizeof($rev); $i++) { 
-									foreach($rev[$i]['reviews'] as $p) { 
-										$points = $points + $p['points'];
-									}
-								}
-								echo $points." von ".$max_points." Punkten (".((int)(100 * $points / $max_points))."%)</h4>";
-
-								$itemcount = 0;
-								foreach ($json as $item) {
-									echo '<div class="sect">';
-									echo '<p>'.$item["name"].'</p>';
-									$idx = 0;
-									foreach($item["categories"] as $cat) {
-										echo '<div class="cat"><span class="desc">'.$cat['description']."</span>";
-										echo '<div class="points"><span>'.$rev[$itemcount]['reviews'][$idx]['points'].' / '.$cat['max_points'].'</span></div></div>';
-										$idx = $idx + 1;
-									}
-									echo '<div class="cat"><span class="comment">'.$rev[$itemcount]['comment'].'</span></div>';
-									$itemcount = $itemcount + 1;
-								?>
-							</div>
-								<?php
-								}
-								?>
-							</div>
-					<?php
-					} else {?>
-						<div class="collapsible-header">
-					    	<i class="material-icons circle left-align red-text darken-4">error</i>
-					     	<a class="red-text darken-4">Du hast noch keine Review von 
-							<?php
-							echo getName($conn, $rv['code_reviewer']) . "</a>"?>
-						</div>
-						<?php
-					}
-					} echo "</div>";
-				}
-			echo "</div></div>";
+	
+	<?php
+	if($_SESSION['user_level'] !== 1) {			
+		$review = getReviews($conn, $course, $_SESSION['user_id']);
 		?>
-			<div class="col-md-4">
-				<div class="admin-cart">       <!--Anfang admin cart -->
-				<h3>Bewertungen verfassen</h3>
-				<?php
-				    $tar = getReviewTargets($conn, $_SESSION['user_id'], $course);
-				    # noch kein target
-				    if($_SESSION['user_level'] === 1) {
-						echo "<span class=\"red-text darken-4\">Als Administrator kannst du keine Reviews schreiben.</span>";
-					}elseif (count($tar) == 0) {
-						echo "<span class=\"red-text darken-4\">Es wurde für dich noch kein Benutzer zum Review ausgewählt!</span>";
-				    } else {
-				    	?>
-				    	<ul class="collapsible" data-collapsible="accordion"> <?php
-						foreach ($tar as $rev) {
-						    ?>
-						    <li>
-						    <div class="collapsible-header">
-						    	<i class="material-icons circle left-align">chat_bubble</i>
-						     	<a class="red-text darken-4">Review für 
+		<div class="row equal"><div class="col-md-8"><div class="admin-cart">
+		<h3>Deine Reviews</h3>
+		<?php
+		if(count($review) == 0) {
+			echo "<span class=\"red-text darken-4\">Es wurde für dich noch keine Review ausgefüllt!</span>";
+		} else {?>
+			<?php 
+			$json = json_decode(getReviewScheme($conn, $course), JSON_UNESCAPED_UNICODE);
+			$max_points = 0;
+			foreach ($json as $cats) {
+				foreach ($cats['categories'] as $cat) {
+					$max_points = $max_points + $cat['max_points'];
+				}
+			}
+			foreach ($review as $rv) {
+				if($rv['review']!="{}" && strlen($rv['review']) > 2) {
+				    ?>
+					<div class="panel panel-primary">
+					    <!-- heading -->
+					    <div class="panel-heading panel-collapsed">
+							<span class="pull-left clickable">
+								<i class="fa fa-commenting" aria-hidden="true"></i>
+							</span>
+					     	<h3 class="panel-title">Review von 
 								<?php
-								echo $rev['name'] . "</a>   (Klick)"?>
-							</div>
-							<div class="collapsible-body white"><?php
-								echo "<a href=\"review.php?id=".$rev['id']."&course=".$course."\">Review für " . $rev['name'] . " bearbeiten</a>";
-								?>
-							</div>
-							</li>
+								echo getName($conn, $rv['code_reviewer'])?>	
+							</h3>
+					    <!-- end heading -->
+						</div>
+
+					    <!-- body -->
+						<div class="panel-body indigo lighten-5">
+							<h4 class="green-text lighten-2"><?php
+							//$points = getPoints($conn,$rv['id'],$rv['code_reviewer'], $course);
+							$points = 0;
+							$rev = json_decode($rv['review'], JSON_UNESCAPED_UNICODE);
+							for ($i=0; $i < sizeof($rev); $i++) { 
+								foreach($rev[$i]['reviews'] as $p) { 
+									$points = $points + $p['points'];
+								}
+							}
+							echo $points." von ".$max_points." Punkten (".((int)(100 * $points / $max_points))."%)</h4>";
+
+							$itemcount = 0;
+							foreach ($json as $item) {
+								echo '<div class="sect">';
+								echo '<p>'.$item["name"].'</p>';
+								$idx = 0;
+								foreach($item["categories"] as $cat) {
+									echo '<div class="cat"><span class="desc">'.$cat['description']."</span>";
+									echo '<div class="points"><span>'.$rev[$itemcount]['reviews'][$idx]['points'].' / '.$cat['max_points'].'</span></div></div>';
+									$idx = $idx + 1;
+								}
+								echo '<div class="cat"><span class="comment">'.$rev[$itemcount]['comment'].'</span></div>';
+								$itemcount = $itemcount + 1;
+							}
+							?>
+
+					    <!-- end body -->
+						</div>
+					</div>
+					<?php
+				} else {?>
+					<div class="panel panel-warning">
+					    <div class="panel-heading panel-collapsed">
+							<span class="pull-left clickable"><i class="fa fa-exclamation-circle" aria-hidden="true"></i></span>
+					     	<h3 class="panel-title">Du hast noch keine Review von 
+							<?php
+							echo getName($conn, $rv['code_reviewer'])?>
+							</h3>
+						</div>
+						<div class="panel-body"></div>
+					</div>
+					<?php
+				}
+			}
+		}  ?>
+		<div class="col-md-4">
+			<div class="admin-cart">       <!--Anfang admin cart -->
+			<h3>Bewertungen verfassen</h3>
+			<?php
+		    $tar = getReviewTargets($conn, $_SESSION['user_id'], $course);
+		    # noch kein target
+		    if($_SESSION['user_level'] === 1) {
+				echo "<span class=\"red-text darken-4\">Als Administrator kannst du keine Reviews schreiben.</span>";
+			}elseif (count($tar) == 0) {
+				echo "<span class=\"red-text darken-4\">Es wurde für dich noch kein Benutzer zum Review ausgewählt!</span>";
+		    } else {
+		    	?>
+		    	<ul class="collapsible" data-collapsible="accordion"> <?php
+				foreach ($tar as $rev) {
+				    ?>
+				    <li>
+				    <div class="collapsible-header">
+				    	<i class="material-icons circle left-align">chat_bubble</i>
+				     	<a class="red-text darken-4">Review für 
 						<?php
-				    	}
-				    	echo "</ul>";
-				    }
-				} // Ende von "if is admin"
-				?>
+						echo $rev['name'] . "   (Klick)"?>
+						</a>
+					</div>
+					<div class="collapsible-body white"><?php
+						echo "<a href=\"review.php?id=".$rev['id']."&course=".$course."\">Review für " . $rev['name'] . " bearbeiten</a>";
+						?>
+					</div>
+					</li>
+				<?php
+		    	}?>
+		    	</ul>
+		    	<?php
+		    }
+	} // Ende von "if is admin"
+	?>
+		</div>
+		</div>
 		<div class="row equal">
 			<div class="col-md-4 col-sm-6 col-xs-12">
 				<div class="admin-cart">
@@ -395,10 +409,11 @@ function randomPassword($length){
 			</div>
 		</div>			<!-- Ende admin cart -->
 		</div>
-		</div>
-		</div>
-		</div>			<!-- Ende col-md-4 	-->
-		</div>			<!-- Ende row -->
+	</div>
+	</div>
+	</div>
+	</div>			<!-- Ende col-md-4 	-->
+	</div>			<!-- Ende row -->
 	</div>
 </body>
 <script type="text/javascript">	
@@ -446,7 +461,10 @@ function randomPassword($length){
 		responsive: true,
 		animation: {
 			animateScale: true
-		}
+		},                                                                             
+	    scales: {
+	      yAxes: [{id: 'y-axis-1', type: 'linear', position: 'left', ticks: {min: 0}}]
+	    }
 	};
 	const dataset = [<?php 
 			$data = getLoginsOfLastMonth($conn);
@@ -469,7 +487,8 @@ function randomPassword($length){
 	const data = {
 	    datasets: [{
 	        data: dataset,
-	        backgroundColor: "rgba(42,63,84,0.6)"
+	        backgroundColor: "rgba(75,192,192,0.2)",
+            borderColor: "rgba(75,192,192,1)"
 	    }],
 	    labels: times
 	};
