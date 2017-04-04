@@ -250,19 +250,13 @@ function getName($conn, $id) {
 }
 
 function getFinishedReviewsOfCourse($conn, $course) {
-	if($stmt = $conn->prepare("(SELECT COUNT(review) as free FROM reviews WHERE NOT review IS NULL) / (SELECT COUNT(review) FROM reviews) ")) {
-		$stmt->bind_param("iii", $id, $autor, $course);
+	if($stmt = $conn->prepare('SELECT avg( review IS NOT NULL ) * 100 AS "avg" FROM reviews WHERE course = ?')) {
+		$stmt->bind_param("i", $course);
 		$stmt->execute();
 		$result = $stmt->get_result();
 		if ($result->num_rows > 0) {
 			if ($row = $result->fetch_assoc()) {
-				$ret = 0;
-				foreach ($row as $r => $v) {
-					if(is_int($v) && !endsWith($r,"_c") && $r != 'id' && $r != 'isset' && $r != 'code_reviewer') {
-						$ret = $ret + $v;
-					}
-				}
-				return $ret;
+				return $row['avg'];
 			}
 		}
 		$stmt->free_result();

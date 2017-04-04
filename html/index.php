@@ -77,8 +77,10 @@ function randomPassword($length){
 			</div>
 			<div class="col-md-4 col-xs-12">
 				<div class="admin-cart">
-					<h3>Fertige Reviews in diesem Kurs</h3>
-					<div class="pie-chart" data-percent="73"></div>
+					<h3>Geschriebene Reviews in diesem Kurs</h3>
+					<div class="pie-chart" data-percent="<?php 
+						echo getFinishedReviewsOfCourse($conn, $course);
+					?>"></div>
 				</div>
 			</div>
 		  	<div class="col-md-4 col-xs-12">
@@ -287,7 +289,9 @@ function randomPassword($length){
 	if($_SESSION['user_level'] !== 1) {			
 		$review = getReviews($conn, $course, $_SESSION['user_id']);
 		?>
-		<div class="row equal"><div class="col-md-8"><div class="admin-cart">
+		<div class="row equal">
+			<div class="col-md-8">
+				<div class="admin-cart">
 		<h3>Deine Reviews</h3>
 		<?php
 		if(count($review) == 0) {
