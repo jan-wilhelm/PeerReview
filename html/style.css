@@ -39,11 +39,6 @@ table {
 	border-bottom: 2px solid #777;
 }
 
-.welcomer {
-	margin-top: 60px;
-}
-
-
 .collapsible-header {
 	transition: all 0.5s;
 	-webkit-transition: all 0.5s;
@@ -209,7 +204,7 @@ h3 .small {
 	color: #73879C;
 }
 
-.right-col .row > div[class*='col-'], .admin-cart{
+.right-col > .row > div[class*='col-'], .admin-cart{
 	padding: 20px;
 }
 
@@ -313,4 +308,21 @@ form input, form button{
     margin-left: auto;
     margin-right: auto;
     display: block;
+}
+
+#edit_users_row > div {
+	padding: 0;
+	margin: 0;
+}
+
+#edit_users_row > div > a {
+	display: inline-block;
+	padding-left: 20px;
+}
+
+@media (min-width: 962px) {
+	#edit_users_row {
+		width: 70%;
+		margin: auto;
+	}
 }

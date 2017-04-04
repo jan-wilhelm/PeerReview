@@ -16,13 +16,13 @@ if ($conn->connect_error) {
 	die("Database connection failed: " . $conn->connect_error);
 }
 
+$course = $_GET['course'];
+
 $target = array(
 	"id" => $_GET['id'],
 	"name" => getName($conn,$_GET['id']),
-	"code" => getCode($conn,$_GET['id'])
+	"code" => getCode($conn,$_GET['id'], $course)
 );
-
-$course = $_GET['course'];
 
 ?>
 <!DOCTYPE html>

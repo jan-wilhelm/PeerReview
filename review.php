@@ -122,6 +122,24 @@ function getUsersOfCourse($conn, $course) {
 	return $ret;
 }
 
+function getUsersOfCourseApartFromAdmin($conn, $course) {
+	$ret = array();
+	if($stmt    = $conn->prepare("SELECT id FROM users WHERE EXISTS (select 1 from courses where id = users.id and course = ?) AND level != 1")) {
+		$stmt->bind_param("i", $course);
+		$stmt->execute();
+		$result = $stmt->get_result();
+		if ($result->num_rows > 0) {
+			while ($row = $result->fetch_assoc()) {
+				$ret[] = $row['id'];
+			}
+		}
+		$stmt->free_result();
+	} else {
+		echo $conn->error;
+	}
+	return $ret;
+}
+
 function getUsersForReviews($conn, $course) {
 	$ret = array();
 	if($stmt    = $conn->prepare("SELECT id FROM users WHERE level != 1 AND EXISTS (select 1 from courses where id = users.id and course = ?) ORDER BY RAND()")) {
