@@ -86,7 +86,7 @@ include "../header.php";
 			if(!isset($review[$idx]['reviews'][$jdx])) {
 				$review[$idx]['reviews'][] = array();
 			}
-			$review[$idx]['comment'] = $_POST['comment_'.$idx];
+			$review[$idx]['comment'] = htmlspecialchars($_POST['comment_'.$idx]); // use the special chars in order to prevent html injection
 			$v = ((int)$value);
 			$v = max($v, 0);
 			$v = min($v, $json[$idx]['categories'][$jdx]['max_points']);

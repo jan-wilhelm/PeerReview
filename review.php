@@ -10,8 +10,8 @@ function setUTF8($conn) {
 function getReviews($conn, $course, $id) {
 	$ret = array();
 	setUTF8($conn);
-	if($stmt    = $conn->prepare("SELECT * FROM reviews WHERE id = ? AND course = ? ORDER BY review DESC")) {
-		$stmt->bind_param("ii", $id, $course);
+	if($stmt    = $conn->prepare("SELECT * FROM reviews WHERE id = ? AND course = ? AND review_id = ? ORDER BY review DESC")) {
+		$stmt->bind_param("iii", $id, $course, $reviewid);
 		$stmt->execute();
 		$result = $stmt->get_result();
 		if ($result->num_rows > 0) {
@@ -27,11 +27,11 @@ function getReviews($conn, $course, $id) {
 	return $ret;
 }
 
-function getReviewsBy($conn, $course, $id) {
+function getReviewsBy($conn, $course, $id, $reviewid) {
 	$ret = array();
 	setUTF8($conn);
-	if($stmt    = $conn->prepare("SELECT * FROM reviews WHERE code_reviewer = ? AND course = ?")) {
-		$stmt->bind_param("ii", $id, $course);
+	if($stmt    = $conn->prepare("SELECT * FROM reviews WHERE code_reviewer = ? AND course = ? AND review_id = ?")) {
+		$stmt->bind_param("iii", $id, $course, $reviewid);
 		$stmt->execute();
 		$result = $stmt->get_result();
 		if ($result->num_rows > 0) {
@@ -47,10 +47,10 @@ function getReviewsBy($conn, $course, $id) {
 	return $ret;
 }
 
-function getReview($conn, $id, $autor, $course) {
+function getReview($conn, $id, $autor, $course, $reviewid) {
 	setUTF8($conn);
-	if($stmt = $conn->prepare("SELECT * FROM reviews WHERE id = ? and code_reviewer = ? AND course = ?")) {
-		$stmt->bind_param("iii", $id, $autor, $course);
+	if($stmt = $conn->prepare("SELECT * FROM reviews WHERE id = ? and code_reviewer = ? AND course = ? AND review_id = ?")) {
+		$stmt->bind_param("iiii", $id, $autor, $course, $reviewid);
 		$stmt->execute();
 		$result = $stmt->get_result();
 		if ($result->num_rows > 0) {
@@ -177,10 +177,10 @@ function setTargets($conn, $course, $limit) {
 	return true;
 }
 
-function getReviewTargets($conn, $id, $course) {
+function getReviewTargets($conn, $id, $course, $reviewid) {
 	$ret = array();
-	if($stmt   = $conn->prepare("SELECT * FROM reviews WHERE code_reviewer = ? AND course = ?")) {
-		$stmt->bind_param("ii", $id, $course);
+	if($stmt   = $conn->prepare("SELECT * FROM reviews WHERE code_reviewer = ? AND course = ? AND review_id = ?")) {
+		$stmt->bind_param("iii", $id, $course, $reviewid);
 		$stmt->execute();
 		$result = $stmt->get_result();
 		if ($result->num_rows > 0) {
@@ -195,9 +195,9 @@ function getReviewTargets($conn, $id, $course) {
 	return $ret;
 }
 
-function setReviewTarget($conn, $id, $tar, $course) {
-	if($stmt = $conn->prepare("INSERT INTO reviews (id, code_reviewer, course) VALUES (?,?,?)")) {
-		$stmt->bind_param("iii", $id, $tar, $course);
+function setReviewTarget($conn, $id, $tar, $course, $reviewid) {
+	if($stmt = $conn->prepare("INSERT INTO reviews (id, code_reviewer, course, review_id) VALUES (?,?,?,?)")) {
+		$stmt->bind_param("iiii", $id, $tar, $course, $reviewid);
 		$stmt->execute();
 		unset($stmt);
 	} else {
@@ -219,21 +219,21 @@ function endsWith($haystack, $needle) {
     return (substr($haystack, -$length) === $needle);
 }
 
-function setCode($conn, $id, $code, $course) {
+function setCode($conn, $id, $code, $course, $reviewid) {
 	if(!startsWith(strtolower($code), "http://")) {
 		$code = "http://" . $code;
 	}
-	if($stmt = $conn->prepare("UPDATE courses SET link = ? WHERE id = ? AND course = ?")) {
-		$stmt->bind_param("sii", $code, $id, $course);
+	if($stmt = $conn->prepare("UPDATE courses SET link = ? WHERE id = ? AND course = ? AND review_id = ?")) {
+		$stmt->bind_param("siii", $code, $id, $course, $reviewid);
 		$stmt->execute();
 		unset($stmt);
 	}
 }
 
 
-function getCode($conn, $id, $course) {
-	if($stmt    = $conn->prepare("SELECT * FROM courses WHERE id = ? AND course = ?")) {
-		$stmt->bind_param("ii", $id, $course);
+function getCode($conn, $id, $course, $reviewid) {
+	if($stmt    = $conn->prepare("SELECT link FROM reviews WHERE id = ? AND course = ? AND review_id = ?")) {
+		$stmt->bind_param("iii", $id, $course, $reviewid);
 		$stmt->execute();
 		$result = $stmt->get_result();
 		if ($result->num_rows > 0) {
@@ -367,9 +367,8 @@ function getReviewScheme($conn, $course) {
 	return "";
 }
 
-function setReview($conn, $id, $autor, $course, $review) {
-	$review = htmlspecialchars($review);
-	setUTF8($conn);
+function setReview($conn, $id, $autor, $course, $review, $reviewid) {
+	setUTF8($courseonn);
 	if($stmt = $conn->prepare("UPDATE reviews SET review = ?, modified = NOW() WHERE id = ? AND course = ? AND code_reviewer = ?")) {
 		$stmt->bind_param("siii", $review, $id, $course, $autor);
 		$stmt->execute();

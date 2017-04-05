@@ -250,24 +250,40 @@ function randomPassword($length){
 		<div class="row equal">
 			<div class="col-12">
 				<div class="admin-cart">
-					<h3>Neues review erstellen</h3>
-					<div class="row" id="edit_users_row">
-						<?php
-						$idx = 0;
-						foreach (getUsersOfCourseApartFromAdmin($conn, $course) as $users) {					?>
-							<div class="col-md-4 col-sm-12">
-    							<span class="pull-left clickable">
-    								<i class="fa fa-pencil" aria-hidden="true"></i>
-    							</span>
-    							<?php
-    							echo "<a class=\"blue-text\" href=\"user.php?id=$users&course=$course\">".getName($conn, $users)."</a>"
-    							?>
-							</div>
-							<?php
-							$idx = $idx + 1;
-						}
-						?>
-					</div>
+					<h3>Neues Review erstellen</h3>
+					<ul id="create_review">
+						<li class="sect">
+							<span class="create_review_section">Abschnitt 1</span>
+							<table class="table table-hover">
+								<tr>
+									<th>Kategorie</th>
+									<th>Beschreibung</th>
+									<th>Maximale Punktzahl</th>
+								</tr>
+								<tr>
+									<td>a</td>
+									<td>a</td>
+									<td>a</td>
+								</tr>
+							</table>
+						</li>
+						<li class="sect">
+							<span class="create_review_section">Abschnitt 1</span>
+							<table class="table table-hover">
+								<tr>
+									<th>Kategorie</th>
+									<th>Beschreibung</th>
+									<th>Maximale Punktzahl</th>
+								</tr>
+								<tr>
+									<td>a</td>
+									<td>a</td>
+									<td>a</td>
+								</tr>
+							</table>
+						</li>
+					</ul>
+					<span class="badge"><i class="fa fa-plus" aria-hidden="true"></i></span>
 				</div>
 			</div>
 		</div>

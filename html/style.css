@@ -324,3 +324,8 @@ h3 .small {
 .admin-badge:after {
 	content: " new";
 }
+
+#create_review table {
+	list-style: none;
+	background-color: yellow;
+}
