@@ -90,7 +90,7 @@ function randomPassword($length){
 		  	</div>
 		</div>
 	<?php } else {
-			$reviewsSinceLastLoginForUser = getReviewsSinceLastLoginForUser($conn, $_SESSION['user_id']);
+			$reviewsSinceLastLoginForUser = getReviewsSinceLastLoginForUser($conn, $_SESSION['user_id'], $course);
 		?>
 
 		<div class="row tiles_count">
@@ -226,6 +226,31 @@ function randomPassword($length){
 			<div class="col-12">
 				<div class="admin-cart">
 					<h3>Edit users</h3>
+					<div class="row" id="edit_users_row">
+						<?php
+						$idx = 0;
+						foreach (getUsersOfCourseApartFromAdmin($conn, $course) as $users) {					?>
+							<div class="col-md-4 col-sm-12">
+    							<span class="pull-left clickable">
+    								<i class="fa fa-pencil" aria-hidden="true"></i>
+    							</span>
+    							<?php
+    							echo "<a class=\"blue-text\" href=\"user.php?id=$users&course=$course\">".getName($conn, $users)."</a>"
+    							?>
+							</div>
+							<?php
+							$idx = $idx + 1;
+						}
+						?>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div class="row equal">
+			<div class="col-12">
+				<div class="admin-cart">
+					<h3>Neues review erstellen</h3>
 					<div class="row" id="edit_users_row">
 						<?php
 						$idx = 0;

@@ -368,6 +368,7 @@ function getReviewScheme($conn, $course) {
 }
 
 function setReview($conn, $id, $autor, $course, $review) {
+	$review = htmlspecialchars($review);
 	setUTF8($conn);
 	if($stmt = $conn->prepare("UPDATE reviews SET review = ?, modified = NOW() WHERE id = ? AND course = ? AND code_reviewer = ?")) {
 		$stmt->bind_param("siii", $review, $id, $course, $autor);
@@ -420,14 +421,14 @@ function getReviewsOfToday($conn, $course) {
 	return 0;
 }
 
-function getReviewsSinceLastLoginForUser($conn, $id) {
-	if($stmt = $conn->prepare("select count(*) from users u left join reviews r on u.id =r.id where r.modified > u.last_login and u.id = ?")) {
-		$stmt->bind_param("i", $id);
+function getReviewsSinceLastLoginForUser($conn, $id, $course) {
+	if($stmt = $conn->prepare("SELECT COUNT(*) as `numbers` FROM `info`.`reviews` WHERE `modified` > (SELECT `for_date` FROM `login_history` WHERE `user` = ? AND course = ? ORDER BY `for_date` DESC LIMIT 1,1)")) {
+		$stmt->bind_param("ii", $id, $course);
 		$stmt->execute();
 		$result = $stmt->get_result();
 		if ($result->num_rows > 0) {
 			if ($row = $result->fetch_assoc()) {
-				return $row['count(*)'];
+				return $row['numbers'];
 			}
 		}
 		$stmt->free_result();
