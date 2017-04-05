@@ -90,13 +90,13 @@ function randomPassword($length){
 		  	</div>
 		</div>
 	<?php } else {
-			$r = getReviewsSinceLastLoginForUser($conn, $_SESSION['user_id']);
+			$reviewsSinceLastLoginForUser = getReviewsSinceLastLoginForUser($conn, $_SESSION['user_id']);
 		?>
 
 		<div class="row tiles_count">
 			<div class="tiles_col col-md-2 col-sm-4 col-xs-6">
-				<span class="tiles_desc">Reviews since last login</span>
-				<span class="tiles_number"><?php echo $r;?></span>
+				<span class="tiles_desc">Bewertungen seit letztem Login</span>
+				<span class="tiles_number"><?php echo $reviewsSinceLastLoginForUser;?></span>
 			</div>
 		</div>
 
@@ -290,6 +290,11 @@ function randomPassword($length){
 		<div class="row equal">
 			<div class="col-md-8">
 				<div class="admin-cart">
+					<?php
+					if($reviewsSinceLastLoginForUser > 0) {
+						echo '<span class="admin-badge badge green accent-4">'.$reviewsSinceLastLoginForUser.'</span>';
+					}
+					?>
 					<h3>Deine Reviews</h3>
 					<?php
 					if(count($review) == 0) {
@@ -348,20 +353,21 @@ function randomPassword($length){
 														<span class="desc">
 															<?php echo $cat['description']; ?>
 														</span>
-													</div>
-													<div class="points">
-														<span>
-															<?php echo $rev[$itemcount]['reviews'][$idx]['points'].' / '.$cat['max_points'];?>
-														</span>
+														<div class="points">
+															<span>
+																<?php echo $rev[$itemcount]['reviews'][$idx]['points'].' / '.$cat['max_points'];?>
+															</span>
+														</div>
 													</div>
 													<?php 
 													$idx = $idx + 1;
 												}?>
 												<div class="cat">
+													<span class="pull-left">Kommentar: </span>
 													<span class="comment">
 														<?php echo $rev[$itemcount]['comment'];?>
 													</span>
-												</div>';
+												</div><?php
 												$itemcount = $itemcount + 1;
 												?>
 											</div>
@@ -381,7 +387,6 @@ function randomPassword($length){
 										echo getName($conn, $rv['code_reviewer'])?>
 										</h3>
 									</div>
-									<div class="panel-body"></div>
 								</div>
 								<?php
 							}
@@ -513,18 +518,21 @@ function randomPassword($length){
 	    labels: times
 	};
 
-	var loginsChart = new Chart(ctx, {
-	    type: 'line',
-	    data: data,
-	    options: options
+	$(function() {
+		var loginsChart = new Chart(ctx, {
+		    type: 'line',
+		    data: data,
+		    options: options
+		});
 	});
 
 	$(document).on('click', '#edit_users_row a', function(e){
 		e.preventDefault();
 	    var $this = $(this);
 		const link = $this.attr('href');
-		if($('#edit-user-modal') != null && $('#edit-user-modal') != undefined) {
-			$('.container-fluid').append('<div class="modal fade" id="edit-user-modal" tabindex="-1" role="dialog" aria-labelledby="edit-user-modal-label"> <div class="modal-dialog" role="document"> <div class="modal-content"> <div class="modal-header"> <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button> <h4 class="modal-title" id="set-link-modal-label">Links verteilen</h4> </div> <div class="modal-body"> </div> <div class="modal-footer"> <button type="button" class="btn btn-default" data-dismiss="modal">Abbrechen</button> </div> </div> </div> </div>');
+		if(!$('#edit-user-modal').length) {
+			console.log("appending modal");
+			$('.container-fluid').append('<div class="modal fade" id="edit-user-modal" tabindex="-1" role="dialog" aria-labelledby="edit-user-modal-label"> <div class="modal-dialog" role="document"><div class="modal-content"><div class="modal-header"> <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button><h4 class="modal-title" id="set-link-modal-label">Benutzer bearbeiten</h4></div><div class="modal-body"></div><div class="modal-footer"><button type="button" class="btn btn-default" data-dismiss="modal">Abbrechen</button></div></div></div></div>');
 		}
 		$('#edit-user-modal .modal-body').load(link + " .element", function( response, status, xhr ) {
 		  	$('#edit-user-modal').modal().modal("open");
