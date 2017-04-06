@@ -248,12 +248,26 @@ function randomPassword($length){
 		</div>
 
 		<div class="row equal">
-			<div class="col-12">
+			<div class="col-md-12">
 				<div class="admin-cart">
 					<h3>Neues Review erstellen</h3>
+					<span>Hier kannst du ein neues Review erstellen! Füge einzelne Abschnitte des Reviews über die Schaltfläche <code>"Neuer Abschnitt"</code> hinzu. Innerhalb dieses Abschnittes kannst du über den Knopf <code>"Neue Kategorie"</code> eine neue Unterkategorie dieses Abschnittes hinzufügen.<br>Um die <mark>Platzhalter und einzelnen Werte zu ändern</mark>, klicke sie einfach an, gebe einen passenden Wert ein und klicke woanders hin, um den Wert zu übernehmen.</span>
+					<noscript>
+						<h1 class="red-text">Achtung! Du hast JavaScript deaktiviert! Daher wirst du leider kein neues Review erstellen können!<a href="http://www.enable-javascript.com/de/"> Falls du wissen möchtest, wie du JavaScript einschalten kannst, klicke hier!</a></h1>
+
+					</noscript>
 					<ul id="create_review">
+						<span class="badge green create_section">
+							<i class="fa fa-plus" aria-hidden="true"></i> Neuer Abschnitt
+						</span>
 						<li class="sect">
-							<span class="create_review_section">Abschnitt 1</span>
+							<span class="create_review_section editable">Abschnitt 1</span>
+							<br><span class="badge green accent-4 create_category">
+								<i class="fa fa-plus" aria-hidden="true"></i> Neue Kategorie
+							</span>
+							<span class="badge red accent-4 delete_section">
+								<i class="fa fa-trash-o" aria-hidden="true"></i> Abschnitt löschen
+							</span>
 							<table class="table table-hover">
 								<tr>
 									<th>Kategorie</th>
@@ -261,29 +275,15 @@ function randomPassword($length){
 									<th>Maximale Punktzahl</th>
 								</tr>
 								<tr>
-									<td>a</td>
-									<td>a</td>
-									<td>a</td>
-								</tr>
-							</table>
-						</li>
-						<li class="sect">
-							<span class="create_review_section">Abschnitt 1</span>
-							<table class="table table-hover">
-								<tr>
-									<th>Kategorie</th>
-									<th>Beschreibung</th>
-									<th>Maximale Punktzahl</th>
-								</tr>
-								<tr>
-									<td>a</td>
-									<td>a</td>
-									<td>a</td>
+									<td class="editable">Platzhalter...</td>
+									<td class="editable">Platzhalter...</td>
+									<td class="editable">1</td>
+									<td class="delete-row"><i class="fa fa-trash red-text accent-4" aria-hidden="true"></i></td>
 								</tr>
 							</table>
 						</li>
 					</ul>
-					<span class="badge"><i class="fa fa-plus" aria-hidden="true"></i></span>
+					<button type="button" class="btn btn-primary" id="create_review_button">Review erstellen</button>
 				</div>
 			</div>
 		</div>
@@ -582,6 +582,7 @@ function randomPassword($length){
 	});
 
 </script>
+<script type="text/javascript" src="./js/review_creator.js"></script>
 <?php } ?>
 <script type="text/javascript" src="./js/panel.js"></script>
 </html>

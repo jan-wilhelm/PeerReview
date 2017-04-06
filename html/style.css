@@ -321,11 +321,66 @@ h3 .small {
 	padding-left: 20px;
 	padding-right: 20px;
 }
-.admin-badge:after {
-	content: " new";
+
+#create_review .sect {
+	list-style: none;
+	position: relative;
 }
 
+#create_review .badge {
+	margin-top: 10px;
+	cursor: pointer;
+}
+
+#create_review {
+	padding: 0px;
+	margin-top: 25px;
+}
+
+#create_review > .sect > * {
+	margin-bottom: 20px;
+}
+
+#create_review tr {
+	position: relative;
+}
+
+#create_review td {
+  -webkit-transition: color 0.1s cubic-bezier(0,0,0,0);
+  -moz-transition: color 0.1s cubic-bezier(0,0,0,0);
+  -o-transition: color 0.1s cubic-bezier(0,0,0,0);
+  transition: color 0.1s cubic-bezier(0,0,0,0);
+}
+
+#create_review td:not(.delete-row):hover {
+	color: red;
+}
+
+#create_review tr:first-child {
+	background-color: #4F4F4F;
+	color: #EDEDED;
+}
+
+#create_review tr:not(:first-child):hover {
+	background-color: #D6D6D6;
+}
+
+#create_review > .sect >*:last-child {
+	margin-bottom: inherit;
+}
+
+.delete-row {
+	position: absolute;
+	right: 40px;
+	display: none;
+	font-size: 20px;
+	cursor: pointer;
+}
 #create_review table {
-	list-style: none;
-	background-color: yellow;
+	border-radius: 3px;
+	border: 1px solid #828282;
+}
+
+#create_review tr:hover > .delete-row {
+	display: block;
 }
