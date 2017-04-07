@@ -248,6 +248,22 @@ function getCode($conn, $id, $course, $reviewid) {
 	return "";
 }
 
+function getNewestCode($conn, $id, $course) {
+	if($stmt    = $conn->prepare("SELECT link FROM reviews WHERE id = ? AND course = ? ORDER BY review_id DESC LIMIT 1")) {
+		$stmt->bind_param("ii", $id, $course);
+		$stmt->execute();
+		$result = $stmt->get_result();
+		if ($result->num_rows > 0) {
+			if ($row = $result->fetch_assoc()) {
+				return $row['link'];
+			}
+		}
+		$stmt->free_result();
+	} else {
+		die($conn->error);
+	}
+	return "";
+}
 
 function getName($conn, $id) {
 	setUTF8($conn);
@@ -365,6 +381,15 @@ function getReviewScheme($conn, $course) {
 		echo $conn->error;
 	}
 	return "";
+}
+
+function setReviewScheme($conn, $course, $scheme) {
+	setUTF8($conn);
+	if($stmt = $conn->prepare("UPDATE course_data SET review = ? WHERE course = ?")) {
+		$stmt->bind_param("si", $scheme, $course);
+		$stmt->execute();
+		unset($stmt);
+	}
 }
 
 function setReview($conn, $id, $autor, $course, $review, $reviewid) {

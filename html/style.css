@@ -392,3 +392,19 @@ h3 .small {
 .delete_section {
 	margin-left: 15px;
 }
+
+#create_review > form > input {
+	font-size: 32px;
+	border-radius: 25px;
+	height: 50px;
+	display: inline-block;
+}
+
+#create_review > form {
+	width: 100%;
+	display: inline-block;
+}
+
+.editable {
+	cursor: text;
+}

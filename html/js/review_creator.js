@@ -27,7 +27,7 @@ $(document).ready(function() {
 	    var viewableText = null;
 	    if($(this).parent("td").length) {
 	    	viewableText = $("<td>");
-	    	if($(this).parent().index() == 2) {
+	    	if($(this).parent().index() == 1) {
 		    	if(isNaN(html)) {
 		    		html = 1;
 		           	toastr.error('Ungültige Nummer!', "Fehler");
@@ -51,8 +51,8 @@ $(document).ready(function() {
 
     $(".editable").unbind().click(divClicked);
 
-	const category = '<tr class="data-row"><td class="editable">Platzhalter...</td><td class="editable">Platzhalter...</td><td class="editable">1</td><td class="delete-row"><i class="fa fa-trash red-text accent-4" aria-hidden="true"></i></td></tr>';
-	const section = '<li class="creation_sect"><span class="create_review_section editable">%section%</span><br><span class="badge btn-success create_category"><i class="fa fa-plus" aria-hidden="true"></i> Neue Kategorie</span><span class="badge btn-danger delete_section"><i class="fa fa-trash-o" aria-hidden="true"></i> Abschnitt löschen</span><table class="table"><tr><th>Kategorie</th><th>Beschreibung</th><th>Maximale Punktzahl</th></tr></table></li>';
+	const category = '<tr class="data-row"><td class="editable">Platzhalter...</td><td class="editable">1</td><td class="delete-row"><i class="fa fa-trash red-text accent-4" aria-hidden="true"></i></td></tr>';
+	const section = '<li class="creation_sect"><span class="create_review_section editable">%section%</span><br><span class="badge btn-success create_category"><i class="fa fa-plus" aria-hidden="true"></i> Neue Kategorie</span><span class="badge btn-danger delete_section"><i class="fa fa-trash-o" aria-hidden="true"></i> Abschnitt löschen</span><table class="table"><tr><th>Beschreibung</th><th>Maximale Punktzahl</th></tr></table></li>';
 
 	function addCategory() {
 		$(this).parent(".creation_sect").find("table").append(category);
@@ -86,14 +86,25 @@ $(document).ready(function() {
 		console.log("Trying to create a new review");
 		const length = $('.creation_sect').length;
 		console.log("There are " + length + " sections");
-		var arr = new Array();
+		var arr = {};
+		arr['name'] = $('#create_review_name').val();
+
+		if( isStringEmpty(arr['name'] )) {
+			toastr.error("Bitte gib einen gültigen Namen für das Review ein!", 'Fehler!');
+			$('#create_review_name').focus();
+			return;
+		}
+
 		for (var i = 0; i < length; i++) {
 			// loop for each section
 			
 			const section = $('.creation_sect:nth-child('+ (i+2) + ')');
+			const name = section.find('.create_review_section').html();
+			console.log("name = " + name);
 			const categoryLength = section.find('.data-row').length;
 
 			console.log("Section number " + i + " has " + categoryLength + " categories.")
+			arr['name_' + i] = name;
 
 			for (var j = 0; j < categoryLength; j++) {
 				section.find('.data-row:eq('+ (j) + ') td').not('.delete-row').each( function (index) {
@@ -102,15 +113,18 @@ $(document).ready(function() {
 				});
 			}
 		}
+
+		arr['course'] = getQueryParams(document.location.search).course;
 		console.log("Got resulting array: \n");
 		console.log(arr);
-		var url = "create_review.php?course=" + getQueryParams(document.location.search).course;
-		console.log("Connecting to " + url)
+
+		console.log("Stringified JSON: " + JSON.stringify(arr));
+		const url = "create_review.php";
+		console.log("Connecting to " + url);
+
 	    $.ajax({ 
 	        url: url,
-	        data: {
-	        	arr
-	    	},
+	        data: arr,
 	        type: 'post',
 	        success: function(result) {
 	        	console.log("Got result " + result);

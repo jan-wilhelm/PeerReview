@@ -123,10 +123,11 @@ function randomPassword($length){
 	    	?>
 			<h3>Link zu deinem Code bearbeiten</h3>
 			<span>
+			Hier kannst du nur den Link für das <mark>aktuelle Review</mark> ändern, um Abgaben im Nachhinein nicht zu verfälschen. <br>
 			Bitte gib den richtigen Link zu deinem Code ein, damit für dich ein Review verfasst werden kann!
 			</span>
 			<form action="" method="post" class="form-horizontal">
-				<input id="link-set-link" class="form-control" name="link" type="text" placeholder="Link" value=<?php echo "\"". getCode($conn, $_SESSION['user_id'], $course)."\"";?>>
+				<input id="link-set-link" class="form-control" name="link" type="text" placeholder="Link" value=<?php echo "\"". getNewestCode($conn, $_SESSION['user_id'], $course)."\"";?>>
 				
 				<button type="button" class="btn btn-success" name="link-set" id="link-set-button">
 					<i class="fa fa-paper-plane" aria-hidden="true"></i> Link absenden
@@ -225,7 +226,7 @@ function randomPassword($length){
 		<div class="row equal">
 			<div class="col-12">
 				<div class="admin-cart">
-					<h3>Edit users</h3>
+					<h3>Benutzer bearbeiten</h3>
 					<div class="row" id="edit_users_row">
 						<?php
 						$idx = 0;
@@ -257,9 +258,14 @@ function randomPassword($length){
 
 					</noscript>
 					<ul id="create_review" class="create_review">
-						<span class="badge green create_section">
+
+						<form action="" method="post" class="form-horizontal">
+							<input class="form-control" id="create_review_name" type="text" placeholder="Name des Reviews">
+						</form>
+						<span class="badge btn-success create_section text-center">
 							<i class="fa fa-plus" aria-hidden="true"></i> Neuer Abschnitt
 						</span>
+
 						<li class="creation_sect">
 							<span class="create_review_section editable">Abschnitt 1</span>
 							<br>
@@ -271,12 +277,10 @@ function randomPassword($length){
 							</span>
 							<table class="table">
 								<tr>
-									<th>Kategorie</th>
 									<th>Beschreibung</th>
 									<th>Maximale Punktzahl</th>
 								</tr>
 								<tr class="data-row">
-									<td class="editable">Platzhalter...</td>
 									<td class="editable">Platzhalter...</td>
 									<td class="editable">1</td>
 									<td class="delete-row"><i class="fa fa-trash red-text accent-4" aria-hidden="true"></i></td>
@@ -472,13 +476,6 @@ function randomPassword($length){
 				<?php
 		} // Ende von "if is admin"
 		?>
-		<div class="row equal">
-			<div class="col-md-4 col-sm-6 col-xs-12">
-				<div class="admin-cart">
-					<div class="pie-chart" data-percent="73"></div>
-				</div>
-			</div>
-		</div>			<!-- Ende admin cart -->
 		</div>
 	</div>
 	</div>

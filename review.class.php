@@ -1,5 +1,5 @@
 <?php
-
+	
 	class ReviewCategory implements JsonSerializable {
 		public $description = "";
 		public $max_points = 0;
@@ -36,32 +36,60 @@
 
 	class Review implements JsonSerializable {
 		public $objects = array();
+		public $name = "";
 
-		public function __construct($objects) {
+		public function __construct($name, $objects) {
 			$this->objects = $objects;
-		}
-
-		public static function fromJSON($json) {
-			if(is_string($json) || !is_array($json)) {
-				$json = json_decode($json, JSON_UNESCAPED_UNICODE);
-			}
-			if(is_null($json)) {
-				return;
-			}
-			$objects = array();
-			foreach ($json as $object) {
-				$name = $object['name'];
-				$categories = array();
-				foreach ($object['categories'] as $cat) {
-					$categories[] = new ReviewCategory($cat['description'],((int)$cat['max_points']));
-				}
-				$objects[] = new ReviewObject($categories, $name);
-			}
-			return new self($objects);
+			$this->name = $name;
 		}
 
 		public function jsonSerialize() {
-			return $this->objects;
+			return [
+				"name" => $this->name,
+				"sections" => $this->objects
+			];
+		}
+	}
+
+	class ReviewScheme implements JsonSerializable {
+		public $reviews = array();
+
+		public function __construct($reviews) {
+			$this->reviews = $reviews;
+		}
+
+		public static function fromJSON($json) {
+
+			if(strlen($json) < 5) {
+				return new self(null);
+			}
+
+			if(is_string($json) || !is_array($json)) {
+				$json = json_decode($json, JSON_UNESCAPED_UNICODE);
+			}
+
+			$reviews = array();
+			foreach ($json as $review) {
+				$objects = array();
+				foreach ($review['sections'] as $object) {
+					$name = $object['name'];
+					$categories = array();
+					foreach ($object['categories'] as $cat) {
+						$categories[] = new ReviewCategory($cat['description'],((int)$cat['max_points']));
+					}
+					$objects[] = new ReviewObject($categories, $name);
+				}
+				$reviews[] = new Review($review['name'], $objects);
+			}
+			return new self($reviews);
+		}
+
+		public function addReview($obj) {
+			$this->reviews[] = $obj;
+		}
+
+		public function jsonSerialize() {
+			return $this->reviews;
 		}
 	}
 
