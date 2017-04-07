@@ -7,7 +7,7 @@ function setUTF8($conn) {
 	}
 }
 
-function getReviews($conn, $course, $id) {
+function getReviews($conn, $course, $id, $reviewid) {
 	$ret = array();
 	setUTF8($conn);
 	if($stmt    = $conn->prepare("SELECT * FROM reviews WHERE id = ? AND course = ? AND review_id = ? ORDER BY review DESC")) {
@@ -177,6 +177,9 @@ function getUsersForReviews($conn, $course) {
 function setTargets($conn, $course, $limit) {
 	$us = getUsersForReviews($conn, $course);
 	$id = getNewReviewId($conn, $course);
+	if(!isset($id) || $id == null) {
+		$id = 0;
+	}
 	shuffle($us);
 	$l = count($us);
 	if($l < 4) {

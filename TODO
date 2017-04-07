@@ -1,0 +1,3 @@
+index.php:
+  ☐ Das "Deine Reviews" muss mit neer For-Schleife alle Reviews (mit ihrer ID) durchgehen, und pro Review alle für diese ID erstellten (3) anderen Reviews ausgeben. @created(17-04-07 15:37)
+  ☐ Ein neues Mockup erstellen um zu überlegen, wie ich die belibebige Menge an Reviews passend darstellen kann, sodass es sowohl für große als auch kleine Anzahlen an Reviews / Limits gut aussieht.

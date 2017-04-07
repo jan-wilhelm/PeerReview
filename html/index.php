@@ -310,6 +310,7 @@ function randomPassword($length){
 			        type: 'post',
 			        success: function(result) {
 			           	toastr.success('Reviews wurden erfolgreich verteilt!', 'Geschafft!');
+			           	console.log(result);
 			        },
 			        error: function(error) {
 			           	toastr.error(error, 'Fehler!');
@@ -330,13 +331,12 @@ function randomPassword($length){
 
 	
 	<?php
-	if($_SESSION['user_level'] !== 1) {			
-		$review = getReviews($conn, $course, $_SESSION['user_id']);
-		?>
+	if($_SESSION['user_level'] !== 1) {?>
 		<div class="row equal">
 			<div class="col-md-8">
 				<div class="admin-cart">
 					<?php
+					$review = getReviews($conn, $course, $_SESSION['user_id']);
 					if($reviewsSinceLastLoginForUser > 0) {
 						echo '<span class="admin-badge badge green accent-4">'.$reviewsSinceLastLoginForUser.'</span>';
 					}

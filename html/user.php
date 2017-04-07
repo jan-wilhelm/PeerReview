@@ -143,318 +143,104 @@ $target = array(
 			    if (count($tar) == 0) {
 					echo "<p class=\"red-text darken-4\">Es wurde für ".$target["name"]." noch kein Benutzer zum Review ausgewählt!</p>";
 			    } else {?>
-					<ul class="collapsible" data-collapsible="expandable"><?php
-			    	foreach ($tar as $rv) {
-					if(!is_null($rv['isset'])) {
-						    ?>
-						    <li>
-						    <div class="collapsible-header">
-						    	<i class="material-icons circle left-align">chat_bubble</i>
-						     	<a class="red-text darken-4">Review für 
-								<?php
-								echo getName($conn, $rv['id']) . "</a>   (Klick)"?>
-							</div>
-							<div class="collapsible-body indigo lighten-5">
-
-
-							<!-- MAKE MOVE -->
-							<div class="sect">
-								<p>makeMove(board,row,col)</p>
-
-								<div class="cat">
-								<span class="desc">Überprüft, ob board[row][col] frei ist.</span>
-								<div class="points">
-								<span><?php echo $rv['make_move_0'];?>/1</span>
-								</div>
-								</div>
-
-								<div class="cat">
-								<span class="desc">Setzt dann je nach Spieler board[row][col] = +/- 1.</span>
-								<div class="points">
-								<span><?php echo $rv['make_move_1'];?>/1</span>
-								</div>
-
-								</div>
-								<div class="cat">
-								<span class="comment"><?php echo $rv['make_move_c'];?></span>
-								</div>
-
-							</div>
-
-
-
-							<!-- CHANGEPLAYER -->
-							<div class="sect">
-								<p>changePlayer()</p>
-
-								<div class="cat">
-								<span class="desc">Wechselt die globale Variable player.</span>
-								<div class="points">
-								<span><?php echo $rv['change_player_0'];?>/2</span>
-								</div>
-								</div>
-								<div class="cat">
-								<span class="comment"><?php echo $rv['change_player_c'];?></span>
-								</div>
-
-							</div>
-
-
-							<!-- testLine -->
-							<div class="sect">
-								<p>testLine( line )</p>
-
-								<div class="cat">
-								<span class="desc">Rückgabe 1, wenn alle 3 Einträge == 1.</span>
-								<div class="points">
-								<span><?php echo $rv['test_line_0'];?>/1</span>
-								</div>
-								</div>
-
-								<div class="cat">
-								<span class="desc">Rückgabe -1, wenn alle 3 Einträge == -1.</span>
-								<div class="points">
-								<span><?php echo $rv['test_line_1'];?>/1</span>
-								</div>
-								</div>
-
-
-								<div class="cat">
-								<span class="desc">Rückgabe 0, sonst.</span>
-								<div class="points">
-								<span><?php echo $rv['test_line_2'];?>/1</span>
-								</div>
-								</div>
-
-								<div class="cat">
-								<span class="comment"><?php echo $rv['test_line_c'];?></span>
-								</div>
-
-							</div>
-
-
-
-
-							<!-- testWin -->
-							<div class="sect">
-								<p>testWin( board )</p>
-
-								<div class="cat">
-								<span class="desc">Alle Zeilen richtig getestet.</span>
-								<div class="points">
-								<span><?php echo $rv['test_win_0'];?>/2</span>
-								</div>
-								</div>
-
-								<div class="cat">
-								<span class="desc">Alle Spalten richtig getestet.</span>
-								<div class="points">
-								<span><?php echo $rv['test_win_1'];?>/2</span>
-								</div>
-								</div>
-
-								<div class="cat">
-								<span class="desc">Alle Diagonalen richtig getestet.</span>
-								<div class="points">
-								<span><?php echo $rv['test_win_2'];?>/2</span>
-								</div>
-								</div>
-
-								<div class="cat">
-								<span class="desc">Winner richtig gesetzt.</span>
-								<div class="points">
-								<span><?php echo $rv['test_win_3'];?>/2</span>
-								</div>
-								</div>
-
-								<div class="cat">
-								<span class="desc">Richtige Rückgabe True/False</span>
-								<div class="points">
-								<span><?php echo $rv['test_win_4'];?>/1</span>
-								</div>
-								</div>
-
-								<div class="cat">
-								<span class="comment"><?php echo $rv['test_win_c'];?></span>
-								</div>
-
-							</div>
-
-
-							<!-- endGame -->
-							<div class="sect">
-								<p>endGame( board )</p>
-
-								<div class="cat">
-								<span class="desc">Ruft testWin() auf.</span>
-								<div class="points">
-								<span><?php echo $rv['end_game_0'];?>/1</span>
-								</div>
-								</div>
-
-								<div class="cat">
-								<span class="desc">Testet, ob noch Felder frei sind</span>
-								<div class="points">
-								<span><?php echo $rv['end_game_1'];?>/4</span>
-								</div>
-								</div>
-
-								<div class="cat">
-								<span class="desc">Richtige Rückgabe True/False</span>
-								<div class="points">
-								<span><?php echo $rv['end_game_2'];?>/1</span>
-								</div>
-								</div>
-
-								<div class="cat">
-								<span class="comment"><?php echo $rv['end_game_c'];?></span>
-								</div>
-
-							</div>
-
-
-							<!-- convertMove -->
-							<div class="sect">
-								<p>convertMove()</p>
-
-								<div class="cat">
-								<span class="desc">Festlegung auf sinnvolles Eingabeformat</span>
-								<div class="points">
-								<span><?php echo $rv['convert_move_0'];?>/2</span>
-								</div>
-								</div>
-
-								<div class="cat">
-								<span class="desc">Richtige Umwandlung in Reihe und Spalte</span>
-								<div class="points">
-								<span><?php echo $rv['convert_move_1'];?>/2</span>
-								</div>
-								</div>
-
-								<div class="cat">
-								<span class="desc">Fehlerbehandlung (Rückgabe (-1,-1)) bei falscher Eingabe</span>
-								<div class="points">
-								<span><?php echo $rv['convert_move_2'];?>/1</span>
-								</div>
-								</div>
-
-								<div class="cat">
-								<span class="comment"><?php echo $rv['convert_move_c'];?></span>
-								</div>
-
-							</div>
-
-
-
-
-							<!-- getMove -->
-							<div class="sect">
-								<p>getMove()</p>
-
-								<div class="cat">
-								<span class="desc">Ruft convertMove() auf, um Reihe und Spalte zu bekommen</span>
-								<div class="points">
-								<span><?php echo $rv['get_move_0'];?>/1</span>
-								</div>
-								</div>
-
-								<div class="cat">
-								<span class="desc">Testet, ob Move legal war</span>
-								<div class="points">
-								<span><?php echo $rv['get_move_1'];?>/1</span>
-								</div>
-								</div>
-
-								<div class="cat">
-								<span class="desc">Ruft makeMove() auf</span>
-								<div class="points">
-								<span><?php echo $rv['get_move_2'];?>/1</span>
-								</div>
-								</div>
-
-								<div class="cat">
-								<span class="desc">Testet, ob endGame()</span>
-								<div class="points">
-								<span><?php echo $rv['get_move_3'];?>/1</span>
-								</div>
-								</div>
-
-								<div class="cat">
-								<span class="desc">Gibt ggf. Gewinner / Unentschieden aus</span>
-								<div class="points">
-								<span><?php echo $rv['get_move_4'];?>/2</span>
-								</div>
-								</div>
-
-								<div class="cat">
-								<span class="desc">Ruft changePlayer() auf</span>
-								<div class="points">
-								<span><?php echo $rv['get_move_5'];?>/1</span>
-								</div>
-								</div>
-
-								<div class="cat">
-								<span class="desc">spielerAnzeige wird entsprechend Spieler angepasst.</span>
-								<div class="points">
-								<span><?php echo $rv['get_move_6'];?>/1</span>
-								</div>
-								</div>
-
-								<div class="cat">
-								<span class="comment"><?php echo $rv['get_move_c'];?></span>
-								</div>
-
-							</div>
-
-
-
-
-							<!-- stil -->
-							<div class="sect">
-								<p>Code-Stil</p>
-
-								<div class="cat">
-								<span class="desc">Alle Funktionen ausführlich getestet.</span>
-								<div class="points">
-								<span><?php echo $rv['stil_0'];?>/5</span>
-								</div>
-								</div>
-
-								<div class="cat">
-								<span class="desc">Alle Funktionen vollständig kommentiert (Docstrings)</span>
-								<div class="points">
-								<span><?php echo $rv['stil_1'];?>/4</span>
-								</div>
-								</div>
-
-								<div class="cat">
-								<span class="desc">Ein sinnvolles assert-statement eingefügt.</span>
-								<div class="points">
-								<span><?php echo $rv['stil_2'];?>/1</span>
-								</div>
-								</div>
-
-								<div class="cat">
-								<span class="comment"><?php echo $rv['stil_c'];?></span>
-								</div>
-
-							</div>
-
-
-						</div>
-							</li>
 					<?php
-						} else {?>
-							<div class="collapsible-header">
-						    	<i class="material-icons circle left-align red-text darken-4">error</i>
-						     	<a class="red-text darken-4">Austehende Review für 
-								<?php
-								echo getName($conn, $rv['id']) . "</a>"?>
-							</div>
-							<?php
+					$review = getReviews($conn, $course, $_SESSION['user_id'], $reviewId);
+
+					if(count($review) == 0) {
+						echo "<p class=\"red-text darken-4\">Dieses Review wurde noch nicht ausgefüllt!</p>";
+					} else {?>
+						<?php 
+						$json = json_decode(getReviewScheme($conn, $course), JSON_UNESCAPED_UNICODE);
+						$max_points = 0;
+						foreach ($json as $cats) {
+							foreach ($cats['categories'] as $cat) {
+								$max_points = $max_points + $cat['max_points'];
+							}
 						}
-					}?>
-					</ul><?php
+						foreach ($review as $rv) {
+							if($rv['review']!="{}" && strlen($rv['review']) > 2) {
+							    ?>
+								<div class="panel panel-primary">
+								    <!-- heading -->
+								    <div class="panel-heading panel-collapsed">
+										<span class="pull-left clickable">
+											<i class="fa fa-commenting" aria-hidden="true"></i>
+										</span>
+								     	<h3 class="panel-title">Review von 
+											<?php
+											echo getName($conn, $rv['code_reviewer'])?>	
+										</h3>
+								    <!-- end heading -->
+									</div>
+
+								    <!-- body -->
+									<div class="panel-body indigo lighten-5">
+										<h4 class="green-text lighten-2">
+											<?php
+
+											$points = 0;
+											$rev = json_decode($rv['review'], JSON_UNESCAPED_UNICODE);
+											for ($i=0; $i < sizeof($rev); $i++) { 
+												foreach($rev[$i]['reviews'] as $p) { 
+													$points = $points + $p['points'];
+												}
+											}
+											echo $points." von ".$max_points." Punkten (".((int)(100 * $points / $max_points))."%)";?>	
+										</h4>
+										<?php
+
+										$itemcount = 0;
+										foreach ($json as $item) {
+											?>
+											<div class="sect">
+												<?php
+												echo '<p>'.$item["name"].'</p>';
+												$idx = 0;
+												foreach($item["categories"] as $cat) {
+													?>
+													<div class="cat">
+														<span class="desc">
+															<?php echo $cat['description']; ?>
+														</span>
+														<div class="points">
+															<span>
+																<?php echo $rev[$itemcount]['reviews'][$idx]['points'].' / '.$cat['max_points'];?>
+															</span>
+														</div>
+													</div>
+													<?php 
+													$idx = $idx + 1;
+												}?>
+												<div class="cat">
+													<span class="pull-left">Kommentar: </span>
+													<span class="comment">
+														<?php echo $rev[$itemcount]['comment'];?>
+													</span>
+												</div><?php
+												$itemcount = $itemcount + 1;
+												?>
+											</div>
+											<?php
+										}
+										?>
+								    <!-- end panel body -->
+									</div>
+								</div>
+								<?php
+							} else {?>
+								<div class="panel panel-warning">
+								    <div class="panel-heading panel-collapsed">
+										<span class="pull-left clickable"><i class="fa fa-exclamation-circle" aria-hidden="true"></i></span>
+								     	<h3 class="panel-title">Du hast noch keine Review von 
+										<?php
+										echo getName($conn, $rv['code_reviewer'])?>
+										</h3>
+									</div>
+								</div>
+								<?php
+							}
+						}
+					}
 			    }
 			?>
 		</div>
