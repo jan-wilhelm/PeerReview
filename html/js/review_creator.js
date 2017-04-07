@@ -51,11 +51,11 @@ $(document).ready(function() {
 
     $(".editable").unbind().click(divClicked);
 
-	const category = '<tr><td class="editable">Platzhalter...</td><td class="editable">Platzhalter...</td><td class="editable">1</td><td class="delete-row"><i class="fa fa-trash red-text accent-4" aria-hidden="true"></i></td></tr>';
-	const section = '<li class="sect"><span class="create_review_section editable">%section%</span><br><span class="badge green accent-4 create_category"><i class="fa fa-plus" aria-hidden="true"></i> Neue Kategorie </span><span class="badge red accent-4 delete_section"><i class="fa fa-trash-o" aria-hidden="true"></i> Abschnitt löschen </span><table class="table table-hover"><tr><th>Kategorie</th><th>Beschreibung</th><th>Maximale Punktzahl</th></tr></table></li>';
+	const category = '<tr class="data-row"><td class="editable">Platzhalter...</td><td class="editable">Platzhalter...</td><td class="editable">1</td><td class="delete-row"><i class="fa fa-trash red-text accent-4" aria-hidden="true"></i></td></tr>';
+	const section = '<li class="creation_sect"><span class="create_review_section editable">%section%</span><br><span class="badge btn-success create_category"><i class="fa fa-plus" aria-hidden="true"></i> Neue Kategorie</span><span class="badge btn-danger delete_section"><i class="fa fa-trash-o" aria-hidden="true"></i> Abschnitt löschen</span><table class="table"><tr><th>Kategorie</th><th>Beschreibung</th><th>Maximale Punktzahl</th></tr></table></li>';
 
 	function addCategory() {
-		$(this).parent(".sect").find("table").append(category);
+		$(this).parent(".creation_sect").find("table").append(category);
     	$(".editable").unbind().click(divClicked);
     	$('.delete-row').unbind().click(deleteCategory);
 	}
@@ -68,17 +68,72 @@ $(document).ready(function() {
 		$(this).parent("li").remove();
 	}
 
+	function getQueryParams(qs) {
+	    qs = qs.split('+').join(' ');
+
+	    var params = {},
+	        tokens,
+	        re = /[?&]?([^=]+)=([^&]*)/g;
+
+	    while (tokens = re.exec(qs)) {
+	        params[decodeURIComponent(tokens[1])] = decodeURIComponent(tokens[2]);
+	    }
+
+	    return params;
+	}
+
+	function createReview() {
+		console.log("Trying to create a new review");
+		const length = $('.creation_sect').length;
+		console.log("There are " + length + " sections");
+		var arr = new Array();
+		for (var i = 0; i < length; i++) {
+			// loop for each section
+			
+			const section = $('.creation_sect:nth-child('+ (i+2) + ')');
+			const categoryLength = section.find('.data-row').length;
+
+			console.log("Section number " + i + " has " + categoryLength + " categories.")
+
+			for (var j = 0; j < categoryLength; j++) {
+				section.find('.data-row:eq('+ (j) + ') td').not('.delete-row').each( function (index) {
+					const value = $(this).html();
+					arr['cat_' + i + "_" + j + "_" + index] = value;
+				});
+			}
+		}
+		console.log("Got resulting array: \n");
+		console.log(arr);
+		var url = "create_review.php?course=" + getQueryParams(document.location.search).course;
+		console.log("Connecting to " + url)
+	    $.ajax({ 
+	        url: url,
+	        data: {
+	        	arr
+	    	},
+	        type: 'post',
+	        success: function(result) {
+	        	console.log("Got result " + result);
+	           	toastr.success('Review wurde erfolgreich erstellt!', 'Geschafft!');
+	        },
+	        error: function(error) {
+	           	toastr.error(error, 'Fehler!');
+	        }
+        });
+	}
+
 	function addSection() {
 		$('#create_review').append(section.replace("%section%", "Neuer Abschnitt"));
 		$(".create_category").unbind().click(addCategory);
-		$('#create_review .sect').last().find(".create_category").click();
+		$('#create_review .creation_sect').last().find(".create_category").click();
 		$('.delete_section').unbind().click(deleteSection);
 	}
 
 	$('.delete_section').unbind().click(deleteSection);
-    $("#create_review > .sect > .create_category").unbind().click(addCategory);
+    $("#create_review > .creation_sect > .create_category").unbind().click(addCategory);
     $('.delete-row').unbind().click(deleteCategory);
     $('.create_section').unbind().click(addSection);
+    $('#create_review_button').unbind().click(createReview);
 
 });
 

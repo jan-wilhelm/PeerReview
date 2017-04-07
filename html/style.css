@@ -322,30 +322,34 @@ h3 .small {
 	padding-right: 20px;
 }
 
-#create_review .sect {
+.create_review .creation_sect {
 	list-style: none;
 	position: relative;
+	margin-top: 30px;
+	border: 2px solid #73879C;
+	padding: 30px;
+	border-radius: 5px;
 }
 
-#create_review .badge {
+.create_review .badge {
 	margin-top: 10px;
 	cursor: pointer;
 }
 
-#create_review {
+.create_review {
 	padding: 0px;
 	margin-top: 25px;
 }
 
-#create_review > .sect > * {
+.create_review > .creation_sect > * {
 	margin-bottom: 20px;
 }
 
-#create_review tr {
+.create_review tr {
 	position: relative;
 }
 
-#create_review td {
+.create_review td {
   -webkit-transition: color 0.1s cubic-bezier(0,0,0,0);
   -moz-transition: color 0.1s cubic-bezier(0,0,0,0);
   -o-transition: color 0.1s cubic-bezier(0,0,0,0);
@@ -356,8 +360,8 @@ h3 .small {
 	color: red;
 }
 
-#create_review tr:first-child {
-	background-color: #4F4F4F;
+.create_review tr:first-child {
+	background-color: #2A3F54;
 	color: #EDEDED;
 }
 
@@ -365,7 +369,7 @@ h3 .small {
 	background-color: #D6D6D6;
 }
 
-#create_review > .sect >*:last-child {
+.create_review > .sect >*:last-child {
 	margin-bottom: inherit;
 }
 
@@ -376,11 +380,15 @@ h3 .small {
 	font-size: 20px;
 	cursor: pointer;
 }
-#create_review table {
+.create_review table {
 	border-radius: 3px;
 	border: 1px solid #828282;
 }
 
-#create_review tr:hover > .delete-row {
+.create_review tr:hover > .delete-row {
 	display: block;
+}
+
+.delete_section {
+	margin-left: 15px;
 }

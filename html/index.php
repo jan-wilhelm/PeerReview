@@ -256,25 +256,26 @@ function randomPassword($length){
 						<h1 class="red-text">Achtung! Du hast JavaScript deaktiviert! Daher wirst du leider kein neues Review erstellen können!<a href="http://www.enable-javascript.com/de/"> Falls du wissen möchtest, wie du JavaScript einschalten kannst, klicke hier!</a></h1>
 
 					</noscript>
-					<ul id="create_review">
+					<ul id="create_review" class="create_review">
 						<span class="badge green create_section">
 							<i class="fa fa-plus" aria-hidden="true"></i> Neuer Abschnitt
 						</span>
-						<li class="sect">
+						<li class="creation_sect">
 							<span class="create_review_section editable">Abschnitt 1</span>
-							<br><span class="badge green accent-4 create_category">
+							<br>
+							<span class="badge btn-success create_category">
 								<i class="fa fa-plus" aria-hidden="true"></i> Neue Kategorie
 							</span>
-							<span class="badge red accent-4 delete_section">
+							<span class="badge btn-danger delete_section">
 								<i class="fa fa-trash-o" aria-hidden="true"></i> Abschnitt löschen
 							</span>
-							<table class="table table-hover">
+							<table class="table">
 								<tr>
 									<th>Kategorie</th>
 									<th>Beschreibung</th>
 									<th>Maximale Punktzahl</th>
 								</tr>
-								<tr>
+								<tr class="data-row">
 									<td class="editable">Platzhalter...</td>
 									<td class="editable">Platzhalter...</td>
 									<td class="editable">1</td>
