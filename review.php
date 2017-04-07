@@ -265,6 +265,24 @@ function getCode($conn, $id, $course, $reviewid) {
 	return "";
 }
 
+function getAllReviewIDs($conn, $id, $course) {
+	$ret = array();
+	if($stmt    = $conn->prepare("SELECT review_id FROM reviews WHERE id = ? AND course = ? GROUP BY review_id")) {
+		$stmt->bind_param("ii", $id, $course);
+		$stmt->execute();
+		$result = $stmt->get_result();
+		if ($result->num_rows > 0) {
+			while ($row = $result->fetch_assoc()) {
+				$ret[] = $row['review_id'];
+			}
+		}
+		$stmt->free_result();
+	} else {
+		die($conn->error);
+	}
+	return $ret;
+}
+
 function getNewestCode($conn, $id, $course) {
 	if($stmt    = $conn->prepare("SELECT link FROM reviews WHERE id = ? AND course = ? ORDER BY review_id DESC LIMIT 1")) {
 		$stmt->bind_param("ii", $id, $course);

@@ -20,8 +20,7 @@ $course = $_GET['course'];
 
 $target = array(
 	"id" => $_GET['id'],
-	"name" => getName($conn,$_GET['id']),
-	"code" => getCode($conn,$_GET['id'], $course)
+	"name" => getName($conn,$_GET['id'])
 );
 
 ?>
@@ -73,10 +72,22 @@ $target = array(
   			}
   		?>
   		<h2 class="header">Benutzer <span class="red-text lighten-2"><?php echo $target["name"]?></span> bearbeiten</h2>
+  		<?php
+  		foreach (getAllReviewIDs($conn, $target['id'], $course) as $reviewId) {?>
+		<div class="panel panel-primary">
+		    <!-- heading -->
+		    <div class="panel-heading panel-collapsed">
+		     	<h3 class="panel-title">Review #<?php echo "".$reviewId?>	
+				</h3>
+		    <!-- end heading -->
+			</div>
+
+	    <!-- body -->
+		<div class="panel-body">
   		<div class="edit-el">
   			<h4>Link zum Code</h4>
 		<?php
-			$code = getCode($conn, $target['id'], $course);
+			$code = getCode($conn, $target['id'], $course, $reviewId);
 			if(is_null($code) or empty($code)) {
 				echo "<span class=\"red-text darken-4\">".$target["name"]." hat noch keinen Link angegeben</span>";
     	    } else {
@@ -87,7 +98,7 @@ $target = array(
 		<div class="edit-el">
   			<h4>Reviews für <?php echo $target["name"]; ?></h4>
 		<?php
-			$review = getReviews($conn, $target["id"], $course);
+			$review = getReviews($conn, $target["id"], $course, $reviewId);
 			if(count($review) == 0) {
 				echo "<p class=\"red-text darken-4\">Es wurde für ".$target["name"]." noch keine Review ausgefüllt!</hp>";
 			} else {?>
@@ -107,291 +118,6 @@ $target = array(
 							<h4 class="green-text lighten-2"><?php
 							$points = getPoints($conn,$rv['id'],$rv['code_reviewer']);
 							echo $points." von 45 Punkten (".((int)(100 * $points / 45))."%)"?></h4>
-
-							<!-- MAKE MOVE -->
-							<div class="sect">
-								<p>makeMove(board,row,col)</p>
-
-								<div class="cat">
-								<span class="desc">Überprüft, ob board[row][col] frei ist.</span>
-								<div class="points">
-								<span><?php echo $rv['make_move_0'];?>/1</span>
-								</div>
-								</div>
-
-								<div class="cat">
-								<span class="desc">Setzt dann je nach Spieler board[row][col] = +/- 1.</span>
-								<div class="points">
-								<span><?php echo $rv['make_move_1'];?>/1</span>
-								</div>
-
-								</div>
-								<div class="cat">
-								<span class="comment"><?php echo $rv['make_move_c'];?></span>
-								</div>
-
-							</div>
-
-
-
-							<!-- CHANGEPLAYER -->
-							<div class="sect">
-								<p>changePlayer()</p>
-
-								<div class="cat">
-								<span class="desc">Wechselt die globale Variable player.</span>
-								<div class="points">
-								<span><?php echo $rv['change_player_0'];?>/2</span>
-								</div>
-								</div>
-								<div class="cat">
-								<span class="comment"><?php echo $rv['change_player_c'];?></span>
-								</div>
-
-							</div>
-
-
-							<!-- testLine -->
-							<div class="sect">
-								<p>testLine( line )</p>
-
-								<div class="cat">
-								<span class="desc">Rückgabe 1, wenn alle 3 Einträge == 1.</span>
-								<div class="points">
-								<span><?php echo $rv['test_line_0'];?>/1</span>
-								</div>
-								</div>
-
-								<div class="cat">
-								<span class="desc">Rückgabe -1, wenn alle 3 Einträge == -1.</span>
-								<div class="points">
-								<span><?php echo $rv['test_line_1'];?>/1</span>
-								</div>
-								</div>
-
-
-								<div class="cat">
-								<span class="desc">Rückgabe 0, sonst.</span>
-								<div class="points">
-								<span><?php echo $rv['test_line_2'];?>/1</span>
-								</div>
-								</div>
-
-								<div class="cat">
-								<span class="comment"><?php echo $rv['test_line_c'];?></span>
-								</div>
-
-							</div>
-
-
-
-
-							<!-- testWin -->
-							<div class="sect">
-								<p>testWin( board )</p>
-
-								<div class="cat">
-								<span class="desc">Alle Zeilen richtig getestet.</span>
-								<div class="points">
-								<span><?php echo $rv['test_win_0'];?>/2</span>
-								</div>
-								</div>
-
-								<div class="cat">
-								<span class="desc">Alle Spalten richtig getestet.</span>
-								<div class="points">
-								<span><?php echo $rv['test_win_1'];?>/2</span>
-								</div>
-								</div>
-
-								<div class="cat">
-								<span class="desc">Alle Diagonalen richtig getestet.</span>
-								<div class="points">
-								<span><?php echo $rv['test_win_2'];?>/2</span>
-								</div>
-								</div>
-
-								<div class="cat">
-								<span class="desc">Winner richtig gesetzt.</span>
-								<div class="points">
-								<span><?php echo $rv['test_win_3'];?>/2</span>
-								</div>
-								</div>
-
-								<div class="cat">
-								<span class="desc">Richtige Rückgabe True/False</span>
-								<div class="points">
-								<span><?php echo $rv['test_win_4'];?>/1</span>
-								</div>
-								</div>
-
-								<div class="cat">
-								<span class="comment"><?php echo $rv['test_win_c'];?></span>
-								</div>
-
-							</div>
-
-
-							<!-- endGame -->
-							<div class="sect">
-								<p>endGame( board )</p>
-
-								<div class="cat">
-								<span class="desc">Ruft testWin() auf.</span>
-								<div class="points">
-								<span><?php echo $rv['end_game_0'];?>/1</span>
-								</div>
-								</div>
-
-								<div class="cat">
-								<span class="desc">Testet, ob noch Felder frei sind</span>
-								<div class="points">
-								<span><?php echo $rv['end_game_1'];?>/4</span>
-								</div>
-								</div>
-
-								<div class="cat">
-								<span class="desc">Richtige Rückgabe True/False</span>
-								<div class="points">
-								<span><?php echo $rv['end_game_2'];?>/1</span>
-								</div>
-								</div>
-
-								<div class="cat">
-								<span class="comment"><?php echo $rv['end_game_c'];?></span>
-								</div>
-
-							</div>
-
-
-							<!-- convertMove -->
-							<div class="sect">
-								<p>convertMove()</p>
-
-								<div class="cat">
-								<span class="desc">Festlegung auf sinnvolles Eingabeformat</span>
-								<div class="points">
-								<span><?php echo $rv['convert_move_0'];?>/2</span>
-								</div>
-								</div>
-
-								<div class="cat">
-								<span class="desc">Richtige Umwandlung in Reihe und Spalte</span>
-								<div class="points">
-								<span><?php echo $rv['convert_move_1'];?>/2</span>
-								</div>
-								</div>
-
-								<div class="cat">
-								<span class="desc">Fehlerbehandlung (Rückgabe (-1,-1)) bei falscher Eingabe</span>
-								<div class="points">
-								<span><?php echo $rv['convert_move_2'];?>/1</span>
-								</div>
-								</div>
-
-								<div class="cat">
-								<span class="comment"><?php echo $rv['convert_move_c'];?></span>
-								</div>
-
-							</div>
-
-
-
-
-							<!-- getMove -->
-							<div class="sect">
-								<p>getMove()</p>
-
-								<div class="cat">
-								<span class="desc">Ruft convertMove() auf, um Reihe und Spalte zu bekommen</span>
-								<div class="points">
-								<span><?php echo $rv['get_move_0'];?>/1</span>
-								</div>
-								</div>
-
-								<div class="cat">
-								<span class="desc">Testet, ob Move legal war</span>
-								<div class="points">
-								<span><?php echo $rv['get_move_1'];?>/1</span>
-								</div>
-								</div>
-
-								<div class="cat">
-								<span class="desc">Ruft makeMove() auf</span>
-								<div class="points">
-								<span><?php echo $rv['get_move_2'];?>/1</span>
-								</div>
-								</div>
-
-								<div class="cat">
-								<span class="desc">Testet, ob endGame()</span>
-								<div class="points">
-								<span><?php echo $rv['get_move_3'];?>/1</span>
-								</div>
-								</div>
-
-								<div class="cat">
-								<span class="desc">Gibt ggf. Gewinner / Unentschieden aus</span>
-								<div class="points">
-								<span><?php echo $rv['get_move_4'];?>/2</span>
-								</div>
-								</div>
-
-								<div class="cat">
-								<span class="desc">Ruft changePlayer() auf</span>
-								<div class="points">
-								<span><?php echo $rv['get_move_5'];?>/1</span>
-								</div>
-								</div>
-
-								<div class="cat">
-								<span class="desc">spielerAnzeige wird entsprechend Spieler angepasst.</span>
-								<div class="points">
-								<span><?php echo $rv['get_move_6'];?>/1</span>
-								</div>
-								</div>
-
-								<div class="cat">
-								<span class="comment"><?php echo $rv['get_move_c'];?></span>
-								</div>
-
-							</div>
-
-
-
-
-							<!-- stil -->
-							<div class="sect">
-								<p>Code-Stil</p>
-
-								<div class="cat">
-								<span class="desc">Alle Funktionen ausführlich getestet.</span>
-								<div class="points">
-								<span><?php echo $rv['stil_0'];?>/5</span>
-								</div>
-								</div>
-
-								<div class="cat">
-								<span class="desc">Alle Funktionen vollständig kommentiert (Docstrings)</span>
-								<div class="points">
-								<span><?php echo $rv['stil_1'];?>/4</span>
-								</div>
-								</div>
-
-								<div class="cat">
-								<span class="desc">Ein sinnvolles assert-statement eingefügt.</span>
-								<div class="points">
-								<span><?php echo $rv['stil_2'];?>/1</span>
-								</div>
-								</div>
-
-								<div class="cat">
-								<span class="comment"><?php echo $rv['stil_c'];?></span>
-								</div>
-
-							</div>
-
-
 						</div>
 						</li>
 				<?php
@@ -412,7 +138,7 @@ $target = array(
 		<div class="edit-el">
   			<h4>Reviews von <?php echo $target["name"]; ?></h4>
 			<?php
-			    $tar = getReviewsBy($conn, $course, $target['id']);
+			    $tar = getReviewsBy($conn, $course, $target['id'], $reviewId);
 			    # noch kein target
 			    if (count($tar) == 0) {
 					echo "<p class=\"red-text darken-4\">Es wurde für ".$target["name"]." noch kein Benutzer zum Review ausgewählt!</p>";
@@ -732,8 +458,13 @@ $target = array(
 			    }
 			?>
 		</div>
+		</div>
+		</div>
+		<?php
+		} ?>
 	</div>
 </body>
+<script type="text/javascript" src="./js/panel.js"></script>
 </html>
 <?php
 $conn->close();
