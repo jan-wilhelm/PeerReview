@@ -180,7 +180,7 @@ function randomPassword($length){
 		<div class="col-md-4 col-sm-12">
 		<div class="admin-cart">
 		<h3>Links verteilen</h3>
-		<span>Hier kannst du die Links an die Benutzer verteilen, damit diese dann die Bewertungen verfassen könen. Bitte erst klicken, wenn alle Nutzer eingetragen sind!</span>
+		<span>Hier kannst du die Links an die Benutzer verteilen, damit diese dann die Bewertungen verfassen könen. Bitte erst klicken, wenn alle Nutzer eingetragen sind!<br>Das folgende <code>Limit</code> gibt an, für wieviele andere Nutzer jeder Nutzer ein Review schreiben soll.</span>
 		<form method="post" class="form-horizontal">
 
 			<input name="limit" value="3" type="number" id="set-codes-field"> 

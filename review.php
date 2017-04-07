@@ -86,7 +86,6 @@ function getUsersLike($conn, $name, $course) {
 	return $ret;
 }
 
-
 function getUsers($conn) {
 	$ret = array();
 	if($stmt    = $conn->prepare("SELECT id FROM users")) {
@@ -102,6 +101,23 @@ function getUsers($conn) {
 		echo $conn->error;
 	}
 	return $ret;
+}
+
+function getNewReviewId($conn, $course) {
+	if($stmt    = $conn->prepare("SELECT MAX(review_id) + 1 AS `new_id` FROM reviews WHERE course = ?")) {
+		$stmt->bind_param("i", $course);
+		$stmt->execute();
+		$result = $stmt->get_result();
+		if ($result->num_rows > 0) {
+			if ($row = $result->fetch_assoc()) {
+				return $row['new_id'];
+			}
+		}
+		$stmt->free_result();
+	} else {
+		echo $conn->error;
+	}
+	return random_int(0, 100);
 }
 
 function getUsersOfCourse($conn, $course) {
@@ -160,6 +176,7 @@ function getUsersForReviews($conn, $course) {
 
 function setTargets($conn, $course, $limit) {
 	$us = getUsersForReviews($conn, $course);
+	$id = getNewReviewId($conn, $course);
 	shuffle($us);
 	$l = count($us);
 	if($l < 4) {
@@ -171,7 +188,7 @@ function setTargets($conn, $course, $limit) {
 			if ($x > $l - 1) {
 				$x = $x - $l;
 			}
-			setReviewTarget($conn, $us[$i], $us[$x], $course);
+			setReviewTarget($conn, $us[$i], $us[$x], $course, $id);
 		}
 	}
 	return true;
