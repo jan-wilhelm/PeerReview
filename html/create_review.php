@@ -53,12 +53,11 @@ foreach ($_POST as $name => $value) {
 
 }
 
-if($course === -1) {
+if($course < 0) {
 	http_response_code(400);
 }
 
-$scheme = ReviewScheme::fromJSON( getReviewScheme($conn, $course));
-$scheme->addReview( new Review($reviewName, $objs) );
-setReviewScheme( $conn, $course, json_encode($scheme));
+$review = new Review($reviewName, $objs);
+addReviewScheme( $conn, $course, $review);
 
 ?>

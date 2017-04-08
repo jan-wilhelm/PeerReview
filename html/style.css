@@ -279,10 +279,11 @@ h3 .small {
 	margin-top: 20px;
 	margin-left: 8px;
 	margin-right: 8px;
+	border-bottom: 3px solid #ADB2B5;
 }
 
 .tiles_col {
-	border-right: 2px solid #ADB2B5;
+	border-right: 3px solid #ADB2B5;
 }
 
 .tiles_col:last-child{
@@ -407,4 +408,12 @@ h3 .small {
 
 .editable {
 	cursor: text;
+}
+
+.alert {
+	display: block;
+}
+
+.panel-collapsed > .panel-body {
+	display: none;
 }

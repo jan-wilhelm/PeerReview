@@ -43,15 +43,34 @@
 			$this->name = $name;
 		}
 
+		public static function fromJSON($json) {
+
+			if(strlen($json) < 5) {
+				return new self(null);
+			}
+
+			if(is_string($json) || !is_array($json)) {
+				$json = json_decode($json, JSON_UNESCAPED_UNICODE);
+			}
+
+			$objects = array();
+			foreach ($json as $object) {
+				$name = $object['name'];
+				$categories = array();
+				foreach ($object['categories'] as $cat) {
+					$categories[] = new ReviewCategory($cat['description'],((int)$cat['max_points']));
+				}
+				$objects[] = new ReviewObject($categories, $name);
+			}
+			return new self($objects);
+		}
+
 		public function jsonSerialize() {
-			return [
-				"name" => $this->name,
-				"sections" => $this->objects
-			];
+			return $this->objects;
 		}
 	}
 
-	class ReviewScheme implements JsonSerializable {
+	/*class ReviewScheme implements JsonSerializable {
 		public $reviews = array();
 
 		public function __construct($reviews) {
@@ -79,7 +98,7 @@
 					}
 					$objects[] = new ReviewObject($categories, $name);
 				}
-				$reviews[] = new Review($review['name'], $objects);
+				$reviews[] = new Review($objects);
 			}
 			return new self($reviews);
 		}
@@ -91,6 +110,6 @@
 		public function jsonSerialize() {
 			return $this->reviews;
 		}
-	}
+	}*/
 
 ?>

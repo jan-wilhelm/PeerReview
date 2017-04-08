@@ -104,13 +104,17 @@ function getUsers($conn) {
 }
 
 function getNewReviewId($conn, $course) {
-	if($stmt    = $conn->prepare("SELECT MAX(review_id) + 1 AS `new_id` FROM reviews WHERE course = ?")) {
+	if($stmt    = $conn->prepare("SELECT MAX(id) + 1 AS `new_id` FROM review_schemes WHERE course = ?")) {
 		$stmt->bind_param("i", $course);
 		$stmt->execute();
 		$result = $stmt->get_result();
 		if ($result->num_rows > 0) {
 			if ($row = $result->fetch_assoc()) {
-				return $row['new_id'];
+				if(isset($row['new_id'])) {
+					return $row['new_id'];
+				} else {
+					return 0;
+				}
 			}
 		}
 		$stmt->free_result();
@@ -403,15 +407,15 @@ function isUserInCourse($conn, $id, $course) {
 	return false;
 }
 
-function getReviewScheme($conn, $course) {
+function getReviewSchemeForID($conn, $course, $reivewId) {
 	setUTF8($conn);
-	if($stmt = $conn->prepare("SELECT * FROM course_data WHERE course = ?")) {
-		$stmt->bind_param("i", $course);
+	if($stmt = $conn->prepare("SELECT * FROM review_schemes WHERE course = ? AND id = ?")) {
+		$stmt->bind_param("ii", $course, $reviewId);
 		$stmt->execute();
 		$result = $stmt->get_result();
 		if ($result->num_rows > 0) {
 			if ($row = $result->fetch_assoc()) {
-				return $row['review'];
+				return $row['review_scheme'];
 			}
 		}
 		$stmt->free_result();
@@ -421,10 +425,13 @@ function getReviewScheme($conn, $course) {
 	return "";
 }
 
-function setReviewScheme($conn, $course, $scheme) {
+function addReviewScheme($conn, $course, $review) {
 	setUTF8($conn);
-	if($stmt = $conn->prepare("UPDATE course_data SET review = ? WHERE course = ?")) {
-		$stmt->bind_param("si", $scheme, $course);
+	if($stmt = $conn->prepare("INSERT INTO review_schemes (course, review_scheme, name, id) VALUES (?,?,?,?)")) {
+		$encoded = json_encode($review);
+		$name = $review->name;
+		$id = getNewReviewId($conn, $course);
+		$stmt->bind_param("issi", $course, $encoded, $name, $id);
 		$stmt->execute();
 		unset($stmt);
 	}
@@ -500,8 +507,57 @@ function getReviewsSinceLastLoginForUser($conn, $id, $course) {
 	return 0;
 }
 
-function getLoginsOfLastMonth($conn) {
-	$sql = "SELECT DATE(`login_history`.`for_date`) AS `date`, COUNT(`login_history`.`user`) AS `count` FROM `login_history` WHERE `login_history`.`for_date` BETWEEN DATE_SUB(NOW(), INTERVAL 1 MONTH) AND NOW() GROUP BY `date` ORDER BY `date`";
+function getNumberOfUsersInCourse($conn, $course) {
+	if($stmt = $conn->prepare("select count(*) as 'count' from users where exists (select 1 from courses where id = users.id and course = ?)")) {
+		$stmt->bind_param("i", $course);
+		$stmt->execute();
+		$result = $stmt->get_result();
+		if ($result->num_rows > 0) {
+			if ($row = $result->fetch_assoc()) {
+				return $row['count'];
+			}
+		}
+		$stmt->free_result();
+	} else {
+		echo $conn->error;
+	}
+	return 0;
+}
+
+function getNumberOfUsersTotal($conn) {
+	if($stmt = $conn->prepare("select count(*) as 'count' from users")) {
+		$stmt->execute();
+		$result = $stmt->get_result();
+		if ($result->num_rows > 0) {
+			if ($row = $result->fetch_assoc()) {
+				return $row['count'];
+			}
+		}
+		$stmt->free_result();
+	} else {
+		echo $conn->error;
+	}
+	return 0;
+}
+
+function getTotalLogins($conn) {
+	if($stmt = $conn->prepare("select count(*) as 'count' from login_history")) {
+		$stmt->execute();
+		$result = $stmt->get_result();
+		if ($result->num_rows > 0) {
+			if ($row = $result->fetch_assoc()) {
+				return $row['count'];
+			}
+		}
+		$stmt->free_result();
+	} else {
+		echo $conn->error;
+	}
+	return 0;
+}
+
+function getLoginsOfLastTwoWeeks($conn) {
+	$sql = "SELECT DATE(`login_history`.`for_date`) AS `date`, COUNT(`login_history`.`user`) AS `count` FROM `login_history` WHERE `login_history`.`for_date` BETWEEN DATE_SUB(NOW(), INTERVAL 2 WEEK) AND NOW() GROUP BY `date` ORDER BY `date`";
 	$ret = array();
 	if($stmt = $conn->prepare($sql)) {
 		$stmt->execute();

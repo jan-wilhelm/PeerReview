@@ -37,21 +37,35 @@ function randomPassword($length){
     <div class="right-col">
 
 	<?php
-	if (isset($_SESSION['user_level']) && $_SESSION['user_level'] == 1) {?>
+	if (isset($_SESSION['user_level']) && $_SESSION['user_level'] == 1) {
+
+		?>
 
 
 		<div class="row tiles_count">
 			<div class="tiles_col col-md-2 col-sm-4 col-xs-6">
-				<span class="tiles_desc">Users</span>
-				<span class="tiles_number">1.509</span>
+				<span class="tiles_desc">Benutzer</span>
+				<span class="tiles_number">
+				<?php
+					echo getNumberOfUsersTotal($conn);
+				?>
+				</span>
 			</div>
 			<div class="tiles_col col-md-2 col-sm-4 col-xs-6">
-				<span class="tiles_desc">Users</span>
-				<span class="tiles_number">1.509</span>
+				<span class="tiles_desc">Mitglieder dieses Kurses</span>
+				<span class="tiles_number">
+				<?php
+					echo getNumberOfUsersInCourse($conn, $course);
+				?>
+				</span>
 			</div>
 			<div class="tiles_col col-md-2 col-sm-4 col-xs-6">
-				<span class="tiles_desc">Users</span>
-				<span class="tiles_number">1.509</span>
+				<span class="tiles_desc">Logins</span>
+				<span class="tiles_number">
+					<?php
+						echo getTotalLogins($conn);
+					?>
+				</span>
 			</div>
 			<div class="tiles_col col-md-2 col-sm-4 col-xs-6">
 				<span class="tiles_desc">Users</span>
@@ -129,7 +143,7 @@ function randomPassword($length){
 			<form action="" method="post" class="form-horizontal">
 				<input id="link-set-link" class="form-control" name="link" type="text" placeholder="Link" value=<?php echo "\"". getNewestCode($conn, $_SESSION['user_id'], $course)."\"";?>>
 				
-				<button type="button" class="btn btn-success" name="link-set" id="link-set-button">
+				<button class="btn btn-success" name="link-set" id="link-set-button">
 					<i class="fa fa-paper-plane" aria-hidden="true"></i> Link absenden
 				</button>
 			</form>
@@ -166,15 +180,12 @@ function randomPassword($length){
 					echo "<span class=\"alert alert-danger\"><strong>Fehler</strong>: Ein Benutzer mit dem Namen $new_user_name existiert bereits.</span>";
 				}
 			}
-		} else { 			?>
-			<form action="" method="post" class="form-horizontal">
-				<input name="username" type="text" placeholder="Username">
-				<input name="password" type="text" placeholder="Password" value="<?php echo randomPassword(8); ?>">
-				<button type="button" class="btn btn-primary" name="user-create">Benutzer erstellen</button>
-			</form>
-		<?php
-		}
-		?>
+		}?>
+		<form action="" method="post" class="form-horizontal">
+			<input name="username" type="text" placeholder="Username">
+			<input name="password" type="text" placeholder="Password" value="<?php echo randomPassword(8); ?>">
+			<button class="btn btn-primary" name="user-create">Benutzer erstellen</button>
+		</form>
 		</div>
 		</div>
 		<div class="col-md-4 col-sm-12">
@@ -266,27 +277,6 @@ function randomPassword($length){
 							<i class="fa fa-plus" aria-hidden="true"></i> Neuer Abschnitt
 						</span>
 
-						<li class="creation_sect">
-							<span class="create_review_section editable">Abschnitt 1</span>
-							<br>
-							<span class="badge btn-success create_category">
-								<i class="fa fa-plus" aria-hidden="true"></i> Neue Kategorie
-							</span>
-							<span class="badge btn-danger delete_section">
-								<i class="fa fa-trash-o" aria-hidden="true"></i> Abschnitt löschen
-							</span>
-							<table class="table">
-								<tr>
-									<th>Beschreibung</th>
-									<th>Maximale Punktzahl</th>
-								</tr>
-								<tr class="data-row">
-									<td class="editable">Platzhalter...</td>
-									<td class="editable">1</td>
-									<td class="delete-row"><i class="fa fa-trash red-text accent-4" aria-hidden="true"></i></td>
-								</tr>
-							</table>
-						</li>
 					</ul>
 					<button type="button" class="btn btn-primary" id="create_review_button">Review erstellen</button>
 				</div>
@@ -335,109 +325,113 @@ function randomPassword($length){
 		<div class="row equal">
 			<div class="col-md-8">
 				<div class="admin-cart">
-					<?php
-					$review = getReviews($conn, $course, $_SESSION['user_id']);
-					if($reviewsSinceLastLoginForUser > 0) {
-						echo '<span class="admin-badge badge green accent-4">'.$reviewsSinceLastLoginForUser.'</span>';
-					}
-					?>
 					<h3>Deine Reviews</h3>
 					<?php
-					if(count($review) == 0) {
-						echo "<span class=\"red-text darken-4\">Es wurde für dich noch keine Review ausgefüllt!</span>";
-					} else {?>
-						<?php 
-						$json = json_decode(getReviewScheme($conn, $course), JSON_UNESCAPED_UNICODE);
-						$max_points = 0;
-						foreach ($json as $cats) {
-							foreach ($cats['categories'] as $cat) {
-								$max_points = $max_points + $cat['max_points'];
-							}
+					foreach (getAllReviewIDs($conn, $_SESSION['user_id'], $course) as $idx => $reviewId) {
+						$review = getReviews($conn, $course, $_SESSION['user_id'], $reviewId);
+						if($reviewsSinceLastLoginForUser > 0) {
+							echo '<span class="admin-badge badge green accent-4">'.$reviewsSinceLastLoginForUser.'</span>';
 						}
-						foreach ($review as $rv) {
-							if($rv['review']!="{}" && strlen($rv['review']) > 2) {
-							    ?>
-								<div class="panel panel-primary">
-								    <!-- heading -->
-								    <div class="panel-heading panel-collapsed">
-										<span class="pull-left clickable">
-											<i class="fa fa-commenting" aria-hidden="true"></i>
-										</span>
-								     	<h3 class="panel-title">Review von 
-											<?php
-											echo getName($conn, $rv['code_reviewer'])?>	
-										</h3>
-								    <!-- end heading -->
-									</div>
+						?>
 
-								    <!-- body -->
-									<div class="panel-body indigo lighten-5">
-										<h4 class="green-text lighten-2">
-											<?php
-
-											$points = 0;
-											$rev = json_decode($rv['review'], JSON_UNESCAPED_UNICODE);
-											for ($i=0; $i < sizeof($rev); $i++) { 
-												foreach($rev[$i]['reviews'] as $p) { 
-													$points = $points + $p['points'];
-												}
-											}
-											echo $points." von ".$max_points." Punkten (".((int)(100 * $points / $max_points))."%)";?>	
-										</h4>
-										<?php
-
-										$itemcount = 0;
-										foreach ($json as $item) {
-											?>
-											<div class="sect">
+						<?php
+						if(count($review) == 0) {
+							echo "<span class=\"red-text darken-4\">Es wurde für dich noch keine Review ausgefüllt!</span>";
+						} else { ?>
+							<?php 
+							$json = json_decode(getReviewSchemeForID($conn, $course, $reviewId), JSON_UNESCAPED_UNICODE);
+							$max_points = 0;
+							foreach ($json as $cats) {
+								foreach ($cats['categories'] as $cat) {
+									$max_points = $max_points + $cat['max_points'];
+								}
+							}
+							foreach ($review as $rv) {
+								if($rv['review']!="{}" && strlen($rv['review']) > 2) {
+								    ?>
+									<div class="panel panel-primary">
+									    <!-- heading -->
+									    <div class="panel-heading panel-collapsed">
+											<span class="pull-left clickable">
+												<i class="fa fa-commenting" aria-hidden="true"></i>
+											</span>
+									     	<h3 class="panel-title">Review von 
 												<?php
-												echo '<p>'.$item["name"].'</p>';
-												$idx = 0;
-												foreach($item["categories"] as $cat) {
-													?>
-													<div class="cat">
-														<span class="desc">
-															<?php echo $cat['description']; ?>
-														</span>
-														<div class="points">
-															<span>
-																<?php echo $rev[$itemcount]['reviews'][$idx]['points'].' / '.$cat['max_points'];?>
-															</span>
-														</div>
-													</div>
-													<?php 
-													$idx = $idx + 1;
-												}?>
-												<div class="cat">
-													<span class="pull-left">Kommentar: </span>
-													<span class="comment">
-														<?php echo $rev[$itemcount]['comment'];?>
-													</span>
-												</div><?php
-												$itemcount = $itemcount + 1;
-												?>
-											</div>
+												echo getName($conn, $rv['code_reviewer'])?>	
+											</h3>
+									    <!-- end heading -->
+										</div>
+
+									    <!-- body -->
+										<div class="panel-body indigo lighten-5">
+											<h4 class="green-text lighten-2">
+												<?php
+
+												$points = 0;
+												$rev = json_decode($rv['review'], JSON_UNESCAPED_UNICODE);
+												for ($i=0; $i < sizeof($rev); $i++) { 
+													foreach($rev[$i]['reviews'] as $p) { 
+														$points = $points + $p['points'];
+													}
+												}
+												echo $points." von ".$max_points." Punkten (".((int)(100 * $points / $max_points))."%)";?>	
+											</h4>
 											<?php
-										}
-										?>
-								    <!-- end panel body -->
+
+											$itemcount = 0;
+											foreach ($json as $item) {
+												?>
+												<div class="sect">
+													<?php
+													echo '<p>'.$item["name"].'</p>';
+													$idx = 0;
+													foreach($item["categories"] as $cat) {
+														?>
+														<div class="cat">
+															<span class="desc">
+																<?php echo $cat['description']; ?>
+															</span>
+															<div class="points">
+																<span>
+																	<?php echo $rev[$itemcount]['reviews'][$idx]['points'].' / '.$cat['max_points'];?>
+																</span>
+															</div>
+														</div>
+														<?php 
+														$idx = $idx + 1;
+													}?>
+													<div class="cat">
+														<span class="pull-left">Kommentar: </span>
+														<span class="comment">
+															<?php echo $rev[$itemcount]['comment'];?>
+														</span>
+													</div><?php
+													$itemcount = $itemcount + 1;
+													?>
+												</div>
+												<?php
+											}
+											?>
+									    <!-- end panel body -->
+										</div>
 									</div>
-								</div>
-								<?php
-							} else {?>
-								<div class="panel panel-warning">
-								    <div class="panel-heading panel-collapsed">
-										<span class="pull-left clickable"><i class="fa fa-exclamation-circle" aria-hidden="true"></i></span>
-								     	<h3 class="panel-title">Du hast noch keine Review von 
-										<?php
-										echo getName($conn, $rv['code_reviewer'])?>
-										</h3>
+									<?php
+								} else {?>
+									<div class="panel panel-warning">
+									    <div class="panel-heading panel-collapsed">
+											<span class="pull-left clickable"><i class="fa fa-exclamation-circle" aria-hidden="true"></i></span>
+									     	<h3 class="panel-title">Du hast noch keine Review von 
+											<?php
+											echo getName($conn, $rv['code_reviewer'])?>
+											</h3>
+										</div>
 									</div>
-								</div>
-								<?php
+									<?php
+								}
 							}
-						}
-					}  ?>
+						}  
+					}
+					?>
 				</div>
 			</div>
 			<div class="col-md-4">
@@ -531,7 +525,7 @@ function randomPassword($length){
 	    }
 	};
 	const dataset = [<?php 
-			$data = getLoginsOfLastMonth($conn);
+			$data = getLoginsOfLastTwoWeeks($conn);
 			$counts = array();
 			foreach ($data as $time => $logins) {
 				$counts[] = $logins;

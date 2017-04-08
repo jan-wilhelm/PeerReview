@@ -95,24 +95,23 @@ $(document).ready(function() {
 			return;
 		}
 
-		for (var i = 0; i < length; i++) {
-			// loop for each section
-			
-			const section = $('.creation_sect:nth-child('+ (i+2) + ')');
+		$('.creation_sect').each(function (index) {
+			const section = $(this);
 			const name = section.find('.create_review_section').html();
 			console.log("name = " + name);
 			const categoryLength = section.find('.data-row').length;
 
-			console.log("Section number " + i + " has " + categoryLength + " categories.")
-			arr['name_' + i] = name;
-
+			console.log("Section number " + index + " has " + categoryLength + " categories.")
+			arr['name_' + index] = name;
+			const i = index;
 			for (var j = 0; j < categoryLength; j++) {
 				section.find('.data-row:eq('+ (j) + ') td').not('.delete-row').each( function (index) {
 					const value = $(this).html();
 					arr['cat_' + i + "_" + j + "_" + index] = value;
 				});
 			}
-		}
+		});
+			
 
 		arr['course'] = getQueryParams(document.location.search).course;
 		console.log("Got resulting array: \n");
@@ -149,5 +148,7 @@ $(document).ready(function() {
     $('.create_section').unbind().click(addSection);
     $('#create_review_button').unbind().click(createReview);
 
+
+ 	$('.create_section').click();
 });
 
