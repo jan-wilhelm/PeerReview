@@ -1,5 +1,10 @@
 index.php:
-  ☐ Das "Deine Reviews" muss mit neer For-Schleife alle Reviews (mit ihrer ID) durchgehen, und pro Review alle für diese ID erstellten (3) anderen Reviews ausgeben. @created(17-04-07 15:37)
+  ✘ Das "Deine Reviews" muss mit neer For-Schleife alle Reviews (mit ihrer ID) durchgehen, und pro Review alle für diese ID erstellten (3) anderen Reviews ausgeben. @created(17-04-07 15:37) @cancelled (17-04-08 17:11)
+    Gecancelled, weil ich mich für ein anderes System entschieden habe, dessen UI schöner ist.
+    Ab nun braucht man in der URL ein _GET Parameter "review", welcher die ReviewID eines Review repräsentiert. Mit dieser ID werden alle benötigten Daten aus der Datenbank abgefragt und wie gehabt ausgegeben.
+    ✔ Bug: Wenn noch kein Review für den Kurs erstellt wurde, wird einfach ein leeres Panel angezeigt. @done (17-04-08 17:15)
+      Es kommt nun eine "Warnung" mit "alert alter-warning"
+
   ☐ Ein neues Mockup erstellen um zu überlegen, wie ich die belibebige Menge an Reviews passend darstellen kann, sodass es sowohl für große als auch kleine Anzahlen an Reviews / Limits gut aussieht.
 
   ☐ Statistiken:
@@ -17,3 +22,10 @@ index.php:
           unset($stmt);
         }
       }
+  ☐ Anstatt "no get course set" eine richtige Seite anzeigen:
+    Ich habe erstmal fürs Programmieren eine Weiterleitung an /?course=1 gemacht, da ich alle Funktionen eh nur an diesem Kurs teste.
+
+  ☐ UI:
+    ✔ Das "Review verfassen" Panel richtig anzeigen lassen @done (17-04-08 17:22)
+      ✔ Von materialize auf Bootstrap migrieren @done (17-04-08 17:22)
+        Ich habe mich entschieden, keine "collapsible" zu nutzen, sondern die Daten wie schon bei dem "Edit users" panel einfach alle untereinander in einer Liste ausgeben zu lassen.

@@ -40,8 +40,14 @@ foreach ($_POST as $name => $value) {
 			if(!isset( $_POST['cat_' . $section . "_" . $i ."_0"] )) {
 				break;
 			}
-			$desc = ((string) $_POST['cat_' . $section . "_" . $i ."_0"]);
-			$points = ((int) $_POST['cat_' . $section . "_" . $i ."_1"]);
+			$desc = htmlspecialchars( ((string) $_POST['cat_' . $section . "_" . $i ."_0"]) );
+			$pointsString = $_POST['cat_' . $section . "_" . $i ."_1"];
+
+			if(!ctype_digit($pointsString)) {
+				http_response_code(400);
+				exit;
+			}
+			$points = intval($pointsString);
 			
 			$cat = new ReviewCategory($desc, $points);
 			$categories[] = $cat; 	// add the category to the array of categories (per section)
@@ -53,11 +59,11 @@ foreach ($_POST as $name => $value) {
 
 }
 
-if($course < 0) {
+if( $course < 0 || empty($reviewName) ) {
 	http_response_code(400);
 }
 
-$review = new Review($reviewName, $objs);
+$review = new Review( htmlspecialchars(trim($reviewName)), $objs);
 addReviewScheme( $conn, $course, $review);
 
 ?>

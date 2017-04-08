@@ -119,10 +119,6 @@ h3 .small {
 	border: none;
 }
 
-.cat textarea {
-	background-color: rgb(240, 240, 240);
-}
-
 .sign-up-course-form {
   width: 70%;
 }
@@ -416,4 +412,47 @@ h3 .small {
 
 .panel-collapsed > .panel-body {
 	display: none;
+}
+
+.edit-review-list {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+}
+
+.edit-review-list a {
+	margin-left: 15px;
+	margin-bottom: 10px;
+	display: inline-block;
+}
+
+textarea {
+	resize: vertical;
+    border: none;
+    border-bottom: 1px solid rgba(0,0,0,.26);
+    box-shadow: none;
+    border-radius: 0;
+	-webkit-transition: border 0.1s cubic-bezier(0,0,0,0);
+	-moz-transition: border 0.1s cubic-bezier(0,0,0,0);
+	-o-transition: border 0.1s cubic-bezier(0,0,0,0);
+	transition: border 0.1s cubic-bezier(0,0,0,0);
+}
+
+textarea:focus {
+    border-color: #2196F3;
+    border-width: 2px;
+}
+
+.comment-textarea {
+	display: block;
+	background-color: white;
+	width: 100%;
+	outline: none;
+	min-height: 64px;
+    background-image: none;
+}
+
+.comment {
+	margin-left: 10px;
+	display: inline-block;
 }

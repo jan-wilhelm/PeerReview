@@ -9,14 +9,20 @@ if ($conn->connect_error) {
 	die("Database connection failed: " . $conn->connect_error);
 }
 
-if(!isset($_GET['course']) && !isset($_POST['course'])) {
-	die("No course get set");
+if(!isset($_GET['review'])) {
+	header("Location: /index.php?course=1&review=0");
+} elseif( !isset($_GET['course']) && !isset($_POST['course'])) {
+	header("Location: /index.php?course=1&review=0");
 }
+
+
 if(isset($_GET['course'])) {
 	$course = $_GET['course'];
 } else {
 	$course = $_POST['course'];
 }
+
+$reviewId = intval($_GET['review']);
 
 function randomPassword($length){
 	$alphabet    = 'abcdefghjkmnopqrstuvwxyzABCDEFGHJKMNOPQRSTUVWXYZ1234567890';
@@ -131,7 +137,7 @@ function randomPassword($length){
 	  		<div class="admin-cart">
 			<?php
 		    if(isset($_POST['link-set']) && isset($_POST['link'])) {
-		    	setCode($conn, $_SESSION['user_id'], $_POST['link'], $course);
+		    	setCode($conn, $_SESSION['user_id'], $_POST['link'], $course, $reviewId);
 		    	echo "<p class=\"green-text lighten-2\">Vielen Dank dass du den Link zu deinem Code eingegeben hast!</p>";
 		    }
 	    	?>
@@ -226,7 +232,7 @@ function randomPassword($length){
 		
 		<?php
 		if(isset($_POST['codes-set']) && isset($_POST['limit'])) {
-	    	if(!setTargets($conn, $course, intval($_POST['limit']))) {
+	    	if(!setTargets($conn, $course, intval($_POST['limit']), $reviewId)) {    // TODO FIX THIS, sollte nicht $reviewId sein. Konzept überlegen!
 	    		echo "<p class=\" red-text darken-4 \">Die Codes konnten nicht verteilt werden. <br />Vielleicht wurden nicht genügend (4) Benutzer eingetragen?</p>";
 	    	} else {
 	    		echo "<p class=\" green-text lighten-2 \">Die Codes wurden erfolgreich verteilt.<br />Jeder Schüler kann nun bewerten!</p>";
@@ -327,142 +333,134 @@ function randomPassword($length){
 				<div class="admin-cart">
 					<h3>Deine Reviews</h3>
 					<?php
-					foreach (getAllReviewIDs($conn, $_SESSION['user_id'], $course) as $idx => $reviewId) {
-						$review = getReviews($conn, $course, $_SESSION['user_id'], $reviewId);
+					$review = getReviews($conn, $course, $_SESSION['user_id'], $reviewId);
+					if(sizeof($review) < 1) {?>
+						<span class="alert alert-warning">Es wurde für dich noch keine Review ausgefüllt!</span>
+					<?php
+					} else {
 						if($reviewsSinceLastLoginForUser > 0) {
 							echo '<span class="admin-badge badge green accent-4">'.$reviewsSinceLastLoginForUser.'</span>';
 						}
-						?>
-
-						<?php
-						if(count($review) == 0) {
-							echo "<span class=\"red-text darken-4\">Es wurde für dich noch keine Review ausgefüllt!</span>";
-						} else { ?>
-							<?php 
-							$json = json_decode(getReviewSchemeForID($conn, $course, $reviewId), JSON_UNESCAPED_UNICODE);
-							$max_points = 0;
-							foreach ($json as $cats) {
-								foreach ($cats['categories'] as $cat) {
-									$max_points = $max_points + $cat['max_points'];
-								}
+						$json = json_decode(getReviewSchemeForID($conn, $course, $reviewId), JSON_UNESCAPED_UNICODE);
+						$max_points = 0;
+						foreach ($json as $cats) {
+							foreach ($cats['categories'] as $cat) {
+								$max_points = $max_points + $cat['max_points'];
 							}
-							foreach ($review as $rv) {
-								if($rv['review']!="{}" && strlen($rv['review']) > 2) {
-								    ?>
-									<div class="panel panel-primary">
-									    <!-- heading -->
-									    <div class="panel-heading panel-collapsed">
-											<span class="pull-left clickable">
-												<i class="fa fa-commenting" aria-hidden="true"></i>
-											</span>
-									     	<h3 class="panel-title">Review von 
-												<?php
-												echo getName($conn, $rv['code_reviewer'])?>	
-											</h3>
-									    <!-- end heading -->
-										</div>
+						}
+						foreach ($review as $rv) {
+							if($rv['review']!="{}" && strlen($rv['review']) > 2) {
+							    ?>
+								<div class="panel panel-primary">
+								    <!-- heading -->
+								    <div class="panel-heading panel-collapsed">
+										<span class="pull-left clickable">
+											<i class="fa fa-commenting" aria-hidden="true"></i>
+										</span>
+								     	<h3 class="panel-title">Review von 
+											<?php
+											echo getName($conn, $rv['code_reviewer'])?>	
+										</h3>
+								    <!-- end heading -->
+									</div>
 
-									    <!-- body -->
-										<div class="panel-body indigo lighten-5">
-											<h4 class="green-text lighten-2">
-												<?php
+								    <!-- body -->
+									<div class="panel-body indigo lighten-5">
+										<h4 class="green-text lighten-2">
+											<?php
 
-												$points = 0;
-												$rev = json_decode($rv['review'], JSON_UNESCAPED_UNICODE);
-												for ($i=0; $i < sizeof($rev); $i++) { 
-													foreach($rev[$i]['reviews'] as $p) { 
-														$points = $points + $p['points'];
-													}
+											$points = 0;
+											$rev = json_decode($rv['review'], JSON_UNESCAPED_UNICODE);
+											for ($i=0; $i < sizeof($rev); $i++) { 
+												foreach($rev[$i]['reviews'] as $p) { 
+													$points = $points + $p['points'];
 												}
-												echo $points." von ".$max_points." Punkten (".((int)(100 * $points / $max_points))."%)";?>	
-											</h4>
-											<?php
-
-											$itemcount = 0;
-											foreach ($json as $item) {
-												?>
-												<div class="sect">
-													<?php
-													echo '<p>'.$item["name"].'</p>';
-													$idx = 0;
-													foreach($item["categories"] as $cat) {
-														?>
-														<div class="cat">
-															<span class="desc">
-																<?php echo $cat['description']; ?>
-															</span>
-															<div class="points">
-																<span>
-																	<?php echo $rev[$itemcount]['reviews'][$idx]['points'].' / '.$cat['max_points'];?>
-																</span>
-															</div>
-														</div>
-														<?php 
-														$idx = $idx + 1;
-													}?>
-													<div class="cat">
-														<span class="pull-left">Kommentar: </span>
-														<span class="comment">
-															<?php echo $rev[$itemcount]['comment'];?>
-														</span>
-													</div><?php
-													$itemcount = $itemcount + 1;
-													?>
-												</div>
-												<?php
 											}
+											echo $points." von ".$max_points." Punkten (".((int)(100 * $points / $max_points))."%)";?>	
+										</h4>
+										<?php
+
+										$itemcount = 0;
+										foreach ($json as $item) {
 											?>
-									    <!-- end panel body -->
-										</div>
-									</div>
-									<?php
-								} else {?>
-									<div class="panel panel-warning">
-									    <div class="panel-heading panel-collapsed">
-											<span class="pull-left clickable"><i class="fa fa-exclamation-circle" aria-hidden="true"></i></span>
-									     	<h3 class="panel-title">Du hast noch keine Review von 
+											<div class="sect">
+												<?php
+												echo '<p>'.$item["name"].'</p>';
+												$idx = 0;
+												foreach($item["categories"] as $cat) {
+													?>
+													<div class="cat">
+														<span class="desc">
+															<?php echo $cat['description']; ?>
+														</span>
+														<div class="points">
+															<span>
+																<?php echo $rev[$itemcount]['reviews'][$idx]['points'].' / '.$cat['max_points'];?>
+															</span>
+														</div>
+													</div>
+													<?php 
+													$idx = $idx + 1;
+												}?>
+												<div class="cat">
+													<span class="pull-left">Kommentar: </span>
+													<span class="comment">
+														<?php echo $rev[$itemcount]['comment'];?>
+													</span>
+												</div><?php
+												$itemcount = $itemcount + 1;
+												?>
+											</div>
 											<?php
-											echo getName($conn, $rv['code_reviewer'])?>
-											</h3>
-										</div>
+										}
+										?>
+								    <!-- end panel body -->
 									</div>
-									<?php
-								}
+								</div>
+								<?php
+							} else {?>
+								<div class="panel panel-warning">
+								    <div class="panel-heading panel-collapsed">
+										<span class="pull-left clickable"><i class="fa fa-exclamation-circle" aria-hidden="true"></i></span>
+								     	<h3 class="panel-title">Du hast noch keine Review von 
+										<?php
+										echo getName($conn, $rv['code_reviewer'])?>
+										</h3>
+									</div>
+								</div>
+								<?php
 							}
-						}  
+						}
 					}
 					?>
 				</div>
 			</div>
 			<div class="col-md-4">
 				<div class="admin-cart">       <!--Anfang admin cart -->
+					<h3>Review verfassen</h3>
+
 					<?php
-				    $tar = getReviewTargets($conn, $_SESSION['user_id'], $course);
+				    $tar = getReviewTargets($conn, $_SESSION['user_id'], $course, $reviewId);
 				    # noch kein target
 				    if (count($tar) == 0) {
 						echo "<span class=\"red-text darken-4\">Es wurde für dich noch kein Benutzer zum Review ausgewählt!</span>";
-				    } else {
-				    	?>
-				    	<ul class="collapsible" data-collapsible="accordion"> <?php
+				    } else {?>
+				    	<ul class="edit-review-list">
+				    	<?php
 						foreach ($tar as $rev) {
 						    ?>
 						    <li>
-						    <div class="collapsible-header">
-						    	<i class="material-icons circle left-align">chat_bubble</i>
-						     	<a class="red-text darken-4">Review für 
-								<?php
-								echo $rev['name'] . "   (Klick)"?>
-								</a>
-							</div>
-							<div class="collapsible-body white"><?php
-								echo "<a href=\"review.php?id=".$rev['id']."&course=".$course."\">Review für " . $rev['name'] . " bearbeiten</a>";
-								?>
-							</div>
+							<span class="pull-left">
+								<i class="fa fa-pencil" aria-hidden="true"></i>
+							</span>
+						    <?php
+							echo '<a href="review.php?id='.$rev['id'].'&course='.$course.'&review='.$reviewId.'"> Review für ' . $rev['name'] . ' bearbeiten</a>';
+							?>
 							</li>
-						<?php
+							<?php
 				    	}?>
 				    	</ul>
-			    	<?php
+				    	<?php
 			    	}?>
 				</div>
 			</div>

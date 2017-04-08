@@ -43,7 +43,7 @@
 			$this->name = $name;
 		}
 
-		public static function fromJSON($json) {
+		public static function fromJSON($name, $json) {
 
 			if(strlen($json) < 5) {
 				return new self(null);
@@ -55,14 +55,14 @@
 
 			$objects = array();
 			foreach ($json as $object) {
-				$name = $object['name'];
+				$sectionName = $object['name'];
 				$categories = array();
 				foreach ($object['categories'] as $cat) {
 					$categories[] = new ReviewCategory($cat['description'],((int)$cat['max_points']));
 				}
-				$objects[] = new ReviewObject($categories, $name);
+				$objects[] = new ReviewObject($categories, $sectionName);
 			}
-			return new self($objects);
+			return new self($name, $objects);
 		}
 
 		public function jsonSerialize() {

@@ -178,12 +178,8 @@ function getUsersForReviews($conn, $course) {
 	return $ret;
 }
 
-function setTargets($conn, $course, $limit) {
+function setTargets($conn, $course, $limit, $reviewId) {
 	$us = getUsersForReviews($conn, $course);
-	$id = getNewReviewId($conn, $course);
-	if(!isset($id) || $id == null) {
-		$id = 0;
-	}
 	shuffle($us);
 	$l = count($us);
 	if($l < 4) {
@@ -195,7 +191,7 @@ function setTargets($conn, $course, $limit) {
 			if ($x > $l - 1) {
 				$x = $x - $l;
 			}
-			setReviewTarget($conn, $us[$i], $us[$x], $course, $id);
+			setReviewTarget($conn, $us[$i], $us[$x], $course, $reviewId);
 		}
 	}
 	return true;
@@ -243,17 +239,16 @@ function endsWith($haystack, $needle) {
     return (substr($haystack, -$length) === $needle);
 }
 
-function setCode($conn, $id, $code, $course, $reviewid) {
+function setCode($conn, $id, $code, $course, $reviewId) {
 	if(!startsWith(strtolower($code), "http://")) {
 		$code = "http://" . $code;
 	}
-	if($stmt = $conn->prepare("UPDATE courses SET link = ? WHERE id = ? AND course = ? AND review_id = ?")) {
-		$stmt->bind_param("siii", $code, $id, $course, $reviewid);
+	if($stmt = $conn->prepare("UPDATE reviews SET link = ? WHERE id = ? AND course = ? AND review_id = ?")) {
+		$stmt->bind_param("siii", $code, $id, $course, $reviewId);
 		$stmt->execute();
 		unset($stmt);
 	}
 }
-
 
 function getCode($conn, $id, $course, $reviewid) {
 	if($stmt    = $conn->prepare("SELECT link FROM reviews WHERE id = ? AND course = ? AND review_id = ?")) {
@@ -407,7 +402,7 @@ function isUserInCourse($conn, $id, $course) {
 	return false;
 }
 
-function getReviewSchemeForID($conn, $course, $reivewId) {
+function getReviewSchemeForID($conn, $course, $reviewId) {
 	setUTF8($conn);
 	if($stmt = $conn->prepare("SELECT * FROM review_schemes WHERE course = ? AND id = ?")) {
 		$stmt->bind_param("ii", $course, $reviewId);
@@ -416,6 +411,24 @@ function getReviewSchemeForID($conn, $course, $reivewId) {
 		if ($result->num_rows > 0) {
 			if ($row = $result->fetch_assoc()) {
 				return $row['review_scheme'];
+			}
+		}
+		$stmt->free_result();
+	} else {
+		echo $conn->error;
+	}
+	return "";
+}
+
+function getReviewNameForID($conn, $course, $reviewId) {
+	setUTF8($conn);
+	if($stmt = $conn->prepare("SELECT * FROM review_schemes WHERE course = ? AND id = ?")) {
+		$stmt->bind_param("ii", $course, $reviewId);
+		$stmt->execute();
+		$result = $stmt->get_result();
+		if ($result->num_rows > 0) {
+			if ($row = $result->fetch_assoc()) {
+				return $row['name'];
 			}
 		}
 		$stmt->free_result();
@@ -438,7 +451,7 @@ function addReviewScheme($conn, $course, $review) {
 }
 
 function setReview($conn, $id, $autor, $course, $review, $reviewid) {
-	setUTF8($courseonn);
+	setUTF8($conn);
 	if($stmt = $conn->prepare("UPDATE reviews SET review = ?, modified = NOW() WHERE id = ? AND course = ? AND code_reviewer = ?")) {
 		$stmt->bind_param("siii", $review, $id, $course, $autor);
 		$stmt->execute();

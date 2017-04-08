@@ -3,7 +3,7 @@
 include '../check_auth.php';
 include '../config.php';
 include "../review.php";
-if(!isset($_GET['id']) || !isset($_GET['course'])) {
+if(!isset($_GET['id']) || !isset($_GET['course']) || !isset($_GET['review'])) {
 	header("Location: /");
 }
 $conn = new mysqli($cfg['db_host'], $cfg['db_user'], $cfg['db_password'], $cfg['db_name']);
@@ -11,8 +11,10 @@ if ($conn->connect_error) {
 	die("Database connection failed: " . $conn->connect_error);
 }
 $course = $_GET['course'];
+$reviewId = $_GET['review'];
 $contains = false;
-foreach (getReviewTargets($conn, $_SESSION['user_id'], $course) as $tar) {
+
+foreach (getReviewTargets($conn, $_SESSION['user_id'], $course, $reviewId) as $tar) {
 	if($tar['id'] == $_GET['id']) {
 		$contains = true;
 	}
@@ -25,7 +27,7 @@ if (!$contains) {
 $target = array(
 	"id" => $_GET['id'],
 	"name" => getName($conn,$_GET['id']),
-	"code" => getCode($conn,$_GET['id'], $course)
+	"code" => getCode($conn,$_GET['id'], $course, $reviewId)
 );
 include "../header.php";
 ?>
@@ -69,7 +71,7 @@ include "../header.php";
 		$jdx = 0;
 
 		// I could probably make this OOP as well using Review::fromJSON( getReviewScheme($conn, $course) );, but that's quite a lot of work.
-		$json = json_decode(getReviewScheme($conn, $course), JSON_UNESCAPED_UNICODE);
+		$json = json_decode(getReviewSchemeForID($conn, $course, $reviewId), JSON_UNESCAPED_UNICODE);
 		foreach ($_POST as $name => $value) {
 			if($name == "save-review" || startsWith($name, "comment")) {
 				continue;
@@ -92,7 +94,7 @@ include "../header.php";
 			$v = min($v, $json[$idx]['categories'][$jdx]['max_points']);
 			$review[$idx]['reviews'][$jdx] = array("points" => ($v));
 		}
-		setReview($conn, $i, $a, $course, json_encode($review));
+		setReview($conn, $i, $a, $course, json_encode($review), $reviewId);
 
 		echo "<div class=\"element z-depth-4\"><span class=\"green-text darken-2\">Vielen Dank, dass du deine Bewertung abgegeben hast!</span></div>";
 	}
@@ -101,7 +103,7 @@ include "../header.php";
 	<div class="element z-depth-4">
 		<h4>Link zum Code</h4>
 		<?php
-			$code = getCode($conn, $target['id'], $course);
+			$code = getCode($conn, $target['id'], $course, $reviewId);
 			if(is_null($code) or empty($code)) {
 				echo "<span class=\"red-text darken-4\">".$target["name"]." hat noch keinen Link angegeben</span>";
     	    } else {
@@ -115,9 +117,9 @@ include "../header.php";
 		<?php
 			
 			$rv = json_decode(
-				getReview($conn, $target["id"], $_SESSION['user_id'], $course)['review'],
+				getReview($conn, $target["id"], $_SESSION['user_id'], $course, $reviewId)['review'],
 				JSON_UNESCAPED_UNICODE);
-			$review = Review::fromJSON( getReviewScheme($conn, $course) );
+			$review = Review::fromJSON(getReviewNameForID($conn, $course, $reviewId), getReviewSchemeForID($conn, $course, $reviewId) );
 
 			echo '<form action="" method="post">';
 
@@ -131,13 +133,17 @@ include "../header.php";
 				foreach ($object->categories as $cat) {
 					echo '<div class="cat"><span class="desc">'	.$cat->description.	'</span>';
 					echo '<div class="points"><input type="number" min="0" max="' .$cat->max_points. '" ';
-					echo 'value="'.$rv[$itemcount]['reviews'][$idx]['points'].'" name="points_'.$itemcount.'_'.$idx.'">';
+					echo 'value="';
+					$currentValue = $rv[$itemcount]['reviews'][$idx]['points'];
+					if(!is_numeric($currentValue)) $currentValue = 0;
+					echo $currentValue;
+					echo '" name="points_'.$itemcount.'_'.$idx.'">';
 					echo '<span> / ' .$cat->max_points. '</span></div></div>';
 					$idx = $idx + 1;
 				}
-				echo '<div class="cat"><span class="desc">Kommentar ' .$object->name. '</span>';
-				echo '<div class="input-field"><textarea class="materialize-textarea" name="comment_'.$itemcount.'" ';
-				echo 'placeholder="Kommentar">'.$rv[$itemcount]['comment'].'</textarea></div></div></div>';
+				echo '<div class="cat"><span>Kommentar ' .$object->name. '</span>';
+				echo '<textarea class="comment-textarea" name="comment_'.$itemcount.'" ';
+				echo 'placeholder="Kommentar">'.$rv[$itemcount]['comment'].'</textarea></div></div>';
 				$itemcount = $itemcount + 1;
 			}
 		?>
