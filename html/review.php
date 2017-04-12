@@ -119,7 +119,7 @@ include "../header.php";
 			$rv = json_decode(
 				getReview($conn, $target["id"], $_SESSION['user_id'], $course, $reviewId)['review'],
 				JSON_UNESCAPED_UNICODE);
-			$review = Review::fromJSON(getReviewNameForID($conn, $course, $reviewId), getReviewSchemeForID($conn, $course, $reviewId) );
+			$review = Review::fromJSON(getReviewNameForID($conn, $reviewId), getReviewSchemeForID($conn, $course, $reviewId) );
 
 			echo '<form action="" method="post">';
 

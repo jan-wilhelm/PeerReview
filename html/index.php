@@ -99,7 +99,7 @@ function randomPassword($length){
 				<div class="admin-cart">
 					<h3>Geschriebene Reviews in diesem Kurs</h3>
 					<div class="pie-chart" data-percent="<?php 
-						echo getFinishedReviewsOfCourse($conn, $course);
+						echo getFinishedReviewsOfCourseAndId($conn, $course, $reviewId);
 					?>"></div>
 				</div>
 			</div>
@@ -244,6 +244,9 @@ function randomPassword($length){
 			<div class="col-12">
 				<div class="admin-cart">
 					<h3>Benutzer bearbeiten</h3>
+					<span>
+						Hier kannst du alle Benutzer dieses Kurses bearbeiten, und<mark> ihre geschriebenen Reviews lesen</mark>.<br>Klicke einfach auf einen bestimmten Nutzer und wähle das passende Review aus!
+					</span>
 					<div class="row" id="edit_users_row">
 						<?php
 						$idx = 0;

@@ -71,14 +71,14 @@ $target = array(
   				exit;
   			}
   		?>
-  		<h2 class="header">Benutzer <span class="red-text lighten-2"><?php echo $target["name"]?></span> bearbeiten</h2>
+  		<h2 class="header">Benutzer <span class="red-text"><?php echo $target["name"]?></span> bearbeiten</h2>
   		<?php
   		foreach (getAllReviewIDs($conn, $target['id'], $course) as $reviewId) {?>
 		<div class="panel panel-primary">
 		    <!-- heading -->
 		    <div class="panel-heading panel-collapsed">
-		     	<h3 class="panel-title">Review #<?php echo "".$reviewId?>	
-				</h3>
+		     	<h3 class="panel-title">Review <span class="grey-text text-lighten-1"><?php echo getReviewNameForID($conn, $reviewId)?>
+				</span></h3>
 		    <!-- end heading -->
 			</div>
 

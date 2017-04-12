@@ -103,9 +103,8 @@ function getUsers($conn) {
 	return $ret;
 }
 
-function getNewReviewId($conn, $course) {
-	if($stmt    = $conn->prepare("SELECT MAX(id) + 1 AS `new_id` FROM review_schemes WHERE course = ?")) {
-		$stmt->bind_param("i", $course);
+function getNewReviewId($conn) {
+	if($stmt    = $conn->prepare("SELECT MAX(id) + 1 AS `new_id` FROM review_schemes")) {
 		$stmt->execute();
 		$result = $stmt->get_result();
 		if ($result->num_rows > 0) {
@@ -337,6 +336,23 @@ function getFinishedReviewsOfCourse($conn, $course) {
 	return 0;
 }
 
+function getFinishedReviewsOfCourseAndId($conn, $course, $reviewId) {
+	if($stmt = $conn->prepare('SELECT avg( review IS NOT NULL ) * 100 AS "avg" FROM reviews WHERE course = ? AND review_id = ?')) {
+		$stmt->bind_param("ii", $course, $reviewId);
+		$stmt->execute();
+		$result = $stmt->get_result();
+		if ($result->num_rows > 0) {
+			if ($row = $result->fetch_assoc()) {
+				return $row['avg'];
+			}
+		}
+		$stmt->free_result();
+	} else {
+		echo $conn->error;
+	}
+	return 0;
+}
+
 function userExists($conn, $id) {
 	if($stmt    = $conn->prepare("SELECT id FROM users WHERE id = ?")) {
 		$stmt->bind_param("i", $id);
@@ -420,10 +436,10 @@ function getReviewSchemeForID($conn, $course, $reviewId) {
 	return "";
 }
 
-function getReviewNameForID($conn, $course, $reviewId) {
+function getReviewNameForID($conn, $reviewId) {
 	setUTF8($conn);
-	if($stmt = $conn->prepare("SELECT * FROM review_schemes WHERE course = ? AND id = ?")) {
-		$stmt->bind_param("ii", $course, $reviewId);
+	if($stmt = $conn->prepare("SELECT * FROM review_schemes WHERE id = ?")) {
+		$stmt->bind_param("i", $reviewId);
 		$stmt->execute();
 		$result = $stmt->get_result();
 		if ($result->num_rows > 0) {
@@ -443,7 +459,7 @@ function addReviewScheme($conn, $course, $review) {
 	if($stmt = $conn->prepare("INSERT INTO review_schemes (course, review_scheme, name, id) VALUES (?,?,?,?)")) {
 		$encoded = json_encode($review);
 		$name = $review->name;
-		$id = getNewReviewId($conn, $course);
+		$id = getNewReviewId($conn);
 		$stmt->bind_param("issi", $course, $encoded, $name, $id);
 		$stmt->execute();
 		unset($stmt);
