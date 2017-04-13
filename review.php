@@ -7,7 +7,7 @@ function setUTF8($conn) {
 	}
 }
 
-function getReviews($conn, $course, $id, $reviewid) {
+function getReviewsFor($conn, $course, $id, $reviewid) {
 	$ret = array();
 	setUTF8($conn);
 	if($stmt    = $conn->prepare("SELECT * FROM reviews WHERE id = ? AND course = ? AND review_id = ? ORDER BY review DESC")) {
@@ -23,7 +23,6 @@ function getReviews($conn, $course, $id, $reviewid) {
 	} else {
 		echo $conn->error;
 	}
-	
 	return $ret;
 }
 
@@ -302,23 +301,6 @@ function getAllReviewIDsOfCourse($conn, $course) {
 	return $ret;
 }
 
-function getNewestCode($conn, $id, $course) {
-	if($stmt    = $conn->prepare("SELECT link FROM reviews WHERE id = ? AND course = ? ORDER BY review_id DESC LIMIT 1")) {
-		$stmt->bind_param("ii", $id, $course);
-		$stmt->execute();
-		$result = $stmt->get_result();
-		if ($result->num_rows > 0) {
-			if ($row = $result->fetch_assoc()) {
-				return $row['link'];
-			}
-		}
-		$stmt->free_result();
-	} else {
-		die($conn->error);
-	}
-	return "";
-}
-
 function getName($conn, $id) {
 	setUTF8($conn);
 	if($stmt    = $conn->prepare("SELECT * FROM users WHERE id = ?")) {
@@ -486,8 +468,8 @@ function addReviewScheme($conn, $course, $review) {
 
 function setReview($conn, $id, $autor, $course, $review, $reviewid) {
 	setUTF8($conn);
-	if($stmt = $conn->prepare("UPDATE reviews SET review = ?, modified = NOW() WHERE id = ? AND course = ? AND code_reviewer = ?")) {
-		$stmt->bind_param("siii", $review, $id, $course, $autor);
+	if($stmt = $conn->prepare("UPDATE reviews SET review = ?, modified = NOW() WHERE id = ? AND course = ? AND code_reviewer = ? AND review_id = ?")) {
+		$stmt->bind_param("siiii", $review, $id, $course, $autor, $reviewid);
 		$stmt->execute();
 		unset($stmt);
 	}

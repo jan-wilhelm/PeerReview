@@ -1,6 +1,5 @@
 <?php
 
-include '../check_auth.php';
 include '../config.php';
 include "../review.php";
 if(!isset($_GET['id']) || !isset($_GET['course'])) {
@@ -15,11 +14,12 @@ $conn = new mysqli($cfg['db_host'], $cfg['db_user'], $cfg['db_password'], $cfg['
 if ($conn->connect_error) {
 	die("Database connection failed: " . $conn->connect_error);
 }
+include '../check_auth.php';
 
-$course = $_GET['course'];
+$course = intval($_GET['course']);
 
 $target = array(
-	"id" => $_GET['id'],
+	"id" => intval($_GET['id']),
 	"name" => getName($conn,$_GET['id'])
 );
 
@@ -98,7 +98,7 @@ $target = array(
 		<div class="edit-el">
   			<h4>Reviews für <?php echo $target["name"]; ?></h4>
 		<?php
-			$review = getReviews($conn, $target["id"], $course, $reviewId);
+			$review = getReviewsFor($conn, $course, $target["id"], $reviewId);
 			if(count($review) == 0) {
 				echo "<p class=\"red-text darken-4\">Es wurde für ".$target["name"]." noch keine Review ausgefüllt!</hp>";
 			} else {?>
@@ -144,8 +144,7 @@ $target = array(
 					echo "<p class=\"red-text darken-4\">Es wurde für ".$target["name"]." noch kein Benutzer zum Review ausgewählt!</p>";
 			    } else {?>
 					<?php
-					$review = getReviews($conn, $course, $_SESSION['user_id'], $reviewId);
-
+					$review = getReviewsFor($conn, $course, $_SESSION['user_id'], $reviewId);
 					if(count($review) == 0) {
 						echo "<p class=\"red-text darken-4\">Dieses Review wurde noch nicht ausgefüllt!</p>";
 					} else {?>

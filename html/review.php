@@ -1,6 +1,5 @@
 <?php
 
-include '../check_auth.php';
 include '../config.php';
 include "../review.php";
 if(!isset($_GET['id']) || !isset($_GET['course']) || !isset($_GET['review'])) {
@@ -10,6 +9,8 @@ $conn = new mysqli($cfg['db_host'], $cfg['db_user'], $cfg['db_password'], $cfg['
 if ($conn->connect_error) {
 	die("Database connection failed: " . $conn->connect_error);
 }
+include '../check_auth.php';
+
 $course = $_GET['course'];
 $reviewId = $_GET['review'];
 $contains = false;

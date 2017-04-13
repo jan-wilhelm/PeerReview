@@ -1,5 +1,4 @@
 <?php
-include '../check_auth.php';
 include '../config.php';
 include "../review.php";
 include "../header.php";
@@ -8,6 +7,7 @@ $conn = new mysqli($cfg['db_host'], $cfg['db_user'], $cfg['db_password'], $cfg['
 if ($conn->connect_error) {
 	die("Database connection failed: " . $conn->connect_error);
 }
+include '../check_auth.php';
 
 if( !isset($_GET['course']) && !isset($_POST['course'])) {
 	header("Location: /index.php?course=1");
@@ -109,7 +109,7 @@ $admin = (isset($_SESSION['user_level']) && $_SESSION['user_level'] === 1);
 	}
 
 	// Render page if no specific review is selected
-	if(!isset($_GET['review'])) {
+	if(!isset($_GET['review']) && !isset($_POST['review'])) {
 
 		?>
 		<div class="row">
@@ -321,6 +321,7 @@ $admin = (isset($_SESSION['user_level']) && $_SESSION['user_level'] === 1);
 				e.preventDefault();
 			    var $this = $(this);
 				const link = $this.attr('href');
+				console.log(link);
 				if(!$('#edit-user-modal').length) {
 					console.log("appending modal");
 					$('.container-fluid').append('<div class="modal fade" id="edit-user-modal" tabindex="-1" role="dialog" aria-labelledby="edit-user-modal-label"> <div class="modal-dialog" role="document"><div class="modal-content"><div class="modal-header"> <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button><h4 class="modal-title" id="set-link-modal-label">Benutzer bearbeiten</h4></div><div class="modal-body"></div><div class="modal-footer"><button type="button" class="btn btn-default" data-dismiss="modal">Abbrechen</button></div></div></div></div>');
@@ -341,7 +342,11 @@ $admin = (isset($_SESSION['user_level']) && $_SESSION['user_level'] === 1);
 		echo "</html>";
 		exit();
 	}
-	$reviewId = intval($_GET['review']);
+	if(isset($_GET['review'])) {
+		$reviewId = intval($_GET['review']);
+	} elseif (isset($_POST['review'])) {
+		$reviewId = intval($_POST['review']);
+	}
 					?>
 
 	<div class="row">
@@ -386,7 +391,7 @@ $admin = (isset($_SESSION['user_level']) && $_SESSION['user_level'] === 1);
 			Bitte gib den richtigen Link zu deinem Code ein, damit für dich ein Review verfasst werden kann!
 			</span>
 			<form action="" method="post" class="form-horizontal">
-				<input id="link-set-link" class="form-control" name="link" type="text" placeholder="Link" value=<?php echo "\"". getNewestCode($conn, $_SESSION['user_id'], $course)."\"";?>>
+				<input id="link-set-link" class="form-control" name="link" type="text" placeholder="Link" value=<?php echo "\"". getCode($conn, $_SESSION['user_id'], $course, $reviewId)."\"";?>>
 				
 				<button class="btn btn-success" name="link-set" id="link-set-button">
 					<i class="fa fa-paper-plane" aria-hidden="true"></i> Link absenden
@@ -457,12 +462,12 @@ $admin = (isset($_SESSION['user_level']) && $_SESSION['user_level'] === 1);
 			        data: {
 			        	"codes-set": null,
 			        	"limit": limit,
-			        	"course": <?php echo $course;?>
+			        	"course": <?php echo $course;?>,
+			        	"review": <?php echo $reviewId;?>
 			    	},
 			        type: 'post',
 			        success: function(result) {
 			           	toastr.success('Reviews wurden erfolgreich verteilt!', 'Geschafft!');
-			           	console.log(result);
 			        },
 			        error: function(error) {
 			           	toastr.error(error, 'Fehler!');
@@ -489,7 +494,7 @@ $admin = (isset($_SESSION['user_level']) && $_SESSION['user_level'] === 1);
 				<div class="admin-cart">
 					<h3>Deine Reviews</h3>
 					<?php
-					$review = getReviews($conn, $course, $_SESSION['user_id'], $reviewId);
+					$review = getReviewsFor($conn, $course, $_SESSION['user_id'], $reviewId);
 					if(sizeof($review) < 1) {?>
 						<span class="alert alert-warning">Es wurde für dich noch keine Review ausgefüllt!</span>
 					<?php
@@ -638,7 +643,8 @@ $admin = (isset($_SESSION['user_level']) && $_SESSION['user_level'] === 1);
 	        data: {
 	        	"link-set": null,
 	        	"link": link,
-	        	"course": <?php echo $course;?>
+	        	"course": <?php echo $course;?>,
+	        	"review": <?php echo $reviewId;?>
 	    	},
 	        type: 'post',
 	        success: function(result) {

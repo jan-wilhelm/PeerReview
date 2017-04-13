@@ -33,6 +33,7 @@ index.php:
       ✔ Von materialize auf Bootstrap migrieren @done (17-04-08 17:22)
         Ich habe mich entschieden, keine "collapsible" zu nutzen, sondern die Daten wie schon bei dem "Edit users" panel einfach alle untereinander in einer Liste ausgeben zu lassen.
     ✔ Wenn course und review gesetzt sind, muss ein jumbotron angezeigt werden @created(17-04-13 15:10) @done (17-04-13 15:16)
+    ☐ Erstelle panel für den Signin Key, damit der Lehrer ihn verteilen kann
 
   ☐ Aufbau:
     ✔ Die Panels "Benutzer bearbeiten", "Neuen Nutzer erstellen" und "Neues Review erstellen" sollte ich am besten auf die index Seite verschieben, die auch angezeigt wird, wenn keine ReviewID gesetzt ist. @created(17-04-12 22:16) @done (17-04-13 15:09)

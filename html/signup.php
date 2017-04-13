@@ -1,13 +1,13 @@
 <?php
-include '../check_auth.php';
 include '../config.php';
 include "../review.php";
-include "../header.php";
 $conn = new mysqli($cfg['db_host'], $cfg['db_user'], $cfg['db_password'], $cfg['db_name']);
 
 if ($conn->connect_error) {
 	die("Database connection failed: " . $conn->connect_error);
 }
+include '../check_auth.php';
+include "../header.php";
 ?>
 <body>
 	<nav class="navbar navbar-inverse navbar-fixed-top">

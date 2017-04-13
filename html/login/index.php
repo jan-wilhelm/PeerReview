@@ -15,7 +15,6 @@
 
 </head>
 <?php
-	session_start();
 	require '../../config.php';
 	// echo password_hash("password", PASSWORD_DEFAULT)."\n";
 	if (isset($_POST['login-submit'])) {
