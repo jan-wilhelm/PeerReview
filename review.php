@@ -266,7 +266,7 @@ function getCode($conn, $id, $course, $reviewid) {
 	return "";
 }
 
-function getAllReviewIDs($conn, $id, $course) {
+function getAllReviewIDsOfUser($conn, $id, $course) {
 	$ret = array();
 	if($stmt    = $conn->prepare("SELECT review_id FROM reviews WHERE id = ? AND course = ? GROUP BY review_id")) {
 		$stmt->bind_param("ii", $id, $course);
@@ -275,6 +275,24 @@ function getAllReviewIDs($conn, $id, $course) {
 		if ($result->num_rows > 0) {
 			while ($row = $result->fetch_assoc()) {
 				$ret[] = $row['review_id'];
+			}
+		}
+		$stmt->free_result();
+	} else {
+		die($conn->error);
+	}
+	return $ret;
+}
+
+function getAllReviewIDsOfCourse($conn, $course) {
+	$ret = array();
+	if($stmt    = $conn->prepare("SELECT id FROM review_schemes WHERE course = ?")) {
+		$stmt->bind_param("i", $course);
+		$stmt->execute();
+		$result = $stmt->get_result();
+		if ($result->num_rows > 0) {
+			while ($row = $result->fetch_assoc()) {
+				$ret[] = $row['id'];
 			}
 		}
 		$stmt->free_result();
@@ -385,9 +403,9 @@ function getCourseByKey($conn, $key) {
 	return 0;
 }
 
-function getCourseName($conn, $id) {
+function getCourseName($conn, $course) {
 	if($stmt = $conn->prepare("SELECT name FROM course_data WHERE course = ?")) {
-		$stmt->bind_param("i", $id);
+		$stmt->bind_param("i", $course);
 		$stmt->execute();
 		$result = $stmt->get_result();
 		if ($result->num_rows > 0) {
@@ -519,6 +537,33 @@ function getReviewsOfToday($conn, $course) {
 	return 0;
 }
 
+function getTotalLoginsOfTimeInterval($conn, $interval) {
+	if($stmt = $conn->prepare("SELECT COUNT(*) as 'count' from login_history WHERE for_date BETWEEN DATE_SUB(NOW(), INTERVAL ".$interval.") AND NOW()")) {
+		$stmt->execute();
+		$result = $stmt->get_result();
+		if ($result->num_rows > 0) {
+			if ($row = $result->fetch_assoc()) {
+				return $row['count'];
+			}
+		}
+		$stmt->free_result();
+	} else {
+		echo $conn->error;
+	}
+	return 0;
+}
+
+function randomPassword($length){
+	$alphabet    = 'abcdefghjkmnopqrstuvwxyzABCDEFGHJKMNOPQRSTUVWXYZ1234567890';
+	$pass        = array();
+	$alphaLength = strlen($alphabet) - 1;
+	for ($i = 0; $i < $length; $i++) {
+		$n      = rand(0, $alphaLength);
+		$pass[] = $alphabet[$n];
+	}
+	return implode($pass);
+}
+
 function getReviewsSinceLastLoginForUser($conn, $id, $course) {
 	if($stmt = $conn->prepare("SELECT COUNT(*) as `numbers` FROM `info`.`reviews` WHERE `modified` > (SELECT `for_date` FROM `login_history` WHERE `user` = ? AND course = ? ORDER BY `for_date` DESC LIMIT 1,1)")) {
 		$stmt->bind_param("ii", $id, $course);
@@ -555,6 +600,22 @@ function getNumberOfUsersInCourse($conn, $course) {
 
 function getNumberOfUsersTotal($conn) {
 	if($stmt = $conn->prepare("select count(*) as 'count' from users")) {
+		$stmt->execute();
+		$result = $stmt->get_result();
+		if ($result->num_rows > 0) {
+			if ($row = $result->fetch_assoc()) {
+				return $row['count'];
+			}
+		}
+		$stmt->free_result();
+	} else {
+		echo $conn->error;
+	}
+	return 0;
+}
+
+function getNumberOfCoursesTotal($conn) {
+	if($stmt = $conn->prepare("select count(*) as 'count' from course_data")) {
 		$stmt->execute();
 		$result = $stmt->get_result();
 		if ($result->num_rows > 0) {

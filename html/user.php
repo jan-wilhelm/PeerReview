@@ -73,7 +73,7 @@ $target = array(
   		?>
   		<h2 class="header">Benutzer <span class="red-text"><?php echo $target["name"]?></span> bearbeiten</h2>
   		<?php
-  		foreach (getAllReviewIDs($conn, $target['id'], $course) as $reviewId) {?>
+  		foreach (getAllReviewIDsOfUser($conn, $target['id'], $course) as $reviewId) {?>
 		<div class="panel panel-primary">
 		    <!-- heading -->
 		    <div class="panel-heading panel-collapsed">

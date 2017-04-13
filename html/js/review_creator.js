@@ -65,7 +65,10 @@ $(document).ready(function() {
 	}
 
 	function deleteSection() {
-		$(this).parent("li").remove();
+	    const fade = { opacity: 0, transition: 'opacity 0.5s' };
+	    $(this).parent("li").css(fade).slideUp(500, function() {
+			$(this).remove();
+		});
 	}
 
 	function getQueryParams(qs) {
