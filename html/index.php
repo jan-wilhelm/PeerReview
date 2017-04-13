@@ -346,7 +346,7 @@ $admin = (isset($_SESSION['user_level']) && $_SESSION['user_level'] === 1);
 
 	<div class="row">
 		<div class="col-12 jumbotron">
-			<h2 class="text-center">Kurs <a href="<?php echo "http://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]"; ?>">
+			<h2 class="text-center">Kurs <a href="<?php echo "http://$_SERVER[HTTP_HOST]?course=$course"; ?>">
 				<?php
 				echo getCourseName($conn, $course);
 				?>

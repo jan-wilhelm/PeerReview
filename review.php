@@ -565,8 +565,8 @@ function randomPassword($length){
 }
 
 function getReviewsSinceLastLoginForUser($conn, $id, $course) {
-	if($stmt = $conn->prepare("SELECT COUNT(*) as `numbers` FROM `info`.`reviews` WHERE `modified` > (SELECT `for_date` FROM `login_history` WHERE `user` = ? AND course = ? ORDER BY `for_date` DESC LIMIT 1,1)")) {
-		$stmt->bind_param("ii", $id, $course);
+	if($stmt = $conn->prepare("SELECT COUNT(*) as `numbers` FROM `info`.`reviews` WHERE `modified` > (SELECT `for_date` FROM `login_history` WHERE `user` = ? AND course = ? ORDER BY `for_date` DESC LIMIT 1,1) AND id = ?")) {
+		$stmt->bind_param("iii", $id, $course, $id);
 		$stmt->execute();
 		$result = $stmt->get_result();
 		if ($result->num_rows > 0) {

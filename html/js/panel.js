@@ -8,4 +8,6 @@ $(document).on('click', '.panel-heading', function(e){
 		$this.removeClass('panel-collapsed');
 	}
 })
-$('.panel').find('.panel-body').css("display", "none");
+$(function () {
+	$('.panel').find('.panel-body').css("display", "none");
+});
