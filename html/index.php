@@ -114,12 +114,12 @@ $admin = (isset($_SESSION['user_level']) && $_SESSION['user_level'] === 1);
 		?>
 		<div class="row">
 			<div class="col-12 jumbotron">
-				<h1 class="text-center">Kurs <a href="<?php echo "http://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]"; ?>">
+				<h2 class="text-center">Kurs <a href="<?php echo "http://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]"; ?>">
 					<?php
 					echo getCourseName($conn, $course);
 					?>
-				</a>
-				</h1>
+					</a>
+				</h2>
 			</div>
 		</div>
 
@@ -343,6 +343,23 @@ $admin = (isset($_SESSION['user_level']) && $_SESSION['user_level'] === 1);
 	}
 	$reviewId = intval($_GET['review']);
 					?>
+
+	<div class="row">
+		<div class="col-12 jumbotron">
+			<h2 class="text-center">Kurs <a href="<?php echo "http://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]"; ?>">
+				<?php
+				echo getCourseName($conn, $course);
+				?>
+				</a>
+			</h2>
+			<h2 class="text-center">Review <a href="<?php echo "http://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]"; ?>">
+				<?php
+				echo getReviewNameForID($conn, $reviewId);
+				?>
+				</a>
+			</h2>
+		</div>
+	</div>
     <div class="row equal">
 	  	<div class="col-md-6 col-sm-12">
 	  		<div class="admin-cart">

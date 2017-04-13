@@ -8,7 +8,7 @@ index.php:
   ✘ Ein neues Mockup erstellen um zu überlegen, wie ich die beliebige Menge an Reviews passend darstellen kann, sodass es sowohl für große als auch kleine Anzahlen an Reviews / Limits gut aussieht. @cancelled (17-04-12 22:05)
     Cancelled, da ich den Aufbau der gesamten Seite geändert habe. Es gibt nun Pro Kurs und Pro ReviewID eine einzelne Seite. Dafür musste ich einen zweiten GET Parameter (review) in Kauf nehmen.
 
-  ☐ Statistiken:
+  ✔ Statistiken: @done (17-04-13 15:09)
     ✔ XXXX Users (select count(*) as 'count' from users) @created(17-04-08 12:31) @done (17-04-08 12:35)
       ✔ 2 Funktionen: @done (17-04-08 12:35)
         getNumberOfUsersInCourse holt die Anzahl aller Benutzer in dem angegebenen Kurs,
@@ -23,7 +23,7 @@ index.php:
           unset($stmt);
         }
       }
-    ☐ Weitere Statistiken überlegen @created(17-04-12 22:09)
+    ✔ Weitere Statistiken überlegen @created(17-04-12 22:09) @done (17-04-13 15:09)
   ☐ Anstatt "no get course set" eine richtige Seite anzeigen:
     Ich habe erstmal fürs Programmieren eine Weiterleitung an /?course=1 gemacht, da ich alle Funktionen eh nur an diesem Kurs teste.
       Siehe Deploy Weiterleitungen
@@ -32,10 +32,11 @@ index.php:
     ✔ Das "Review verfassen" Panel richtig anzeigen lassen @done (17-04-08 17:22)
       ✔ Von materialize auf Bootstrap migrieren @done (17-04-08 17:22)
         Ich habe mich entschieden, keine "collapsible" zu nutzen, sondern die Daten wie schon bei dem "Edit users" panel einfach alle untereinander in einer Liste ausgeben zu lassen.
+    ☐ Wenn course und review gesetzt sind, muss ein jumbotron angezeigt werden @created(17-04-13 15:10)
 
   ☐ Aufbau:
-    ☐ Die Panels "Benutzer bearbeiten", "Neuen Nutzer erstellen" und "Neues Review erstellen" sollte ich am besten auf die index Seite verschieben, die auch angezeigt wird, wenn keine ReviewID gesetzt ist. @created(17-04-12 22:16)
-    ☐ Neues Mockup, wo die beschriebenen Änderunge dargestellt sind @created(17-04-12 22:16)
+    ✔ Die Panels "Benutzer bearbeiten", "Neuen Nutzer erstellen" und "Neues Review erstellen" sollte ich am besten auf die index Seite verschieben, die auch angezeigt wird, wenn keine ReviewID gesetzt ist. @created(17-04-12 22:16) @done (17-04-13 15:09)
+    ✔ Neues Mockup, wo die beschriebenen Änderunge dargestellt sind @created(17-04-12 22:16) @done (17-04-13 15:09)
 
 Deploy:
   ☐ Die "Default Weiterleitung" löschen
