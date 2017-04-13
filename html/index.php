@@ -346,13 +346,13 @@ $admin = (isset($_SESSION['user_level']) && $_SESSION['user_level'] === 1);
 
 	<div class="row">
 		<div class="col-12 jumbotron">
-			<h2 class="text-center">Kurs <a href="<?php echo "http://$_SERVER[HTTP_HOST]?course=$course"; ?>">
+			<h2 class="text-center">Kurs <a href="<?php echo "index.php?course=$course"; ?>">
 				<?php
 				echo getCourseName($conn, $course);
 				?>
 				</a>
 			</h2>
-			<h2 class="text-center">Review <a href="<?php echo "http://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]"; ?>">
+			<h2 class="text-center">Review <a href="<?php echo "$_SERVER[REQUEST_URI]"; ?>">
 				<?php
 				echo getReviewNameForID($conn, $reviewId);
 				?>
@@ -601,11 +601,11 @@ $admin = (isset($_SESSION['user_level']) && $_SESSION['user_level'] === 1);
 				    if (count($tar) == 0) {
 						echo "<span class=\"red-text darken-4\">Es wurde für dich noch kein Benutzer zum Review ausgewählt!</span>";
 				    } else {?>
-				    	<ul class="edit-review-list">
+				    	<ul class="edit-review-list list-group">
 				    	<?php
 						foreach ($tar as $rev) {
 						    ?>
-						    <li>
+						    <li class="list-group-item">
 							<span class="pull-left">
 								<i class="fa fa-pencil" aria-hidden="true"></i>
 							</span>
