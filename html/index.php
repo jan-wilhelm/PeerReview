@@ -27,6 +27,7 @@ $admin = (isset($_SESSION['user_level']) && $_SESSION['user_level'] === 1);
 <body>
 <script type="text/javascript">
 	$(function() {
+
 	    //create instance
 	    $('.pie-chart').easyPieChart({
 	        animate: 2000,
@@ -35,8 +36,19 @@ $admin = (isset($_SESSION['user_level']) && $_SESSION['user_level'] === 1);
 	        barColor: "#2A3F54",
 	        scaleColor: "#aaa",
 	        trackColor: "#E3E3E3",
-	        scaleLength: 4
+	        scaleLength: 2,
+	        onStep: function(from, to, value) {
+	        	value = Math.round(value);
+	        	$(this.el).parents().find('.pie-percentage').html(value);
+	        	//console.log( $(this.el).parents().find('.pie-percentage') );
+	        }
 	    });
+
+	    function update() {
+        	$('.pie-chart').data('easyPieChart').update(Math.random() * 100);;
+	    	//setTimeout(update, 3000);
+	    }
+	    //update();
 
 	    $('.admin-cart').each(function (index, element) {
 	    	const closeItem = $('<i class="close-item fa fa-times-circle" aria-hidden="true">');
@@ -122,13 +134,17 @@ $admin = (isset($_SESSION['user_level']) && $_SESSION['user_level'] === 1);
 
 		?>
 		<div class="row">
-			<div class="col-12 jumbotron">
-				<h2 class="text-center">Kurs <a href="<?php echo "http://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]"; ?>">
+			<div class="col-12">
+
+				<ol class="breadcrumb">
+				  <li class="breadcrumb-item"><a href="/">Startseite</a></li>
+				  <li class="breadcrumb-item">Kurs <a href="<?php echo "http://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]"; ?>">
 					<?php
 					echo getCourseName($conn, $course);
 					?>
 					</a>
-				</h2>
+					</li>
+				</ol>
 			</div>
 		</div>
 
@@ -149,11 +165,14 @@ $admin = (isset($_SESSION['user_level']) && $_SESSION['user_level'] === 1);
 				<div class="admin-cart">
 					<h3>Geschriebene Reviews in diesem Kurs</h3>
 					<?php $finishedReviewsOfCourse = getFinishedReviewsOfCourse($conn, $course); ?>
-					<div class="pie-chart" data-percent="<?php 
-						echo $finishedReviewsOfCourse;
-					?>">
-					</div>
+					<div class="pie-container">
+						<span class="pie-percentage">0</span>
 
+						<div class="pie-chart" data-percent="<?php 
+							echo $finishedReviewsOfCourse;
+						?>">
+						</div>
+					</div>
 				</div>
 			</div>
 		</div>
