@@ -476,3 +476,17 @@ textarea:focus {
     margin-left: 10px;
     display: inline-block;
 }
+
+.close-item {
+    display: block;
+    font-size: 20px;
+    position: absolute;
+    top: 0;
+    right: 0;
+    opacity: 0;
+    cursor: pointer;
+}
+
+.admin-cart:hover > .close-item {
+    opacity: 0.6;
+}

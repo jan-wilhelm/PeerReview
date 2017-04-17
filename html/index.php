@@ -37,6 +37,15 @@ $admin = (isset($_SESSION['user_level']) && $_SESSION['user_level'] === 1);
 	        trackColor: "#E3E3E3",
 	        scaleLength: 4
 	    });
+
+	    $('.admin-cart').each(function (index, element) {
+	    	const closeItem = $('<i class="close-item fa fa-times-circle" aria-hidden="true">');
+	    	closeItem.appendTo(element);
+	    });
+	    $('.close-item').click(function() {
+	    	$(this).parent('.admin-cart').parent("div[class*='col-']").remove();
+	    });
+
 	});
 </script>
 <script type="text/javascript" src="./js/panel.js"></script>
