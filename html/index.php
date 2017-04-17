@@ -40,15 +40,9 @@ $admin = (isset($_SESSION['user_level']) && $_SESSION['user_level'] === 1);
 	        onStep: function(from, to, value) {
 	        	value = Math.round(value);
 	        	$(this.el).parents().find('.pie-percentage').html(value);
-	        	//console.log( $(this.el).parents().find('.pie-percentage') );
+	        	console.log( $(this.el).parents().find('.pie-percentage') );
 	        }
 	    });
-
-	    function update() {
-        	$('.pie-chart').data('easyPieChart').update(Math.random() * 100);;
-	    	//setTimeout(update, 3000);
-	    }
-	    //update();
 
 	    $('.admin-cart').each(function (index, element) {
 	    	const closeItem = $('<i class="close-item fa fa-times-circle" aria-hidden="true">');
