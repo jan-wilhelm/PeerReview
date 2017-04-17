@@ -40,7 +40,6 @@ $admin = (isset($_SESSION['user_level']) && $_SESSION['user_level'] === 1);
 	        onStep: function(from, to, value) {
 	        	value = Math.round(value);
 	        	$(this.el).parents().find('.pie-percentage').html(value);
-	        	console.log( $(this.el).parents().find('.pie-percentage') );
 	        }
 	    });
 
