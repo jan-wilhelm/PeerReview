@@ -301,6 +301,12 @@ function getAllReviewIDsOfCourse($conn, $course) {
 	return $ret;
 }
 
+/**
+ * Get the name of a course by its ID
+ * @param  mysqli $conn The MySQL connection
+ * @param  int $id   The ID of the course
+ * @return string       The name of the course
+ */
 function getName($conn, $id) {
 	setUTF8($conn);
 	if($stmt    = $conn->prepare("SELECT * FROM users WHERE id = ?")) {
@@ -319,6 +325,12 @@ function getName($conn, $id) {
 	return "";
 }
 
+/**
+ * Get the percentage of overall finished reviews in one cours
+ * @param  mysql $conn   The MySQL connection
+ * @param  int $course The ID of the course
+ * @return float         The percentage
+ */
 function getFinishedReviewsOfCourse($conn, $course) {
 	if($stmt = $conn->prepare('SELECT avg( review IS NOT NULL ) * 100 AS "avg" FROM reviews WHERE course = ?')) {
 		$stmt->bind_param("i", $course);
@@ -336,6 +348,13 @@ function getFinishedReviewsOfCourse($conn, $course) {
 	return 0;
 }
 
+/**
+ * Get the percentage of finished reviews of one id in one specific course
+ * @param  mysqli $conn     The MySQL connection
+ * @param  int $course   The ID of the course
+ * @param  int $reviewId The ID of the review
+ * @return float           The percentage of finished reviews / total reviews
+ */
 function getFinishedReviewsOfCourseAndId($conn, $course, $reviewId) {
 	if($stmt = $conn->prepare('SELECT avg( review IS NOT NULL ) * 100 AS "avg" FROM reviews WHERE course = ? AND review_id = ?')) {
 		$stmt->bind_param("ii", $course, $reviewId);
@@ -353,6 +372,12 @@ function getFinishedReviewsOfCourseAndId($conn, $course, $reviewId) {
 	return 0;
 }
 
+/**
+ * Check if an user with the given ID exists
+ * @param  mysqli $conn The MySQL connection
+ * @param  int $id   The ID of the user to check for
+ * @return boolean       True if the user exists, false otherwise
+ */
 function userExists($conn, $id) {
 	if($stmt    = $conn->prepare("SELECT id FROM users WHERE id = ?")) {
 		$stmt->bind_param("i", $id);
@@ -368,6 +393,12 @@ function userExists($conn, $id) {
 	return false;
 }
 
+/**
+ * Get the ID of a course by its key
+ * @param  mysqli $conn The MySQL connection
+ * @param  string $key  The key
+ * @return int       The ID of the course
+ */
 function getCourseByKey($conn, $key) {
 	if($stmt = $conn->prepare("SELECT course FROM course_data WHERE signin_key = ?")) {
 		$stmt->bind_param("s", $key);
@@ -385,6 +416,12 @@ function getCourseByKey($conn, $key) {
 	return 0;
 }
 
+/**
+ * Get the name of a course by its course_id
+ * @param  mysqli $conn   The mysql connection
+ * @param  int $course The id of the course
+ * @return string    The name of the course
+ */
 function getCourseName($conn, $course) {
 	if($stmt = $conn->prepare("SELECT name FROM course_data WHERE course = ?")) {
 		$stmt->bind_param("i", $course);
@@ -519,6 +556,12 @@ function getReviewsOfToday($conn, $course) {
 	return 0;
 }
 
+/**
+ * Get the total amount of logins since a given interval
+ * @param  mysqli $conn     The MySQL connection
+ * @param  mysqlinterval $interval The interval to check
+ * @return int           The number of logins
+ */
 function getTotalLoginsOfTimeInterval($conn, $interval) {
 	if($stmt = $conn->prepare("SELECT COUNT(*) as 'count' from login_history WHERE for_date BETWEEN DATE_SUB(NOW(), INTERVAL ".$interval.") AND NOW()")) {
 		$stmt->execute();
@@ -535,6 +578,11 @@ function getTotalLoginsOfTimeInterval($conn, $interval) {
 	return 0;
 }
 
+/**
+ * Generate a random password of given length
+ * @param  int $length The required length of the password
+ * @return string         A new random passwort containg letters [a-z], [A-Z] and [0-9]
+ */
 function randomPassword($length){
 	$alphabet    = 'abcdefghjkmnopqrstuvwxyzABCDEFGHJKMNOPQRSTUVWXYZ1234567890';
 	$pass        = array();
@@ -546,6 +594,13 @@ function randomPassword($length){
 	return implode($pass);
 }
 
+/**
+ * Get the number of updated reviews for a user since his last login
+ * @param  mysqli $conn   The MySQL connection
+ * @param  int $id     The id of the user
+ * @param  int $course The ID of the course to check for
+ * @return int         The amount of upated reviews
+ */
 function getReviewsSinceLastLoginForUser($conn, $id, $course) {
 	if($stmt = $conn->prepare("SELECT COUNT(*) as `numbers` FROM `info`.`reviews` WHERE `modified` > (SELECT `for_date` FROM `login_history` WHERE `user` = ? AND course = ? ORDER BY `for_date` DESC LIMIT 1,1) AND id = ?")) {
 		$stmt->bind_param("iii", $id, $course, $id);
@@ -563,6 +618,12 @@ function getReviewsSinceLastLoginForUser($conn, $id, $course) {
 	return 0;
 }
 
+/**
+ * Get the total amount of courses in one course
+ * @param  mysqli $conn The MySQL connection
+ * @param  int 	$course The ID of the course
+ * @return int       The amount
+ */
 function getNumberOfUsersInCourse($conn, $course) {
 	if($stmt = $conn->prepare("select count(*) as 'count' from users where exists (select 1 from courses where id = users.id and course = ?)")) {
 		$stmt->bind_param("i", $course);
@@ -580,6 +641,11 @@ function getNumberOfUsersInCourse($conn, $course) {
 	return 0;
 }
 
+/**
+ * Get the total amount of users
+ * @param  mysqli $conn The MySQL connection
+ * @return int       The amount
+ */
 function getNumberOfUsersTotal($conn) {
 	if($stmt = $conn->prepare("select count(*) as 'count' from users")) {
 		$stmt->execute();
@@ -596,6 +662,11 @@ function getNumberOfUsersTotal($conn) {
 	return 0;
 }
 
+/**
+ * Get the total amount of courses
+ * @param  mysqli $conn The MySQL connection
+ * @return int       The amount
+ */
 function getNumberOfCoursesTotal($conn) {
 	if($stmt = $conn->prepare("select count(*) as 'count' from course_data")) {
 		$stmt->execute();
@@ -612,6 +683,12 @@ function getNumberOfCoursesTotal($conn) {
 	return 0;
 }
 
+/**
+ * Get all courses of a specific user
+ * @param  mysqli $conn The MySQL connection
+ * @param  int $id   The ID of the user
+ * @return array       An array of all IDs of courses
+ */
 function getCoursesOfUser($conn, $id) {
 	$ret = array();
 	if($stmt = $conn->prepare("select * from courses where id = ?")) {
@@ -630,6 +707,11 @@ function getCoursesOfUser($conn, $id) {
 	return $ret;
 }
 
+/**
+ * Get the overall total number of logins
+ * @param  mysqli $conn The MySQL connection
+ * @return int       The number of logings
+ */
 function getTotalLogins($conn) {
 	if($stmt = $conn->prepare("select count(*) as 'count' from login_history")) {
 		$stmt->execute();
@@ -646,6 +728,12 @@ function getTotalLogins($conn) {
 	return 0;
 }
 
+/**
+ * Get the logins of the past to weeks.
+ * This will be used for chart purposes only.
+ * @param  mysqli $conn The MySQL connection
+ * @return array       An array of dates => number of logins
+ */
 function getLoginsOfLastTwoWeeks($conn) {
 	$sql = "SELECT DATE(`login_history`.`for_date`) AS `date`, COUNT(`login_history`.`user`) AS `count` FROM `login_history` WHERE `login_history`.`for_date` BETWEEN DATE_SUB(NOW(), INTERVAL 2 WEEK) AND NOW() GROUP BY `date` ORDER BY `date`";
 	$ret = array();
