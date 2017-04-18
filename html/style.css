@@ -526,3 +526,13 @@ textarea:focus {
     margin: 0;
     padding: 0;
 }
+
+.centered {
+    margin-left: auto;
+    margin-right: auto;
+    text-align: center;
+}
+
+.absolute-centered form {
+    text-align: center;
+}

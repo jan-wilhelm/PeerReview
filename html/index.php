@@ -9,51 +9,40 @@ if ($conn->connect_error) {
 }
 include '../check_auth.php';
 
-if( !isset($_GET['course']) && !isset($_POST['course'])) {
-	header("Location: /index.php?course=1");
-	//header("Location: /courses.php");
-}
-
-if(isset($_GET['course'])) {
-	$course = $_GET['course'];
-} else {
-	$course = $_POST['course'];
-}
-
 $admin = (isset($_SESSION['user_level']) && $_SESSION['user_level'] === 1);
 
 ?>
 
 <body>
-<script type="text/javascript">
-	$(function() {
+	<script type="text/javascript">
+		$(function() {
 
-	    //create instance
-	    $('.pie-chart').easyPieChart({
-	        animate: 2000,
-	        lineWidth: 16,
-	        lineCap: "butt",
-	        barColor: "#2A3F54",
-	        scaleColor: "#aaa",
-	        trackColor: "#E3E3E3",
-	        scaleLength: 2,
-	        onStep: function(from, to, value) {
-	        	value = Math.round(value);
-	        	$(this.el).parents().find('.pie-percentage').html(value);
-	        }
-	    });
+		    //create instance
+		    $('.pie-chart').easyPieChart({
+		        animate: 2000,
+		        lineWidth: 16,
+		        lineCap: "butt",
+		        barColor: "#2A3F54",
+		        scaleColor: "#aaa",
+		        trackColor: "#E3E3E3",
+		        scaleLength: 2,
+		        onStep: function(from, to, value) {
+		        	value = Math.round(value);
+		        	$(this.el).parents().find('.pie-percentage').html(value);
+		        }
+		    });
 
-	    $('.admin-cart').each(function (index, element) {
-	    	const closeItem = $('<i class="close-item fa fa-times-circle" aria-hidden="true">');
-	    	closeItem.appendTo(element);
-	    });
-	    $('.close-item').click(function() {
-	    	$(this).parent('.admin-cart').parent("div[class*='col-']").remove();
-	    });
+		    $('.admin-cart').each(function (index, element) {
+		    	const closeItem = $('<i class="close-item fa fa-times-circle" aria-hidden="true">');
+		    	closeItem.appendTo(element);
+		    });
+		    $('.close-item').click(function() {
+		    	$(this).parent('.admin-cart').parent("div[class*='col-']").remove();
+		    });
 
-	});
-</script>
-<script type="text/javascript" src="./js/panel.js"></script>
+		});
+	</script>
+	<script type="text/javascript" src="./js/panel.js"></script>
   <div class="container-fluid">
   <div class="row">
     <?php include "../sidenav.php"; ?>
@@ -61,6 +50,45 @@ $admin = (isset($_SESSION['user_level']) && $_SESSION['user_level'] === 1);
     <div class="right-col">
 
 	<?php
+
+	// render page if no get params are set
+	if( !isset($_GET['course']) && !isset($_POST['course'])) {
+		?>
+		<div class="row equal">
+			<div class="col-12">
+				<div class="admin-cart">
+					<h3>Deine Kurse</h3>
+					<?php
+					$courses = getCoursesOfUser($conn, $_SESSION['user_id']);
+					echo '<ul class="list-group">';
+					foreach ($courses as $course) {
+						echo '<li class="list-group-item">Kurs ';
+						echo '<a href="?course='.$course.'">'.getCourseName($conn, $course).'</a>';
+						echo '</li>';
+					}
+					echo '</ul>';
+					?>
+				</div>
+			</div>
+		</div>
+		<div class="centered">
+			<button class="btn btn-primary"><a href="signup.php" class="white-text">In neuen Kurs einschreiben</a></button>
+		</div>
+        </div>
+        </div>
+        </div>
+        </body>
+        <?php
+		exit();
+	}
+
+
+	if(isset($_GET['course'])) {
+		$course = $_GET['course'];
+	} else {
+		$course = $_POST['course'];
+	}
+
 	if ($admin) {
 		?>
 		<div class="row tiles_count">

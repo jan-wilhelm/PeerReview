@@ -612,6 +612,24 @@ function getNumberOfCoursesTotal($conn) {
 	return 0;
 }
 
+function getCoursesOfUser($conn, $id) {
+	$ret = array();
+	if($stmt = $conn->prepare("select * from courses where id = ?")) {
+		$stmt->bind_param("i", $id);
+		$stmt->execute();
+		$result = $stmt->get_result();
+		if ($result->num_rows > 0) {
+			while ($row = $result->fetch_assoc()) {
+				$ret[] = $row['course'];
+			}
+		}
+		$stmt->free_result();
+	} else {
+		echo $conn->error;
+	}
+	return $ret;
+}
+
 function getTotalLogins($conn) {
 	if($stmt = $conn->prepare("select count(*) as 'count' from login_history")) {
 		$stmt->execute();

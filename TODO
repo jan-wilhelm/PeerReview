@@ -42,3 +42,6 @@ index.php:
 Deploy:
   ☐ Die "Default Weiterleitung" löschen
     ☐ Bei index.php setze ich bspw den Kurs und die Review ID mit header('...') auf einen Standardwert, damit ich beim programmieren einfacher arbeiten kann @created(17-04-12 22:08)
+
+Code:
+  ☐ review.php auskommentieren @created(17-04-18 14:24)

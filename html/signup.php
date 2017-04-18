@@ -10,32 +10,7 @@ include '../check_auth.php';
 include "../header.php";
 ?>
 <body>
-	<nav class="navbar navbar-inverse navbar-fixed-top">
-      <div class="container-fluid">
-        <div class="navbar-header">
-          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="true" aria-controls="navbar">
-            <span class="sr-only">Navigation ein-/ausblenden</span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-          </button>
-          <a class="navbar-brand" href="#">Projekt-Titel</a>
-        </div>
-        <div id="navbar" class="navbar-collapse collapse">
-          <ul class="nav navbar-nav navbar-right">
-            <li><a href="#">Dashboard</a></li>
-            <li><a href="#">Einstellungen</a></li>
-            <li><a href="#">Profil</a></li>
-            <li><a href="#">Hilfe</a></li>
-          </ul>
-          <form class="navbar-form navbar-right">
-            <input type="text" class="form-control" placeholder="Suchen...">
-          </form>
-        </div>
-      </div>
-    </nav>
-
-  	<div class="absolute-centered container">
+  	<div class="absolute-centered container text-center">
 		<?php
 		if (isset($_POST['sign-up']) && isset($_POST['course-key'])) {
 			$result = handleKeyTyped($conn, $_SESSION['user_id'], trim($_POST['course-key']));
@@ -66,9 +41,10 @@ include "../header.php";
 			}
 			echo('<div class="row"><p class="element s12 center-align '.$color.'">'.$msg.'</p></div>');
 		} else {?>
-			<form action="" method="post" class="z-depth-4 element sign-up-course-form center-align absolute-centered">
-				<h4 class="header center">Für Kurs eintragen</h4>
-				<input name="course-key" type="text" placeholder="Key" class="center">
+			<form action="" method="post" class="form-horizontal sign-up-course-form center-align absolute-centered">
+				<h3 class="center">Für Kurs eintragen</h4>
+				<span>Hier kannst du dich mit einem <code>Berechtigungsschlüssel</code> in einen Kurs eintragen. Wenn dir dieser Schlüssel nicht bekannt ist, frage bitte deinem Lehrer danach.</span>
+				<input name="course-key" type="text" placeholder="Key" class="center form-control">
 				<br/>
 				<input type="submit" value="Eintragen" class="btn waves-effect waves-light" name="sign-up">
 			</form>
