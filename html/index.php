@@ -397,21 +397,25 @@ $admin = (isset($_SESSION['user_level']) && $_SESSION['user_level'] === 1);
 		$reviewId = intval($_POST['review']);
 	}
 					?>
-
 	<div class="row">
-		<div class="col-12 jumbotron">
-			<h2 class="text-center">Kurs <a href="<?php echo "index.php?course=$course"; ?>">
-				<?php
-				echo getCourseName($conn, $course);
-				?>
-				</a>
-			</h2>
-			<h2 class="text-center">Review <a href="<?php echo "$_SERVER[REQUEST_URI]"; ?>">
-				<?php
-				echo getReviewNameForID($conn, $reviewId);
-				?>
-				</a>
-			</h2>
+		<div class="col-12">
+
+			<ol class="breadcrumb">
+				<li class="breadcrumb-item"><a href="/">Startseite</a></li>
+				<li class="breadcrumb-item">Kurs <a href="<?php echo "/?course=$course"; ?>">
+					<?php
+					echo getCourseName($conn, $course);
+					?>
+					</a>
+				</li>
+				<li class="breadcrumb-item">Review <a href="<?php echo "$_SERVER[REQUEST_URI]"; ?>">
+					<?php
+					echo getReviewNameForID($conn, $reviewId);
+					?>
+					</a>
+					</h2>
+				</li>
+			</ol>
 		</div>
 	</div>
     <div class="row equal">
