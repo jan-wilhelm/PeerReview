@@ -57,8 +57,37 @@ include '../profile_picture.php';
 									    unlink($file); // delete the file
 									}
 
-									if (move_uploaded_file($_FILES['avatarimage']['tmp_name'], $uploadfile)) {
+									// scale the image down to a maximum of 500 pixels
+									if (($result = move_uploaded_file($_FILES['avatarimage']['tmp_name'], $uploadfile))) {
 									    echo "File is valid, and was successfully uploaded.\n";
+										$orig_image = imagecreatefromfile($uploadfile);
+										$image_info = getimagesize($uploadfile); 
+										$width_orig  = $image_info[0]; // current width as found in image file
+										$height_orig = $image_info[1]; // current height as found in image file
+
+										$MAX_PIXELS = 500;
+
+										//
+										// 	w / h 	= 	wo / ho
+										//	w = wo / ho * h
+										//	h / w = ho / wo
+										//	h = ho / wo * w
+										//
+										
+										if($width_orig > $height_orig) {
+											$width = $MAX_PIXELS;
+											$height = $height_orig * $width / $width_orig;
+										} else {
+											$height = $MAX_PIXELS;
+											$width = $width_orig * $height / $height_orig;
+										}
+
+										$destination_image = imagecreatetruecolor($width, $height);
+										imagealphablending( $destination_image, false );
+										imagesavealpha( $destination_image, true );
+										imagecopyresampled($destination_image, $orig_image, 0, 0, 0, 0, $width, $height, $width_orig, $height_orig);
+										// This will just copy the new image over the original at the same filePath.
+										imagepng($destination_image, $uploadfile, 0);
 									} else {
 										echo "Es gab einen Fehler bei dem Versuch, die Datei zu ändern. Bitte kontaktiere den Administrator oder einen Lehrer.";
 									}

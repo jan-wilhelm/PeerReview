@@ -542,9 +542,9 @@ textarea:focus {
 }
 
 .profile-pic {
-    width: 100px;
+    width: 180px;
     height: auto;
-    border-radius: 50px;
+    border-radius: 90px;
 }
 
 .btn-file {
