@@ -1,0 +1,98 @@
+<?php
+include '../config.php';
+include "../review.php";
+include "../header.php";
+$conn = new mysqli($cfg['db_host'], $cfg['db_user'], $cfg['db_password'], $cfg['db_name']);
+
+if ($conn->connect_error) {
+	die("Database connection failed: " . $conn->connect_error);
+}
+include '../check_auth.php';
+include '../profile_picture.php';
+
+?>
+
+<body>
+	<script type="text/javascript" src="./js/panel.js"></script>
+	<div class="container-fluid">
+		<div class="row">
+			<?php include "../sidenav.php"; ?>
+
+			<div class="right-col">
+				<div class="row equal">
+					<div class="col-md-4">
+						<div class="admin-cart">
+							<h3>Upload</h3>
+							<?php
+							if(!empty( $_FILES )) {
+								$uploaddir = getPath($_SESSION['user_id']);
+								if(!is_dir($uploaddir)) {
+									mkdir($uploaddir, 777, true);
+								}
+
+								$uploadfile = $uploaddir . basename($_FILES['avatarimage']['name']);
+
+								$error = false;
+
+								if ($_FILES['avatarimage']['error'] !== UPLOAD_ERR_OK) {
+									$error = true;
+								}
+
+								$info = getimagesize($_FILES['avatarimage']['tmp_name']);
+								if ($info === FALSE) {
+									$error = true;
+								}
+
+								if (($info[2] !== IMAGETYPE_GIF) && ($info[2] !== IMAGETYPE_JPEG) && ($info[2] !== IMAGETYPE_PNG)) {
+									$error = true;
+								}
+
+								echo '<pre>';
+
+								if(!$error) {
+
+									$files = glob($uploaddir."/*"); // get all file names present in folder
+									foreach($files as $file){ // iterate files
+									  if(is_file($file))
+									    unlink($file); // delete the file
+									}
+
+									if (move_uploaded_file($_FILES['avatarimage']['tmp_name'], $uploadfile)) {
+									    echo "File is valid, and was successfully uploaded.\n";
+									} else {
+										echo "Es gab einen Fehler bei dem Versuch, die Datei zu ändern. Bitte kontaktiere den Administrator oder einen Lehrer.";
+									}
+								} else {
+									echo "Es dürfen nur <code>.gif</code>, <code>.jpg</code>, <code>.jpeg</code> oder <code>.png</code> Dateien hochgeladen werden.";
+								}
+
+								echo '</pre>';
+							?>
+							<?php
+							} else { ?>							
+								<form action="" method="post" enctype="multipart/form-data" class="form form-horizontal">
+									Select image to upload:
+									<input type="file" name="avatarimage" id="file-upload">
+									<input type="submit" class="btn btn-success" value="Upload Image" name="submit" id="upload-avatar">
+								</form>
+							<?php
+							}
+							?>
+						</div>
+					</div>
+					<div class="col-md-4">
+						<div class="admin-cart">
+							<h3>Test</h3>
+							<?php echo getImageTagForHTML( $_SESSION['user_id'] ); ?>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</body>
+
+</html>
+<?php
+$conn->close();
+?>
