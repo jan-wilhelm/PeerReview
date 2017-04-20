@@ -130,6 +130,7 @@ include '../check_auth.php';
 								    </div>
 								  </div>
 								  <input type="submit" id="save-settings" name="save-settings" class="btn btn-warning pull-right" value="Speichern">
+								  <input type="submit" id="cancel" name="cancel" class="btn btn-danger pull-right" value="Abbrechen">
 								</form>
 							</div>
 						</div>

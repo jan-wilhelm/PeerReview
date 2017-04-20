@@ -50,7 +50,6 @@ $admin = (isset($_SESSION['user_level']) && $_SESSION['user_level'] === 1);
 	  Peer Review
 	  </div>
 	  <ul class="nav nav-sidebar">
-	    <li><a href="#">Überblick <span class="sr-only">(aktuell)</span></a></li>
 	    <li><a href="/">Deine Kurse</a></li>
 	    <?php
 	    if(isset($_GET['course'])) {;

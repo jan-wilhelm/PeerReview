@@ -3,7 +3,6 @@
   Peer Review
   </div>
   <ul class="nav nav-sidebar">
-    <li><a href="#">Überblick <span class="sr-only">(aktuell)</span></a></li>
     <li><a href="/">Deine Kurse</a></li>
     <li><a href="settings.php">Profil</a></li>
     <li><a href="logout.php">Logout</a></li>

@@ -15,6 +15,7 @@ if ($conn->connect_error) {
 	die("Database connection failed: " . $conn->connect_error);
 }
 include '../check_auth.php';
+include '../profile_picture.php';
 
 $course = intval($_GET['course']);
 
@@ -68,11 +69,17 @@ $target = array(
   		<?php
   			if(!userExists($conn, $target['id'])) {
   				echo "<h1 class=\"red-text\">Es existiert kein Benutzer mit der ID ".$target['id']."</h1></div></div></body></html>";
-  				exit;
+  				exit();
   			}
   		?>
   		<h2 class="header">Benutzer <span class="red-text"><?php echo $target["name"]?></span> bearbeiten</h2>
+
   		<?php
+
+  		// echo the profile picture
+  		$path = getPicName($target['id']);
+  		echo '<img src="'.$path.'" alt="Avatar von ' . $target['name'] . '" class="profile-pic edit-users-pic">';
+
   		foreach (getAllReviewIDsOfUser($conn, $target['id'], $course) as $reviewId) {?>
 		<div class="panel panel-primary">
 		    <!-- heading -->

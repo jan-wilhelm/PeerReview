@@ -602,3 +602,12 @@ textarea:focus {
   overflow: hidden;
   background-color: #D1D1D1;
 }
+
+#cancel {
+    margin-right: 10px;
+}
+
+.edit-users-pic {
+    margin-bottom: 20px;
+    border-radius: 20px;
+}
