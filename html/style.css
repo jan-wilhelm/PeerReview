@@ -6,7 +6,6 @@ ul,
 }
 
 body {
-    /*padding-top: 70px;*/
     background-color: #f7f7f7;
 }
 
@@ -544,7 +543,7 @@ textarea:focus {
 .profile-pic {
     width: 180px;
     height: auto;
-    border-radius: 90px;
+    
 }
 
 .btn-file {
@@ -565,4 +564,41 @@ textarea:focus {
     background: white;
     cursor: inherit;
     display: block;
+}
+
+#create_course_group {
+    width: 30%;
+    min-width: 300px;
+    text-align: justify;
+}
+
+.settings_div {
+    width: 60%;
+    min-width: 500px;
+    margin: auto;
+}
+
+.has-success .form-control {
+    border-color: #5cb85c;
+}
+
+.has-success .col-form-label, .has-success .custom-control, .has-success .form-check-label, .has-success .form-control-feedback, .has-success .form-control-label {
+    color: #5cb85c;
+}
+
+.col-form-label {
+    margin-top: 8px;
+}
+
+#signupkey_copy {
+    cursor: pointer;
+}
+
+.divider {
+  height: 1px;
+  width:100%;
+  display:block; /* for use on default inline elements like span */
+  margin: 19px 0;
+  overflow: hidden;
+  background-color: #D1D1D1;
 }

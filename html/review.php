@@ -35,6 +35,12 @@ include "../header.php";
 <body>
     <script type="text/javascript" src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
     <script type="text/javascript" src="js/materialize.min.js"></script>
+    <script type="text/javascript" src="js/jquery.ns-autogrow.js"></script>
+    <script type="text/javascript">
+	    $(document).ready(function() {
+	    	$('textarea').css("overflow", "hidden").autogrow();
+	    });
+	</script>
     <div class="navbar-fixed">
 		<nav>
 		    <div class="nav-wrapper grey darken-3">

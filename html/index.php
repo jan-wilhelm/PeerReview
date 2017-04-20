@@ -45,7 +45,24 @@ $admin = (isset($_SESSION['user_level']) && $_SESSION['user_level'] === 1);
 	<script type="text/javascript" src="./js/panel.js"></script>
   <div class="container-fluid">
   <div class="row">
-    <?php include "../sidenav.php"; ?>
+    <div class="col-md-3 sidebar">
+	  <div class="brand">
+	  Peer Review
+	  </div>
+	  <ul class="nav nav-sidebar">
+	    <li><a href="#">Überblick <span class="sr-only">(aktuell)</span></a></li>
+	    <li><a href="/">Deine Kurse</a></li>
+	    <?php
+	    if(isset($_GET['course'])) {;
+	    ?>
+	    	<li><a href="coursesettings.php?course=<?php echo $_GET['course']; ?>">Kurseinstellungen</a></li>
+	    <?php
+		}
+	    ?>
+	    <li><a href="settings.php">Profil</a></li>
+	    <li><a href="logout.php">Logout</a></li>
+	  </ul>
+	</div>
 
     <div class="right-col">
 
@@ -55,7 +72,7 @@ $admin = (isset($_SESSION['user_level']) && $_SESSION['user_level'] === 1);
 	if( !isset($_GET['course']) && !isset($_POST['course'])) {
 		?>
 		<div class="row equal">
-			<div class="col-12">
+			<div class="col-md-12">
 				<div class="admin-cart">
 					<h3>Deine Kurse</h3>
 					<?php
@@ -73,6 +90,22 @@ $admin = (isset($_SESSION['user_level']) && $_SESSION['user_level'] === 1);
 		</div>
 		<div class="centered">
 			<button class="btn btn-primary"><a href="signup.php" class="white-text">In neuen Kurs einschreiben</a></button>
+		</div>
+		<div class="row equal">
+			<div class="col-md-12">
+				<div class="admin-cart">
+					<h3>Neuen Kurs erstellen</h3>
+					<div id="create_course_group" class="centered">
+						<span>Hier kannst du einen neuen Kurs erstellen. Bitte wählen den Namen des Kurses sorgfältig!<br>Die Schüler, die diesem Kurs beitreten sollen, benötigen dafür einen <code>SignUp-Key</code>. Diesen findest du in der Seite dines Kurses unter <mark>Kurseinstellungen</mark>.Gib ihnen diesen 6-stelligen Code, damit diese ihn unter <a href="signup.php">diesem Link</a> benutzen können.</span>
+					    <div class="input-group">
+					    	<input type="text" class="form-control" placeholder="Name...">
+					    	<span class="input-group-btn">
+					    		<button class="btn btn-success" type="button">Erstellen!</button>
+					    	</span>
+					    </div>
+					</div>
+				</div>
+			</div>
 		</div>
         </div>
         </div>
