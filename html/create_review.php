@@ -1,11 +1,14 @@
 <?php 
 
 include '../config.php';
-include "../review.php";
-include '../check_auth.php';
+
+$filePath = $IS_LOCAL ? "../" : "../../info";
+
+include $filePath. 'review.php';
 
 if (!isset($_SESSION['user_level']) || $_SESSION['user_level'] > 1) {
 	http_response_code(401);
+	header("Location: " . $ROOT_SITE);
 	exit;
 }
 

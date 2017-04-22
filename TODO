@@ -1,47 +1,61 @@
 index.php:
   ✘ Das "Deine Reviews" muss mit neer For-Schleife alle Reviews (mit ihrer ID) durchgehen, und pro Review alle für diese ID erstellten (3) anderen Reviews ausgeben. @created(17-04-07 15:37) @cancelled (17-04-08 17:11)
-    Gecancelled, weil ich mich für ein anderes System entschieden habe, dessen UI schöner ist.
-    Ab nun braucht man in der URL ein _GET Parameter "review", welcher die ReviewID eines Review repräsentiert. Mit dieser ID werden alle benötigten Daten aus der Datenbank abgefragt und wie gehabt ausgegeben.
-    ✔ Bug: Wenn noch kein Review für den Kurs erstellt wurde, wird einfach ein leeres Panel angezeigt. @done (17-04-08 17:15)
-      Es kommt nun eine "Warnung" mit "alert alter-warning"
+	Gecancelled, weil ich mich für ein anderes System entschieden habe, dessen UI schöner ist.
+	Ab nun braucht man in der URL ein _GET Parameter "review", welcher die ReviewID eines Review repräsentiert. Mit dieser ID werden alle benötigten Daten aus der Datenbank abgefragt und wie gehabt ausgegeben.
+	✔ Bug: Wenn noch kein Review für den Kurs erstellt wurde, wird einfach ein leeres Panel angezeigt. @done (17-04-08 17:15)
+	  Es kommt nun eine "Warnung" mit "alert alter-warning"
 
   ✘ Ein neues Mockup erstellen um zu überlegen, wie ich die beliebige Menge an Reviews passend darstellen kann, sodass es sowohl für große als auch kleine Anzahlen an Reviews / Limits gut aussieht. @cancelled (17-04-12 22:05)
-    Cancelled, da ich den Aufbau der gesamten Seite geändert habe. Es gibt nun Pro Kurs und Pro ReviewID eine einzelne Seite. Dafür musste ich einen zweiten GET Parameter (review) in Kauf nehmen.
+	Cancelled, da ich den Aufbau der gesamten Seite geändert habe. Es gibt nun Pro Kurs und Pro ReviewID eine einzelne Seite. Dafür musste ich einen zweiten GET Parameter (review) in Kauf nehmen.
 
   ✔ Statistiken: @done (17-04-13 15:09)
-    ✔ XXXX Users (select count(*) as 'count' from users) @created(17-04-08 12:31) @done (17-04-08 12:35)
-      ✔ 2 Funktionen: @done (17-04-08 12:35)
-        getNumberOfUsersInCourse holt die Anzahl aller Benutzer in dem angegebenen Kurs,
-        getNumberOfUsersTotal holt die Anzahl aller in der Datenbank eingetragenen Benutzer
-    ✔ Total logins @done (17-04-08 12:48)
-    ✔ Teste die "logins pro letztem Monat" funktion: @done (17-04-08 12:56)
-      Test funktion für die Testdaten 
-      for ($i=0; $i < 50; $i++) { 
-        if($stmt = $conn->prepare("insert into login_history (for_date, `user`) VALUES ( (DATE_SUB( NOW(), INTERVAL ? DAY)), 3)")) {
-          $stmt->bind_param("i", $i);
-          $stmt->execute();
-          unset($stmt);
-        }
-      }
-    ✔ Weitere Statistiken überlegen @created(17-04-12 22:09) @done (17-04-13 15:09)
-  ☐ Anstatt "no get course set" eine richtige Seite anzeigen:
-    Ich habe erstmal fürs Programmieren eine Weiterleitung an /?course=1 gemacht, da ich alle Funktionen eh nur an diesem Kurs teste.
-      Siehe Deploy Weiterleitungen
+	✔ XXXX Users (select count(*) as 'count' from users) @created(17-04-08 12:31) @done (17-04-08 12:35)
+	  ✔ 2 Funktionen: @done (17-04-08 12:35)
+		getNumberOfUsersInCourse holt die Anzahl aller Benutzer in dem angegebenen Kurs,
+		getNumberOfUsersTotal holt die Anzahl aller in der Datenbank eingetragenen Benutzer
+	✔ Total logins @done (17-04-08 12:48)
+	✔ Teste die "logins pro letztem Monat" funktion: @done (17-04-08 12:56)
+	  Test funktion für die Testdaten 
+	  for ($i=0; $i < 50; $i++) { 
+		if($stmt = $conn->prepare("insert into login_history (for_date, `user`) VALUES ( (DATE_SUB( NOW(), INTERVAL ? DAY)), 3)")) {
+		  $stmt->bind_param("i", $i);
+		  $stmt->execute();
+		  unset($stmt);
+		}
+	  }
+	✔ Weitere Statistiken überlegen @created(17-04-12 22:09) @done (17-04-13 15:09)
+  ✔ Anstatt "no get course set" eine richtige Seite anzeigen: @done (17-04-22 13:31)
+	Ich habe erstmal fürs Programmieren eine Weiterleitung an /?course=1 gemacht, da ich alle Funktionen eh nur an diesem Kurs teste.
+	  Siehe Deploy Weiterleitungen
 
-  ☐ UI:
-    ✔ Das "Review verfassen" Panel richtig anzeigen lassen @done (17-04-08 17:22)
-      ✔ Von materialize auf Bootstrap migrieren @done (17-04-08 17:22)
-        Ich habe mich entschieden, keine "collapsible" zu nutzen, sondern die Daten wie schon bei dem "Edit users" panel einfach alle untereinander in einer Liste ausgeben zu lassen.
-    ✔ Wenn course und review gesetzt sind, muss ein jumbotron angezeigt werden @created(17-04-13 15:10) @done (17-04-13 15:16)
-    ☐ Erstelle panel für den Signin Key, damit der Lehrer ihn verteilen kann
+  ✔ UI: @done (17-04-22 13:31)
+	✔ Das "Review verfassen" Panel richtig anzeigen lassen @done (17-04-08 17:22)
+	  ✔ Von materialize auf Bootstrap migrieren @done (17-04-08 17:22)
+		Ich habe mich entschieden, keine "collapsible" zu nutzen, sondern die Daten wie schon bei dem "Edit users" panel einfach alle untereinander in einer Liste ausgeben zu lassen.
+	✔ Wenn course und review gesetzt sind, muss ein jumbotron angezeigt werden @created(17-04-13 15:10) @done (17-04-13 15:16)
+	✔ Erstelle panel für den Signin Key, damit der Lehrer ihn verteilen kann @done (17-04-22 13:30)
+		Panel findet man in coursesettings.php
 
-  ☐ Aufbau:
-    ✔ Die Panels "Benutzer bearbeiten", "Neuen Nutzer erstellen" und "Neues Review erstellen" sollte ich am besten auf die index Seite verschieben, die auch angezeigt wird, wenn keine ReviewID gesetzt ist. @created(17-04-12 22:16) @done (17-04-13 15:09)
-    ✔ Neues Mockup, wo die beschriebenen Änderunge dargestellt sind @created(17-04-12 22:16) @done (17-04-13 15:09)
+  ✔ Aufbau: @done (17-04-22 13:31)
+	✔ Die Panels "Benutzer bearbeiten", "Neuen Nutzer erstellen" und "Neues Review erstellen" sollte ich am besten auf die index Seite verschieben, die auch angezeigt wird, wenn keine ReviewID gesetzt ist. @created(17-04-12 22:16) @done (17-04-13 15:09)
+	✔ Neues Mockup, wo die beschriebenen Änderunge dargestellt sind @created(17-04-12 22:16) @done (17-04-13 15:09)
 
 Deploy:
-  ☐ Die "Default Weiterleitung" löschen
-    ☐ Bei index.php setze ich bspw den Kurs und die Review ID mit header('...') auf einen Standardwert, damit ich beim programmieren einfacher arbeiten kann @created(17-04-12 22:08)
+  ✔ Die "Default Weiterleitung" löschen @done (17-04-22 13:08)
+	✔ Bei index.php setze ich bspw den Kurs und die Review ID mit header('...') auf einen Standardwert, damit ich beim programmieren einfacher arbeiten kann @created(17-04-12 22:08) @done (17-04-22 13:08)
+  ✔ Pfade anpassen: @done (17-04-22 13:30)
+	✔ logout.php @done (17-04-22 13:30)
+	✔ user.php @done (17-04-22 13:30)
+	✔ review.php @done (17-04-22 13:28)
+	✔ signup.php @done (17-04-22 13:27)
+	✔ settings.php @done (17-04-22 13:26)
+	✔ index.php @done (17-04-22 13:23)
+	✔ login/index.php @done (17-04-22 13:21)
+	✔ check_auth. @done (17-04-22 13:23)
+	✔ coursesettings.php @done (17-04-22 13:20)
+	✔ create_review.php @done (17-04-22 13:20)
+
+	✔ Testen auf online @done (17-04-22 13:41)
 
 Code:
   ☐ review.php auskommentieren @created(17-04-18 14:24)

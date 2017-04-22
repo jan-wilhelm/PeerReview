@@ -1,16 +1,21 @@
 <?php
 include '../config.php';
-include "../review.php";
-include "../header.php";
+
+$filePath = $IS_LOCAL ? "../" : "../../info";
+
+include $filePath. 'review.php';
+
+include $filePath. "header.php";
+
 $conn = new mysqli($cfg['db_host'], $cfg['db_user'], $cfg['db_password'], $cfg['db_name']);
 
 if ($conn->connect_error) {
 	die("Database connection failed: " . $conn->connect_error);
 }
-include '../check_auth.php';
 
 $admin = (isset($_SESSION['user_level']) && $_SESSION['user_level'] === 1);
 
+include $filePath. 'check_auth.php';
 ?>
 
 <body>
@@ -52,7 +57,7 @@ $admin = (isset($_SESSION['user_level']) && $_SESSION['user_level'] === 1);
 	  <ul class="nav nav-sidebar">
 	    <li><a href="/">Deine Kurse</a></li>
 	    <?php
-	    if(isset($_GET['course'])) {;
+	    if(isset($_GET['course']) && $admin) {;
 	    ?>
 	    	<li><a href="coursesettings.php?course=<?php echo $_GET['course']; ?>">Kurseinstellungen</a></li>
 	    <?php
@@ -90,22 +95,28 @@ $admin = (isset($_SESSION['user_level']) && $_SESSION['user_level'] === 1);
 		<div class="centered">
 			<button class="btn btn-primary"><a href="signup.php" class="white-text">In neuen Kurs einschreiben</a></button>
 		</div>
-		<div class="row equal">
-			<div class="col-md-12">
-				<div class="admin-cart">
-					<h3>Neuen Kurs erstellen</h3>
-					<div id="create_course_group" class="centered">
-						<span>Hier kannst du einen neuen Kurs erstellen. Bitte wählen den Namen des Kurses sorgfältig!<br>Die Schüler, die diesem Kurs beitreten sollen, benötigen dafür einen <code>SignUp-Key</code>. Diesen findest du in der Seite dines Kurses unter <mark>Kurseinstellungen</mark>.Gib ihnen diesen 6-stelligen Code, damit diese ihn unter <a href="signup.php">diesem Link</a> benutzen können.</span>
-					    <div class="input-group">
-					    	<input type="text" class="form-control" placeholder="Name...">
-					    	<span class="input-group-btn">
-					    		<button class="btn btn-success" type="button">Erstellen!</button>
-					    	</span>
-					    </div>
+		<?php
+		if($admin) {
+			?>
+			<div class="row equal">
+				<div class="col-md-12">
+					<div class="admin-cart">
+						<h3>Neuen Kurs erstellen</h3>
+						<div id="create_course_group" class="centered">
+							<span>Hier kannst du einen neuen Kurs erstellen. Bitte wählen den Namen des Kurses sorgfältig!<br>Die Schüler, die diesem Kurs beitreten sollen, benötigen dafür einen <code>SignUp-Key</code>. Diesen findest du in der Seite dines Kurses unter <mark>Kurseinstellungen</mark>.Gib ihnen diesen 6-stelligen Code, damit diese ihn unter <a href="signup.php">diesem Link</a> benutzen können.</span>
+						    <div class="input-group">
+						    	<input type="text" class="form-control" placeholder="Name...">
+						    	<span class="input-group-btn">
+						    		<button class="btn btn-success" type="button">Erstellen!</button>
+						    	</span>
+						    </div>
+						</div>
 					</div>
 				</div>
 			</div>
-		</div>
+			<?php
+		}
+		?>
         </div>
         </div>
         </div>
@@ -265,7 +276,7 @@ $admin = (isset($_SESSION['user_level']) && $_SESSION['user_level'] === 1);
 								echo "<span>Fülle bitte das gesamte Formular aus!</span>";
 							} else {
 								$stmt          = $conn->prepare("SELECT name FROM users WHERE name = ?");
-								$new_user_name = $_POST['username'];
+								$new_user_name = htmlspecialchars(trim($_POST['username']));
 								$stmt->bind_param("s", $new_user_name);
 								$stmt->execute();
 								$result = $stmt->get_result();
@@ -280,7 +291,7 @@ $admin = (isset($_SESSION['user_level']) && $_SESSION['user_level'] === 1);
 									$new_user_pass  = $_POST['password'];
 									$stmt->bind_param("ss", $new_user_name, $new_user_pass);
 									$stmt->execute();
-									echo "<span>Benutzer <i>$new_user_name</i> wurde erstellt!</span>";
+									echo "<span class=\"alert alert-success\">Benutzer <i>$new_user_name</i> wurde erstellt!</span>";
 								} else {
 									echo "<span class=\"alert alert-danger\"><strong>Fehler</strong>: Ein Benutzer mit dem Namen $new_user_name existiert bereits.</span>";
 								}
@@ -528,7 +539,7 @@ $admin = (isset($_SESSION['user_level']) && $_SESSION['user_level'] === 1);
 		
 		<?php
 		if(isset($_POST['codes-set']) && isset($_POST['limit'])) {
-	    	if(!setTargets($conn, $course, intval($_POST['limit']), $reviewId)) {    // TODO FIX THIS, sollte nicht $reviewId sein. Konzept überlegen!
+	    	if(!setTargets($conn, $course, intval($_POST['limit']), $reviewId)) {
 	    		echo "<p class=\" red-text darken-4 \">Die Codes konnten nicht verteilt werden. <br />Vielleicht wurden nicht genügend (4) Benutzer eingetragen?</p>";
 	    	} else {
 	    		echo "<p class=\" green-text lighten-2 \">Die Codes wurden erfolgreich verteilt.<br />Jeder Schüler kann nun bewerten!</p>";

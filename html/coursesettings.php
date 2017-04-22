@@ -1,20 +1,29 @@
 <?php
+
 include '../config.php';
-include "../review.php";
+
+$filePath = $IS_LOCAL ? "../" : "../../info";
+
+include $filePath. 'review.php';
 
 $admin = (isset($_SESSION['user_level']) && $_SESSION['user_level'] === 1);
 
 if(!isset($_GET['course']) || !$admin) {
-	header("Location: /");
+	header("Location: " . $ROOT_SITE);
 	exit();
 }
-include "../header.php";
+
+
+include $filePath. "header.php";
+
 $conn = new mysqli($cfg['db_host'], $cfg['db_user'], $cfg['db_password'], $cfg['db_name']);
 
 if ($conn->connect_error) {
 	die("Database connection failed: " . $conn->connect_error);
 }
-include '../check_auth.php';
+
+include $filePath. 'check_auth.php';
+
 
 ?>
 

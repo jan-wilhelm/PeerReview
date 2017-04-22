@@ -16,4 +16,8 @@ $cfg['db_user'] = 'root';
 // Das Password der Datenbank
 $cfg['db_password'] = 'password';
 
+$IS_LOCAL = true;
+
+$ROOT_SITE = "/";
+
 ?>

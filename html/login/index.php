@@ -16,7 +16,8 @@
 </head>
 <?php
 	require '../../config.php';
-	// echo password_hash("password", PASSWORD_DEFAULT)."\n";
+
+
 	if (isset($_POST['login-submit'])) {
 		if (isset($_POST['name']) && isset($_POST['pass'])) {
 			$name = $_POST['name'];
@@ -57,7 +58,7 @@
 							unset($stmt);
 						}
 						// Once the sessions variables have been set, redirect them to the landing page / home page.
-						header('Location: /');
+						header('Location: '. $ROOT_SITE);
 						exit;
 					} else {
 						$error = "Ungültiger Name oder Password. Bitte nochmal versuchen!";

@@ -1,15 +1,19 @@
 <?php
 
 include '../config.php';
-include "../review.php";
+
+$filePath = $IS_LOCAL ? "../" : "../../info";
+
+include $filePath. "review.php";
+
 if(!isset($_GET['id']) || !isset($_GET['course']) || !isset($_GET['review'])) {
-	header("Location: /");
+	header("Location: " . $ROOT_SITE);
 }
 $conn = new mysqli($cfg['db_host'], $cfg['db_user'], $cfg['db_password'], $cfg['db_name']);
 if ($conn->connect_error) {
 	die("Database connection failed: " . $conn->connect_error);
 }
-include '../check_auth.php';
+include $filePath. 'check_auth.php';
 
 $course = $_GET['course'];
 $reviewId = $_GET['review'];
@@ -20,8 +24,9 @@ foreach (getReviewTargets($conn, $_SESSION['user_id'], $course, $reviewId) as $t
 		$contains = true;
 	}
 }
+
 if (!$contains) {
-	header("Location: /info");
+	header("Location: " . $ROOT_SITE);
 	exit;
 }
 
@@ -30,7 +35,8 @@ $target = array(
 	"name" => getName($conn,$_GET['id']),
 	"code" => getCode($conn,$_GET['id'], $course, $reviewId)
 );
-include "../header.php";
+
+include $filePath. "header.php";
 ?>
 <body>
     <script type="text/javascript" src="https://code.jquery.com/jquery-2.1.1.min.js"></script>

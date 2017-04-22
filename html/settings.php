@@ -1,14 +1,20 @@
 <?php
 include '../config.php';
-include "../review.php";
-include "../header.php";
+
+$filePath = $IS_LOCAL ? "../" : "../../info";
+
+include $filePath. "review.php";
+
+include $filePath. "header.php";
 $conn = new mysqli($cfg['db_host'], $cfg['db_user'], $cfg['db_password'], $cfg['db_name']);
 
 if ($conn->connect_error) {
 	die("Database connection failed: " . $conn->connect_error);
 }
-include '../check_auth.php';
-include '../profile_picture.php';
+
+
+include $filePath. 'check_auth.php';
+include $filePath. 'profile_picture.php';
 
 ?>
 

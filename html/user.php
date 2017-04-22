@@ -1,12 +1,17 @@
 <?php
 
 include '../config.php';
-include "../review.php";
+
+$filePath = $IS_LOCAL ? "../" : "../../info";
+
+include $filePath. "review.php";
+
 if(!isset($_GET['id']) || !isset($_GET['course'])) {
-	header("Location: /info");
+	header("Location: " . $ROOT_SITE);
 }
+
 if (!isset($_SESSION['user_level']) || $_SESSION['user_level'] > 1) {
-	header("Location: /info");
+	header("Location: " . $ROOT_SITE);
 	exit;
 }
 $conn = new mysqli($cfg['db_host'], $cfg['db_user'], $cfg['db_password'], $cfg['db_name']);
@@ -14,8 +19,8 @@ $conn = new mysqli($cfg['db_host'], $cfg['db_user'], $cfg['db_password'], $cfg['
 if ($conn->connect_error) {
 	die("Database connection failed: " . $conn->connect_error);
 }
-include '../check_auth.php';
-include '../profile_picture.php';
+include $filePath. 'check_auth.php';
+include $filePath. 'profile_picture.php';
 
 $course = intval($_GET['course']);
 
