@@ -1,15 +1,22 @@
 <?php
 
 	function getPath($user) {
-		return __DIR__ . "/html/assets/users/".$user."/avatar/";
+		if($IS_LOCAL) {
+			return __DIR__ . "/html/assets/users/".$user."/avatar/";
+		} else {
+			$p = explode("/", __DIR__);
+			array_pop($p);
+			$p = implode("/", $p);
+			return $p . "/html/info/assets/users/".$user."/avatar/";
+		}
 	}
 
 	function getPicName($user) {
 		$path = getPath($user);
 		if(is_dir( $path )) {
-			return "/assets/users/" . $user . "/avatar/" . scandir($path)[2];
+			return $ROOT_SITE . "assets/users/" . $user . "/avatar/" . scandir($path)[2];
 		}
-		return "/assets/avatar.png";
+		return $ROOT_SITE . "assets/avatar.png";
 	}
 
 	function getImageTagForHTML($user) {
