@@ -2,7 +2,7 @@
 
 include '../config.php';
 
-$filePath = $IS_LOCAL ? "../" : "../../info";
+$filePath = $IS_LOCAL ? "../" : "../../info/";
 
 include $filePath. "review.php";
 

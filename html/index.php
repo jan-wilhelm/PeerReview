@@ -1,8 +1,7 @@
 <?php
 include '../config.php';
 
-$filePath = $IS_LOCAL ? "../" : "../../info";
-
+$filePath = $IS_LOCAL ? "../" : "../../info/";
 include $filePath. 'review.php';
 
 include $filePath. "header.php";
@@ -55,7 +54,7 @@ include $filePath. 'check_auth.php';
 	  Peer Review
 	  </div>
 	  <ul class="nav nav-sidebar">
-	    <li><a href="/">Deine Kurse</a></li>
+    	<li><a href="<?php echo $ROOT_SITE; ?>">Deine Kurse</a></li>
 	    <?php
 	    if(isset($_GET['course']) && $admin) {;
 	    ?>
@@ -104,12 +103,42 @@ include $filePath. 'check_auth.php';
 						<h3>Neuen Kurs erstellen</h3>
 						<div id="create_course_group" class="centered">
 							<span>Hier kannst du einen neuen Kurs erstellen. Bitte wählen den Namen des Kurses sorgfältig!<br>Die Schüler, die diesem Kurs beitreten sollen, benötigen dafür einen <code>SignUp-Key</code>. Diesen findest du in der Seite dines Kurses unter <mark>Kurseinstellungen</mark>.Gib ihnen diesen 6-stelligen Code, damit diese ihn unter <a href="signup.php">diesem Link</a> benutzen können.</span>
-						    <div class="input-group">
-						    	<input type="text" class="form-control" placeholder="Name...">
-						    	<span class="input-group-btn">
-						    		<button class="btn btn-success" type="button">Erstellen!</button>
-						    	</span>
-						    </div>
+							<?php
+							if(isset($_POST['create-course'])) {
+								$error = 0;
+								$newId = -1;
+								if(!isset($_POST['course-name'])) {
+									$error = 1;
+								} else {
+									$courseName = htmlspecialchars(trim($_POST['course-name']));
+									if (empty($courseName)) {
+										$error = 1;
+									} else {
+										$key = "";
+										do {
+											$key = randomPassword(6);
+										} while (getCourseByKey($conn, $key) != 0);
+
+										createCourse($conn, $key, $courseName);
+										$newId = getCourseByKey($conn, $key);
+										addUserToCourse($conn, $_SESSION['user_id'], $newId);
+									}
+								}
+								if($error != 0) {
+									echo '<span class="alert alert-danger">Bitte gib einen gültigen Namen für den Kurs ein!</span>';
+								} else {
+									echo '<span class="alert alert-success">Du hast erfolgreich den Kurs <i>' . $courseName . '</i> erstellt, und wurdest ihm hinzugefügt.<br>Du möchtest ihn direkt bearbeiten? Klicke <a href="' . $ROOT_SITE . "?course=$newId" .'">hier</a>!</span>';
+								}
+							}
+							?>
+					    	<form class="form-horizontal" method="post" action="">
+							    <div class="input-group">
+								    	<input type="text" class="form-control" placeholder="Name..." name="course-name">
+								    	<span class="input-group-btn">
+								    		<button class="btn btn-success" type="submit" name="create-course">Erstellen!</button>
+								    	</span>
+							    </div>
+					    	</form>
 						</div>
 					</div>
 				</div>
@@ -298,8 +327,8 @@ include $filePath. 'check_auth.php';
 							}
 							}?>
 						<form action="" method="post" class="form-horizontal">
-							<input name="username" type="text" placeholder="Username">
-							<input name="password" type="text" placeholder="Password" value="<?php echo randomPassword(8); ?>">
+							<input class="form-control" name="username" type="text" placeholder="Username">
+							<input class="form-control" name="password" type="text" placeholder="Password" value="<?php echo randomPassword(8); ?>">
 							<button class="btn btn-primary" name="user-create">Benutzer erstellen</button>
 						</form>
 					</div>

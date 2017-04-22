@@ -2,7 +2,7 @@
 
 include '../config.php';
 
-$filePath = $IS_LOCAL ? "../" : "../../info";
+$filePath = $IS_LOCAL ? "../" : "../../info/";
 
 include $filePath. 'review.php';
 
@@ -71,7 +71,7 @@ include $filePath. 'check_auth.php';
 	</script>
 	<div class="container-fluid">
 		<div class="row">
-			<?php include "../sidenav.php";
+			<?php include $filePath . "sidenav.php";
 			$course = $_GET['course'];
 			?>
 	
@@ -110,8 +110,8 @@ include $filePath. 'check_auth.php';
 									$message = "";
 									$class = "alert-danger";
 
-									if(courseExists($conn, $newName)) {
-										$message = "Es existiert bereits ein Kurs mit dem Namen <i>$newName </i>.";
+									if(empty($newName)) {
+										$message = "Gib bitte einen gültigen Namen ein!";
 									} else {
 										setCourseName($conn, $course, $newName);
 										$message = "Der Kurs wurde erfolgreich in <i>$newName </i>umbenannt.";

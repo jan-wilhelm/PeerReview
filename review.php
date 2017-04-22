@@ -441,29 +441,6 @@ function getKeyOfCourse($conn, $id) {
 
 
 /**
- * Checks if a course with the given name exists
- * @param  mysqli $conn     The MySQL connection
- * @param  int $courseName The name of the course
- * @return boolean           True if the course exists, false otherwise
- */
-function courseExists($conn, $courseName) {
-	if($stmt = $conn->prepare("SELECT 1 FROM course_data WHERE name = ?")) {
-		$stmt->bind_param("s", $courseName);
-		$stmt->execute();
-		$result = $stmt->get_result();
-		if ($result->num_rows > 0) {
-			if ($row = $result->fetch_assoc()) {
-				return true;
-			}
-		}
-		$stmt->free_result();
-	} else {
-		echo $conn->error;
-	}
-	return false;
-}
-
-/**
  * Get the name of a course by its course_id
  * @param  mysqli $conn   The mysql connection
  * @param  int $course The id of the course
@@ -545,6 +522,16 @@ function addReviewScheme($conn, $course, $review) {
 		$name = $review->name;
 		$id = getNewReviewId($conn);
 		$stmt->bind_param("issi", $course, $encoded, $name, $id);
+		$stmt->execute();
+		unset($stmt);
+	}
+}
+
+function createCourse($conn, $courseName, $key) {
+	setUTF8($conn);
+	if($stmt = $conn->prepare("INSERT INTO course_data (signin_key, name) VALUES(?,?)")) {
+		$encoded = json_encode($review);
+		$stmt->bind_param("ss", $courseName, $key);
 		$stmt->execute();
 		unset($stmt);
 	}
