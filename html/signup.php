@@ -35,7 +35,7 @@ include $filePath. "header.php";
 				default:
 					$courseId = getCourseByKey($conn, trim($_POST['course-key']));
 					$course = getCourseName($conn, $courseId);
-					$msg = 'Du wurdest in den Kurs '.$course.' erfolgreich eingetragen!<br/>Gehe hier zu der <a href="/?course='.$courseId.'">Seite des Kurses</a>';
+					$msg = 'Du wurdest in den Kurs '.$course.' erfolgreich eingetragen!<br/>Gehe hier zu der <a href="' . $ROOT_SITE . '?course='.$courseId.'">Seite des Kurses</a>';
 					break;
 			}
 			$color = "red-text lighten-1";

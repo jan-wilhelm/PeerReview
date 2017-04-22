@@ -536,7 +536,7 @@ textarea:focus {
     text-align: center;
 }
 
-.nav li a:hover {
+.nav li a:hover, .nav li a:focus {
     background-color: #3F8196;
 }
 

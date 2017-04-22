@@ -530,7 +530,6 @@ function addReviewScheme($conn, $course, $review) {
 function createCourse($conn, $courseName, $key) {
 	setUTF8($conn);
 	if($stmt = $conn->prepare("INSERT INTO course_data (signin_key, name) VALUES(?,?)")) {
-		$encoded = json_encode($review);
 		$stmt->bind_param("ss", $courseName, $key);
 		$stmt->execute();
 		unset($stmt);

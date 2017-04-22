@@ -230,7 +230,7 @@ include $filePath. 'check_auth.php';
 			<div class="col-12">
 
 				<ol class="breadcrumb">
-				  <li class="breadcrumb-item"><a href="/">Startseite</a></li>
+				  <li class="breadcrumb-item"><a href="<?php echo $ROOT_SITE; ?>">Startseite</a></li>
 				  <li class="breadcrumb-item">Kurs <a href="<?php echo "http://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]"; ?>">
 					<?php
 					echo getCourseName($conn, $course);
@@ -473,8 +473,8 @@ include $filePath. 'check_auth.php';
 		<div class="col-12">
 
 			<ol class="breadcrumb">
-				<li class="breadcrumb-item"><a href="/">Startseite</a></li>
-				<li class="breadcrumb-item">Kurs <a href="<?php echo "/?course=$course"; ?>">
+				  <li class="breadcrumb-item"><a href="<?php echo $ROOT_SITE; ?>">Startseite</a></li>
+				<li class="breadcrumb-item">Kurs <a href="<?php echo $ROOT_SITE . "?course=$course"; ?>">
 					<?php
 					echo getCourseName($conn, $course);
 					?>
@@ -570,6 +570,7 @@ include $filePath. 'check_auth.php';
 		if(isset($_POST['codes-set']) && isset($_POST['limit'])) {
 	    	if(!setTargets($conn, $course, intval($_POST['limit']), $reviewId)) {
 	    		echo "<p class=\" red-text darken-4 \">Die Codes konnten nicht verteilt werden. <br />Vielleicht wurden nicht genügend (4) Benutzer eingetragen?</p>";
+	    		http_response_code(500);
 	    	} else {
 	    		echo "<p class=\" green-text lighten-2 \">Die Codes wurden erfolgreich verteilt.<br />Jeder Schüler kann nun bewerten!</p>";
 	    	}
@@ -596,6 +597,7 @@ include $filePath. 'check_auth.php';
 			        },
 			        error: function(error) {
 			           	toastr.error(error, 'Fehler!');
+	           			toastr.error("Vielleicht wurden nicht genügend Schüler (" + limit + ") in den Kurs eingetragen");
 			        }
 		        });
 		    });

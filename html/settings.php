@@ -22,7 +22,7 @@ include $filePath. 'profile_picture.php';
 	<script type="text/javascript" src="./js/panel.js"></script>
 	<div class="container-fluid">
 		<div class="row">
-			<?php include "../sidenav.php"; ?>
+			<?php include $filePath . "sidenav.php"; ?>
 
 			<div class="right-col">
 				<div class="row equal">
@@ -31,7 +31,8 @@ include $filePath. 'profile_picture.php';
 							<h3>Upload</h3>
 							<?php
 							if(!empty( $_FILES )) {
-								$uploaddir = getPath($_SESSION['user_id']);
+								$uploaddir = getPath($_SESSION['user_id'], $IS_LOCAL);
+
 								if(!is_dir($uploaddir)) {
 									mkdir($uploaddir, 777, true);
 								}
@@ -64,7 +65,8 @@ include $filePath. 'profile_picture.php';
 									}
 
 									// scale the image down to a maximum of 500 pixels
-									if (($result = move_uploaded_file($_FILES['avatarimage']['tmp_name'], $uploadfile))) {
+									$result = move_uploaded_file( $_FILES['avatarimage']['tmp_name'], $uploadfile );
+									if ($result) {
 									    echo "File is valid, and was successfully uploaded.\n";
 										$orig_image = imagecreatefromfile($uploadfile);
 										$image_info = getimagesize($uploadfile); 
@@ -95,7 +97,7 @@ include $filePath. 'profile_picture.php';
 										// This will just copy the new image over the original at the same filePath.
 										imagepng($destination_image, $uploadfile, 0);
 									} else {
-										echo "Es gab einen Fehler bei dem Versuch, die Datei zu ändern. Bitte kontaktiere den Administrator oder einen Lehrer.";
+										echo "Es gab einen Fehler bei dem Versuch, die Datei zu ändern. Bitte kontaktiere den Administrator oder einen Lehrer.<br>";
 									}
 								} else {
 									echo "Es dürfen nur <code>.gif</code>, <code>.jpg</code>, <code>.jpeg</code> oder <code>.png</code> Dateien hochgeladen werden.";
@@ -118,7 +120,8 @@ include $filePath. 'profile_picture.php';
 					<div class="col-md-4">
 						<div class="admin-cart">
 							<h3>Test</h3>
-							<?php echo getImageTagForHTML( $_SESSION['user_id'] ); ?>
+							<?php
+							echo getImageTagForHTML( $_SESSION['user_id'], $IS_LOCAL, $ROOT_SITE); ?>
 						</div>
 					</div>
 				</div>

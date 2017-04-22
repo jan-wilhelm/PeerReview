@@ -1,7 +1,8 @@
 <?php
 
-	function getPath($user) {
-		if($IS_LOCAL) {
+	function getPath($user, $local) {
+
+		if($local) {
 			return __DIR__ . "/html/assets/users/".$user."/avatar/";
 		} else {
 			$p = explode("/", __DIR__);
@@ -11,16 +12,16 @@
 		}
 	}
 
-	function getPicName($user) {
-		$path = getPath($user);
+	function getPicName($user, $local, $root) {
+		$path = getPath($user, $local);
 		if(is_dir( $path )) {
-			return $ROOT_SITE . "assets/users/" . $user . "/avatar/" . scandir($path)[2];
+			return $root . "assets/users/" . $user . "/avatar/" . scandir($path)[2];
 		}
-		return $ROOT_SITE . "assets/avatar.png";
+		return $root . "assets/avatar.png";
 	}
 
-	function getImageTagForHTML($user) {
-		$path = getPicName($user);
+	function getImageTagForHTML($user, $local, $root) {
+		$path = getPicName($user, $local, $root);
 		return '<img class="profile-pic" src="' . $path . '" alt="Avatar">';
 	}
 

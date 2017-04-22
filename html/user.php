@@ -82,7 +82,7 @@ $target = array(
   		<?php
 
   		// echo the profile picture
-  		$path = getPicName($target['id']);
+  		$path = getPicName($target['id'], $IS_LOCAL, $ROOT_SITE);
   		echo '<img src="'.$path.'" alt="Avatar von ' . $target['name'] . '" class="profile-pic edit-users-pic">';
 
   		foreach (getAllReviewIDsOfUser($conn, $target['id'], $course) as $reviewId) {?>
