@@ -39,130 +39,157 @@ $target = array(
 include $filePath. "header.php";
 ?>
 <body>
-    <script type="text/javascript" src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
-    <script type="text/javascript" src="js/materialize.min.js"></script>
     <script type="text/javascript" src="js/jquery.ns-autogrow.js"></script>
     <script type="text/javascript">
 	    $(document).ready(function() {
 	    	$('textarea').css("overflow", "hidden").autogrow();
 	    });
 	</script>
-    <div class="navbar-fixed">
-		<nav>
-		    <div class="nav-wrapper grey darken-3">
-		      <a href="#" class="brand-logo center">Informatik Peer Review</a>
-		      <ul id="nav-mobile" class="right hide-on-med-and-down">
-		        <li>
-		        <a href="logout.php">Logout
-		        <i class="material-icons right">power_settings_new</i>
-		        </a>
-		        </li>
-		        <li>
-		        <a href="index.php">Home
-		        <i class="material-icons right">home</i>
-		        </a>
-		        </li>
-		      </ul>
-		    </div>
-  		</nav>
-  	</div>
-  <div class="container">
-  	<div class="element welcomer z-depth-4">
-  		<h2 class="header">Review für <span class="red-text lighten-2"><?php echo $target["name"]?></span> verfassen</h2>
-  		<span style="text-align: justify;">
-  			Hier kannst du dein Review für den angegeben Benutzer bearbeiten oder verfassen.<br>
-  			Bitte halte dich an die Beschreibung der (Kritik-)Punkte und <i>bewerte ernsthaft</i>.
-  		</span>
-  	</div>
-  	<?php
+	<div class="container-fluid">
+		<div class="row">
+		    <div class="col-md-3 sidebar">
+				<div class="brand">
+				Peer Review
+				</div>
+				<ul class="nav nav-sidebar">
+			    	<li><a href="<?php echo $ROOT_SITE; ?>">Deine Kurse</a></li>
+					<li><a href="settings.php">Profil</a></li>
+					<li><a href="logout.php">Logout</a></li>
+				</ul>
+			</div>
 
-	if(isset($_POST['save-review'])) {
-		$i = $target['id'];
-		$a = $_SESSION['user_id'];
-		$review = array();
-		$idx = 0;
-		$jdx = 0;
+		    <div class="right-col">
+				<div class="row">
+					<div class="col-12">
 
-		// I could probably make this OOP as well using Review::fromJSON( getReviewScheme($conn, $course) );, but that's quite a lot of work.
-		$json = json_decode(getReviewSchemeForID($conn, $course, $reviewId), JSON_UNESCAPED_UNICODE);
-		foreach ($_POST as $name => $value) {
-			if($name == "save-review" || startsWith($name, "comment")) {
-				continue;
-			}
-			$n = str_replace("points_", "", $name);
-			$idx = ((int) explode("_", $n)[0]);
-			$jdx = ((int) explode("_", $n)[1]);
-			if(!isset($review[$idx])) {
-				$review[] = array();
-			}
-			if(!isset($review[$idx]['reviews'])) {
-				$review[$idx]['reviews'] = array();
-			}
-			if(!isset($review[$idx]['reviews'][$jdx])) {
-				$review[$idx]['reviews'][] = array();
-			}
-			$review[$idx]['comment'] = htmlspecialchars($_POST['comment_'.$idx]); // use the special chars in order to prevent html injection
-			$v = ((int)$value);
-			$v = max($v, 0);
-			$v = min($v, $json[$idx]['categories'][$jdx]['max_points']);
-			$review[$idx]['reviews'][$jdx] = array("points" => ($v));
-		}
-		setReview($conn, $i, $a, $course, json_encode($review), $reviewId);
+						<ol class="breadcrumb">
+							<li class="breadcrumb-item"><a href="<?php echo $ROOT_SITE; ?>">Startseite</a></li>
+							<li class="breadcrumb-item">Kurs <a href="<?php echo $ROOT_SITE . "?course=$course"; ?>">
+								<?php
+								echo getCourseName($conn, $course);
+								?>
+								</a>
+							</li>
+							<li class="breadcrumb-item">Review <a href="<?php echo $ROOT_SITE . "?course=$course&review=$reviewId"; ?>">
+								<?php
+								echo getReviewNameForID($conn, $reviewId);
+								?>
+								</a>
+								</h2>
+							</li>
+							<li class="breadcrumb-item">Review <a href="<?php echo "$_SERVER[REQUEST_URI]"; ?>">
+								<?php
+								echo "Für " . $target['name'];
+								?>
+								</a>
+								</h2>
+							</li>
+						</ol>
+					</div>
+				</div>
+		    	<div class="row equal">
+		    		<div class="col-md-6">
+		    			<div class="admin-cart">
+					  		<h1>Review für <span class="red-text lighten-2"><?php echo $target["name"]?></span> verfassen</h1>
+					  		<span>
+					  			Hier kannst du dein Review für den angegeben Benutzer bearbeiten oder verfassen.<br>
+					  			Bitte halte dich an die Beschreibung der (Kritik-)Punkte und <i>bewerte ernsthaft</i>.
+					  		</span>
+		    			</div>
+		    		</div>
+		    		<div class="col-md-6">
+		    			<div class="admin-cart">
+							<h3>Link zum Code</h3>
+							<?php
+							$code = getCode($conn, $target['id'], $course, $reviewId);
+							if(is_null($code) or empty($code)) {
+								echo "<span class=\"red-text darken-4\">".$target["name"]." hat noch keinen Link angegeben</span>";
+				    	    } else {
+								echo "<span>Link zum Code von ".$target["name"].": <a class=\"red-text darken-4\" href=\"".$code."\" target=\"_blank\">Hier klicken</a></span>";
+				    	    }
+							?>
+		    			</div>
+		    		</div>
+		    	</div>
+		    	<div class="row">
+		    		<div class="col-md-12">
+		    			<div class="admin-cart">
+		    				<h3>Review verfassen</h3>
+						  	<?php
+							if(isset($_POST['save-review'])) {
+								$i = $target['id'];
+								$a = $_SESSION['user_id'];
+								$review = array();
+								$idx = 0;
+								$jdx = 0;
 
-		echo "<div class=\"element z-depth-4\"><span class=\"green-text darken-2\">Vielen Dank, dass du deine Bewertung abgegeben hast!</span></div>";
-	}
+								$json = json_decode(getReviewSchemeForID($conn, $course, $reviewId), JSON_UNESCAPED_UNICODE);
+								foreach ($_POST as $name => $value) {
+									if($name == "save-review" || startsWith($name, "comment")) {
+										continue;
+									}
+									$n = str_replace("points_", "", $name);
+									$idx = ((int) explode("_", $n)[0]);
+									$jdx = ((int) explode("_", $n)[1]);
+									if(!isset($review[$idx])) {
+										$review[] = array();
+									}
+									if(!isset($review[$idx]['reviews'])) {
+										$review[$idx]['reviews'] = array();
+									}
+									if(!isset($review[$idx]['reviews'][$jdx])) {
+										$review[$idx]['reviews'][] = array();
+									}
+									$review[$idx]['comment'] = htmlspecialchars($_POST['comment_'.$idx]); // use the special chars in order to prevent html injection
+									$v = ((int)$value);
+									$v = max($v, 0);
+									$v = min($v, $json[$idx]['categories'][$jdx]['max_points']);
+									$review[$idx]['reviews'][$jdx] = array("points" => ($v));
+								}
+								setReview($conn, $i, $a, $course, json_encode($review), $reviewId);
+								?>
+								<span class="alert alert-success">Vielen Dank, dass du deine Bewertung abgegeben hast!</span>
+								<?php
+							}
+						  	?>
+						  	<form action="" method="post" class="form-horizontal">
+								<?php
+								$rv = json_decode(
+									getReview($conn, $target["id"], $_SESSION['user_id'], $course, $reviewId)['review'],
+									JSON_UNESCAPED_UNICODE);
+								$review = Review::fromJSON(getReviewNameForID($conn, $reviewId), getReviewSchemeForID($conn, $course, $reviewId) );
+								$itemcount = 0;
 
-  	?>
-	<div class="element z-depth-4">
-		<h4>Link zum Code</h4>
-		<?php
-			$code = getCode($conn, $target['id'], $course, $reviewId);
-			if(is_null($code) or empty($code)) {
-				echo "<span class=\"red-text darken-4\">".$target["name"]." hat noch keinen Link angegeben</span>";
-    	    } else {
-				echo "<span>Link zum Code von ".$target["name"].": <a class=\"red-text darken-4\" href=\"".$code."\" target=\"_blank\">Hier klicken</a></span>";
-    	    }
-		?>
-	</div>
-	<div class="element z-depth-4">
-  		<h4>Review verfassen</h4>
-  		<br>
-		<?php
-			
-			$rv = json_decode(
-				getReview($conn, $target["id"], $_SESSION['user_id'], $course, $reviewId)['review'],
-				JSON_UNESCAPED_UNICODE);
-			$review = Review::fromJSON(getReviewNameForID($conn, $reviewId), getReviewSchemeForID($conn, $course, $reviewId) );
+								foreach ($review->objects as $object) {
+									$idx = 0;
 
-			echo '<form action="" method="post">';
+									echo '<div class="sect"><p>'.$object->name.'</p>';
 
-			$itemcount = 0;
-
-			foreach ($review->objects as $object) {
-				$idx = 0;
-
-				echo '<div class="sect"><p>'.$object->name.'</p>';
-
-				foreach ($object->categories as $cat) {
-					echo '<div class="cat"><span class="desc">'	.$cat->description.	'</span>';
-					echo '<div class="points"><input type="number" min="0" max="' .$cat->max_points. '" ';
-					echo 'value="';
-					$currentValue = $rv[$itemcount]['reviews'][$idx]['points'];
-					if(!is_numeric($currentValue)) $currentValue = 0;
-					echo $currentValue;
-					echo '" name="points_'.$itemcount.'_'.$idx.'">';
-					echo '<span> / ' .$cat->max_points. '</span></div></div>';
-					$idx = $idx + 1;
-				}
-				echo '<div class="cat"><span>Kommentar ' .$object->name. '</span>';
-				echo '<textarea class="comment-textarea" name="comment_'.$itemcount.'" ';
-				echo 'placeholder="Kommentar">'.$rv[$itemcount]['comment'].'</textarea></div></div>';
-				$itemcount = $itemcount + 1;
-			}
-		?>
-			<br>
-			<input type="submit" value="Bewertung speichern" class="btn waves-effect waves-light" name="save-review">
-		</form>
+									foreach ($object->categories as $cat) {
+										echo '<div class="cat"><span class="desc">'	.$cat->description.	'</span>';
+										echo '<div class="points"><input type="number" min="0" max="' .$cat->max_points. '" ';
+										echo 'value="';
+										$currentValue = $rv[$itemcount]['reviews'][$idx]['points'];
+										if(!is_numeric($currentValue)) $currentValue = 0;
+										echo $currentValue;
+										echo '" name="points_'.$itemcount.'_'.$idx.'">';
+										echo '<span> / ' .$cat->max_points. '</span></div></div>';
+										$idx = $idx + 1;
+									}
+									echo '<div class="cat"><span>Kommentar ' .$object->name. '</span>';
+									echo '<textarea class="comment-textarea" name="comment_'.$itemcount.'" ';
+									echo 'placeholder="Kommentar">'.$rv[$itemcount]['comment'].'</textarea></div></div>';
+									$itemcount = $itemcount + 1;
+								}
+								?>
+								<br>
+								<input type="submit" value="Bewertung speichern" class="btn btn-primary centered" name="save-review">
+							</form>
+		    			</div>
+		    		</div>
+		    	</div>  		
+			</div>
+		</div>
 	</div>
 </body>
 </html>

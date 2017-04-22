@@ -265,7 +265,7 @@ h3 .small {
 .admin-cart > form > input,
 .admin-cart > form > button {
     padding: 7px;
-    width: 100%;
+    width: 40%;
     margin-bottom: 13px;
     display: block;
 }
@@ -451,10 +451,10 @@ textarea {
     border-bottom: 1px solid rgba(0, 0, 0, .26);
     box-shadow: none;
     border-radius: 0;
-    -webkit-transition: border 0.1s cubic-bezier(0, 0, 0, 0);
-    -moz-transition: border 0.1s cubic-bezier(0, 0, 0, 0);
-    -o-transition: border 0.1s cubic-bezier(0, 0, 0, 0);
-    transition: border 0.1s cubic-bezier(0, 0, 0, 0);
+    -webkit-transition: border 0.2s cubic-bezier(0, 0, 0, 0);
+    -moz-transition: border 0.2s cubic-bezier(0, 0, 0, 0);
+    -o-transition: border 0.2s cubic-bezier(0, 0, 0, 0);
+    transition: border 0.2s cubic-bezier(0, 0, 0, 0);
 }
 
 textarea:focus {
@@ -464,11 +464,13 @@ textarea:focus {
 
 .comment-textarea {
     display: block;
-    background-color: white;
+    background-color: #F5F5F5;
     width: 100%;
     outline: none;
     min-height: 64px;
     background-image: none;
+    margin-top: 10px;
+    padding: 5px;
 }
 
 .comment {

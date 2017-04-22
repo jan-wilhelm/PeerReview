@@ -683,7 +683,7 @@ include $filePath. 'check_auth.php';
 														</span>
 														<div class="points">
 															<span>
-																<?php echo $rev[$itemcount]['reviews'][$idx]['points'].' / '.$cat['max_points'];?>
+																<?php echo $rev[$itemcount]['reviews'][$idx]['points'].' / '.$cat['max_points'] . " Pkt";?>
 															</span>
 														</div>
 													</div>
