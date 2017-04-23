@@ -365,7 +365,7 @@ include $filePath. 'check_auth.php';
 							<?php
 							$idx = 0;
 							foreach (getUsersOfCourseApartFromAdmin($conn, $course) as $users) {					?>
-								<div class="col-md-4 col-sm-12">
+								<div class="col-md-4 col-xs-12">
 	    							<span class="pull-left clickable">
 	    								<i class="fa fa-pencil" aria-hidden="true"></i>
 

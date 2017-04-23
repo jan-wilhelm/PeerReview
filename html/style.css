@@ -122,10 +122,6 @@ h3 .small {
     border: none;
 }
 
-.sign-up-course-form {
-    width: 70%;
-}
-
 .absolute-centered {
     position: absolute;
     top: 50%;
@@ -265,9 +261,13 @@ h3 .small {
 .admin-cart > form > input,
 .admin-cart > form > button {
     padding: 7px;
-    width: 40%;
+    width: 100%;
     margin-bottom: 13px;
     display: block;
+}
+
+#save-review-button {
+    width: 40%;
 }
 
 .panel-heading {

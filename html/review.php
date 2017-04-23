@@ -183,7 +183,7 @@ include $filePath. "header.php";
 								}
 								?>
 								<br>
-								<input type="submit" value="Bewertung speichern" class="btn btn-primary centered" name="save-review">
+								<input id="save-review-button" type="submit" value="Bewertung speichern" class="btn btn-primary centered" name="save-review">
 							</form>
 		    			</div>
 		    		</div>
