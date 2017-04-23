@@ -393,9 +393,15 @@ h3 .small {
 .delete-row {
     position: absolute;
     right: 40px;
-    display: none;
     font-size: 20px;
     cursor: pointer;
+    display: block;
+}
+
+@media (min-width: 992px) {
+    .delete-row {
+        display: none;
+    }
 }
 
 .create_review table {
