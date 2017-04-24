@@ -16,7 +16,7 @@ include $filePath. "header.php";
   	<div class="absolute-centered container text-center">
 		<?php
 		if (isset($_POST['sign-up']) && isset($_POST['course-key'])) {
-			$result = handleKeyTyped($conn, $_SESSION['user_id'], trim($_POST['course-key']));
+			$result = handleKeyTyped($conn, $_SESSION['info']['user_id'], trim($_POST['course-key']));
 			$msg = "";
 			$error = false;
 			switch ($result) {

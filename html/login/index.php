@@ -41,10 +41,11 @@
 					if ($pass == $row["password"]) {
 						// is_auth is important here because we will test this to make sure they can view other pages
 						// that are needing credentials.
-						$_SESSION['is_auth'] = true;
-						$_SESSION['user_id'] = $row['id'];
-						$_SESSION['name'] = $row['name'];
-						$_SESSION['user_level'] = $row['level'];
+						$_SESSION['info'] = array();
+						$_SESSION['info']['is_auth'] = true;
+						$_SESSION['info']['user_id'] = $row['id'];
+						$_SESSION['info']['name'] = $row['name'];
+						$_SESSION['info']['user_level'] = $row['level'];
 
 						if($stmt = $conn->prepare("UPDATE users SET last_login = NOW() WHERE id= ?")) {
 							$stmt->bind_param("i", $row['id']);

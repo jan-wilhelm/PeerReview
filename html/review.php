@@ -19,7 +19,7 @@ $course = $_GET['course'];
 $reviewId = $_GET['review'];
 $contains = false;
 
-foreach (getReviewTargets($conn, $_SESSION['user_id'], $course, $reviewId) as $tar) {
+foreach (getReviewTargets($conn, $_SESSION['info']['user_id'], $course, $reviewId) as $tar) {
 	if($tar['id'] == $_GET['id']) {
 		$contains = true;
 	}
@@ -118,7 +118,7 @@ include $filePath. "header.php";
 						  	<?php
 							if(isset($_POST['save-review'])) {
 								$i = $target['id'];
-								$a = $_SESSION['user_id'];
+								$a = $_SESSION['info']['user_id'];
 								$review = array();
 								$idx = 0;
 								$jdx = 0;
@@ -155,7 +155,7 @@ include $filePath. "header.php";
 						  	<form action="" method="post" class="form-horizontal">
 								<?php
 								$rv = json_decode(
-									getReview($conn, $target["id"], $_SESSION['user_id'], $course, $reviewId)['review'],
+									getReview($conn, $target["id"], $_SESSION['info']['user_id'], $course, $reviewId)['review'],
 									JSON_UNESCAPED_UNICODE);
 								$review = Review::fromJSON(getReviewNameForID($conn, $reviewId), getReviewSchemeForID($conn, $course, $reviewId) );
 								$itemcount = 0;

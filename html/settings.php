@@ -31,7 +31,7 @@ include $filePath. 'profile_picture.php';
 							<h3>Upload</h3>
 							<?php
 							if(!empty( $_FILES )) {
-								$uploaddir = getPath($_SESSION['user_id'], $IS_LOCAL);
+								$uploaddir = getPath($_SESSION['info']['user_id'], $IS_LOCAL);
 
 								if(!is_dir($uploaddir)) {
 									mkdir($uploaddir, 777, true);
@@ -121,7 +121,7 @@ include $filePath. 'profile_picture.php';
 						<div class="admin-cart">
 							<h3>Test</h3>
 							<?php
-							echo getImageTagForHTML( $_SESSION['user_id'], $IS_LOCAL, $ROOT_SITE); ?>
+							echo getImageTagForHTML( $_SESSION['info']['user_id'], $IS_LOCAL, $ROOT_SITE); ?>
 						</div>
 					</div>
 				</div>

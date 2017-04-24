@@ -6,7 +6,7 @@ $filePath = $IS_LOCAL ? "../" : "../../info/";
 
 include $filePath. 'review.php';
 
-$admin = (isset($_SESSION['user_level']) && $_SESSION['user_level'] === 1);
+$admin = (isset($_SESSION['info']['user_level']) && $_SESSION['info']['user_level'] === 1);
 
 if(!isset($_GET['course']) || !$admin) {
 	header("Location: " . $ROOT_SITE);
@@ -79,7 +79,7 @@ include $filePath. 'check_auth.php';
 				<div class="row">
 					<div class="col-12">
 						<ol class="breadcrumb">
-						  <li class="breadcrumb-item"><a href="/">Startseite</a></li>
+						  <li class="breadcrumb-item"><a href="<?php echo $ROOT_SITE;?>">Startseite</a></li>
 						  <li class="breadcrumb-item">Einstellungen für <a href="<?php echo "http://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]"; ?>">
 							<?php
 							echo getCourseName($conn, $course);

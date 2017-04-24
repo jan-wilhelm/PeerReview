@@ -10,7 +10,7 @@ if(!isset($_GET['id']) || !isset($_GET['course'])) {
 	header("Location: " . $ROOT_SITE);
 }
 
-if (!isset($_SESSION['user_level']) || $_SESSION['user_level'] > 1) {
+if (!isset($_SESSION['info']['user_level']) || $_SESSION['info']['user_level'] > 1) {
 	header("Location: " . $ROOT_SITE);
 	exit;
 }

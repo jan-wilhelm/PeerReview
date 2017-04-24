@@ -12,7 +12,7 @@ if ($conn->connect_error) {
 	die("Database connection failed: " . $conn->connect_error);
 }
 
-$admin = (isset($_SESSION['user_level']) && $_SESSION['user_level'] === 1);
+$admin = (isset($_SESSION['info']['user_level']) && $_SESSION['info']['user_level'] === 1);
 
 include $filePath. 'check_auth.php';
 ?>
@@ -79,7 +79,7 @@ include $filePath. 'check_auth.php';
 				<div class="admin-cart">
 					<h3>Deine Kurse</h3>
 					<?php
-					$courses = getCoursesOfUser($conn, $_SESSION['user_id']);
+					$courses = getCoursesOfUser($conn, $_SESSION['info']['user_id']);
 					echo '<ul class="list-group">';
 					foreach ($courses as $course) {
 						echo '<li class="list-group-item">Kurs ';
@@ -121,7 +121,7 @@ include $filePath. 'check_auth.php';
 
 										createCourse($conn, $key, $courseName);
 										$newId = getCourseByKey($conn, $key);
-										addUserToCourse($conn, $_SESSION['user_id'], $newId);
+										addUserToCourse($conn, $_SESSION['info']['user_id'], $newId);
 									}
 								}
 								if($error != 0) {
@@ -212,7 +212,7 @@ include $filePath. 'check_auth.php';
 
 	<?php
 	} else {
-		$reviewsSinceLastLoginForUser = getReviewsSinceLastLoginForUser($conn, $_SESSION['user_id'], $course); ?>
+		$reviewsSinceLastLoginForUser = getReviewsSinceLastLoginForUser($conn, $_SESSION['info']['user_id'], $course); ?>
 		<div class="row tiles_count">
 			<div class="tiles_col col-md-2 col-sm-4 col-xs-6">
 				<span class="tiles_desc">Bewertungen seit letztem Login</span>
@@ -244,7 +244,7 @@ include $filePath. 'check_auth.php';
 	    <div class="row equal">
 		  	<div class="col-md-4 col-xs-12">
 		  		<div class="admin-cart">
-		  			<h1>Hallo, <?php echo $_SESSION['name'];?>!</h1>
+		  			<h1>Hallo, <?php echo $_SESSION['info']['name'];?>!</h1>
 		  			<span>Hier kannst du dir Statistiken anschauen, neue Reviews erstellen und dir bereits existierende Reviews anschauen. Klicke dafür einfach auf ein Review im Abschnitt <code>Reviews in diesem Kurs</code></span>
 		  		</div>
 		  	</div>
@@ -494,7 +494,7 @@ include $filePath. 'check_auth.php';
 	  	<div class="col-md-6 col-sm-12">
 	  		<div class="admin-cart">
 		    <?php
-				echo '<h1> Hallo, ' . $_SESSION["name"] . "!</h1>";
+				echo '<h1> Hallo, ' . $_SESSION['info']["name"] . "!</h1>";
 		    ?>
 			<p>
 			Hier kannst du einen Link zu deinem Code hinterlegen, ein Review verfassen oder dein eigenes lesen.
@@ -506,7 +506,7 @@ include $filePath. 'check_auth.php';
 	  		<div class="admin-cart">
 			<?php
 		    if(isset($_POST['link-set']) && isset($_POST['link'])) {
-		    	setCode($conn, $_SESSION['user_id'], $_POST['link'], $course, $reviewId);
+		    	setCode($conn, $_SESSION['info']['user_id'], $_POST['link'], $course, $reviewId);
 		    	echo "<p class=\"green-text lighten-2\">Vielen Dank dass du den Link zu deinem Code eingegeben hast!</p>";
 		    }
 	    	?>
@@ -516,7 +516,7 @@ include $filePath. 'check_auth.php';
 			Bitte gib den richtigen Link zu deinem Code ein, damit für dich ein Review verfasst werden kann!
 			</span>
 			<form action="" method="post" class="form-horizontal">
-				<input id="link-set-link" class="form-control" name="link" type="text" placeholder="Link" value=<?php echo "\"". getCode($conn, $_SESSION['user_id'], $course, $reviewId)."\"";?>>
+				<input id="link-set-link" class="form-control" name="link" type="text" placeholder="Link" value=<?php echo "\"". getCode($conn, $_SESSION['info']['user_id'], $course, $reviewId)."\"";?>>
 				
 				<button class="btn btn-success" name="link-set" id="link-set-button">
 					<i class="fa fa-paper-plane" aria-hidden="true"></i> Link absenden
@@ -621,7 +621,7 @@ include $filePath. 'check_auth.php';
 				<div class="admin-cart">
 					<h3>Deine Reviews</h3>
 					<?php
-					$review = getReviewsFor($conn, $course, $_SESSION['user_id'], $reviewId);
+					$review = getReviewsFor($conn, $course, $_SESSION['info']['user_id'], $reviewId);
 					if(sizeof($review) < 1) {?>
 						<span class="alert alert-warning">Es wurde für dich noch keine Review ausgefüllt!</span>
 					<?php
@@ -728,7 +728,7 @@ include $filePath. 'check_auth.php';
 					<h3>Review verfassen</h3>
 
 					<?php
-				    $tar = getReviewTargets($conn, $_SESSION['user_id'], $course, $reviewId);
+				    $tar = getReviewTargets($conn, $_SESSION['info']['user_id'], $course, $reviewId);
 				    # noch kein target
 				    if (count($tar) == 0) {
 						echo "<span class=\"red-text darken-4\">Es wurde für dich noch kein Benutzer zum Review ausgewählt!</span>";
