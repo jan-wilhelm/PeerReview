@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <script origsrc="http://www.codeskulptor.org/js/codemirror-compressed.js"></script>
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.1/jquery.min.js"></script>
+    <script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/jquery-ui.min.js"></script>
+    <script src="http://www.codeskulptor.org/js/jquery.flot.min.js"></script>
+    <script src="http://www.codeskulptor.org/js/jquery.flot.axislabels.min.js"></script>
+    <script src="http://www.codeskulptor.org/js/jquery.flot.orderbars.min.js"></script>
+    <script src="http://www.codeskulptor.org/js/numeric-1.2.6.min.js"></script>
+    <script src="http://www.codeskulptor.org/skulpt/skulpt.min.js"></script>
+    <script src="http://www.codeskulptor.org/skulpt/skulpt-stdlib.js"></script>
+    <script src="lib/codemirror.js"></script>
+	<link rel="stylesheet" href="lib/codemirror.css">
+	<link rel="stylesheet" href="theme/monokai.css">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" type="text/css" href="./css/font-awesome.min.css">
+    <link rel="stylesheet" type="text/css" href="./css/font-awesome.min.css">
+
+    <script src="addon/fold/foldcode.js"></script>
+    <script src="addon/fold/foldgutter.js"></script>
+    <script src="addon/fold/brace-fold.js"></script>
+    <script src="addon/fold/xml-fold.js"></script>
+    <script src="addon/fold/indent-fold.js"></script>
+    <script src="addon/fold/markdown-fold.js"></script>
+    <script src="addon/fold/comment-fold.js"></script>
+    <script src="mode/javascript/javascript.js"></script>
+    <script src="mode/xml/xml.js"></script>
+    <script src="mode/css/css.js"></script>
+    <script src="mode/htmlmixed/htmlmixed.js"></script>
+    <script src="mode/python/python.js"></script>
+    <script src="mode/markdown/markdown.js"></script>
+
+	<script src="mode/python/python.js"></script>
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+</head>
+
+<body>
+<!--<div id="loader-wrapper">
+    <div id="loader"></div>
+</div>-->
+
+    <div id="container">
+        <div class="left" id="buttons">
+            <ul>
+                <li id="run-button"><i class="fa fa-play-circle" aria-hidden="true"></i></li>
+                <li id="save-button"><i class="fa fa-floppy-o" aria-hidden="true"></i></li>
+            </ul>
+        </div>
+        <div class="left">
+            <textarea id="code">üü</textarea>
+        </div>
+        <div id="right">
+            <div id="console">
+                <h1>Console</h1>
+                <pre id="output"></pre>
+            </div>
+            <div id="debug">
+                <h1>Errors</h1>
+                <pre id="debugout"></pre>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="save-modal" tabindex="-1" role="dialog" aria-labelledby="set-link-modal-label">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title" id="set-link-modal-label">Speichern</h4>
+          </div>
+          <div class="modal-body">
+              <span>Bitte wähle einen passenden Namen für dein Programm</span>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Abbrechen</button>
+            <button type="button" id="save-modal-agree" class="btn btn-warning" name="save-modal-agree" data-toggle="modal" data-target="save-modal">
+                Speichern
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="codeskulptor.js"></script>
+    <script type="text/javascript">
+        setTimeout(function() {
+            $('#loader-wrapper').fadeOut(3000, function() {
+                $(this).remove();
+            });
+        }, 3000);
+
+        $('#save-button').click(function() {
+            $('#save-modal').modal().modal('open');
+        });
+
+    </script>
+</body>
+
+</html>
