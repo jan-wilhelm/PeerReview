@@ -25,12 +25,18 @@ function runCode() {
         read: readBuiltInFile,
         error: printError
     });
+    printOutput("Starting script...\n");
+    var start = new Date().getTime();
     try {
         Sk.importMainWithBody("<stdin>", false, prog);
     }
     catch(e) {
        printError(e.toString());
     }
+
+    var end = new Date().getTime();
+    var time = end - start;
+    printOutput("Finished executing script after " + time + " milliseconds\n");
 }
 
 function reset() {
