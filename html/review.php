@@ -29,11 +29,11 @@ if (!$contains) {
 	header("Location: " . $ROOT_SITE);
 	exit;
 }
-
+$script = getScript($conn,$_GET['id'], $course, $reviewId);
 $target = array(
 	"id" => $_GET['id'],
 	"name" => getName($conn,$_GET['id']),
-	"code" => getCode($conn,$_GET['id'], $course, $reviewId)
+	"code" => is_null($script) ? getCode($conn,$_GET['id'], $course, $reviewId) : $script
 );
 
 include $filePath. "header.php";
@@ -101,11 +101,14 @@ include $filePath. "header.php";
 		    			<div class="admin-cart">
 							<h3>Link zum Code</h3>
 							<?php
-							$code = getCode($conn, $target['id'], $course, $reviewId);
-							if(is_null($code) or empty($code)) {
+							if(is_null($target["code"]) or empty($target["code"])) {
 								echo "<span class=\"red-text darken-4\">".$target["name"]." hat noch keinen Link angegeben</span>";
 				    	    } else {
-								echo "<span>Link zum Code von ".$target["name"].": <a class=\"red-text darken-4\" href=\"".$code."\" target=\"_blank\">Hier klicken</a></span>";
+				    	    	if(isset($target["code"]["script"])) {
+									echo "<span>Link zum Code von ".$target["name"].": <a class=\"red-text darken-4\" href=\"" . $ROOT_SITE . "script/?id=" . $target["code"]["script_id"] ."\" target=\"_blank\">Hier klicken</a></span>";
+				    	    	} else {
+									echo "<span>Link zum Programm von ".$target["name"].": <a class=\"red-text darken-4\" href=\"".$target["code"]."\" target=\"_blank\">Hier klicken</a></span>";
+				    	    	}
 				    	    }
 							?>
 		    			</div>

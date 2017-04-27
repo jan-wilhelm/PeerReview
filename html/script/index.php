@@ -1,3 +1,22 @@
+<?php
+include '../../config.php';
+
+$filePath = $IS_LOCAL ? "../../" : "../../../info/";
+include $filePath. 'review.php';
+
+include $filePath. "header.php";
+
+$conn = new mysqli($cfg['db_host'], $cfg['db_user'], $cfg['db_password'], $cfg['db_name']);
+
+if ($conn->connect_error) {
+    die("Database connection failed: " . $conn->connect_error);
+}
+
+$admin = (isset($_SESSION['info']['user_level']) && $_SESSION['info']['user_level'] === 1);
+
+include $filePath. 'check_auth.php';
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -50,7 +69,12 @@
             </ul>
         </div>
         <div class="left">
-            <textarea id="code"></textarea>
+            <textarea id="code"><?php
+                if(isset($_GET['id'])) {
+                    $script = getScriptForUserAndId($conn, intval($_GET['id']));
+                    echo $script['script'];
+                }
+            ?></textarea>
         </div>
         <div id="right">
             <div id="console">

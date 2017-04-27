@@ -266,6 +266,17 @@ h3 .small {
     display: block;
 }
 
+.set-link-wrapper {
+    margin: auto;
+    width: 60%;
+}
+
+#link-set-button {
+    width: 100%;
+    margin-top: 15px;
+    margin-bottom: 15px;
+}
+
 #save-review-button {
     width: 40%;
 }
@@ -618,4 +629,12 @@ textarea:focus {
 .edit-users-pic {
     margin-bottom: 20px;
     border-radius: 20px;
+}
+
+#set-link-radio {
+    margin: 20px auto;
+}
+
+label {
+    font-weight: 400;
 }

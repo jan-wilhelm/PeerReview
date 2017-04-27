@@ -241,15 +241,48 @@ function setCode($conn, $id, $code, $course, $reviewId) {
 	if(!startsWith(strtolower($code), "http://")) {
 		$code = "http://" . $code;
 	}
-	if($stmt = $conn->prepare("UPDATE reviews SET link = ? WHERE id = ? AND course = ? AND review_id = ?")) {
-		$stmt->bind_param("siii", $code, $id, $course, $reviewId);
+	if($stmt = $conn->prepare("INSERT INTO links (user, course, review_id, link) VALUES(?, ?, ?, ?) ON DUPLICATE KEY UPDATE link=?")){
+		$stmt->bind_param("iiiss", $id, $course, $reviewId, $code, $code);
 		$stmt->execute();
 		unset($stmt);
 	}
 }
 
+function setSubmissionType($conn, $id, $type, $course, $reviewId) {
+	if($stmt = $conn->prepare("UPDATE reviews SET submission_type = ? WHERE id = ? AND course = ? AND review_id = ?")){
+		$stmt->bind_param("iiii", $type, $id, $course, $reviewId);
+		$stmt->execute();
+		unset($stmt);
+	}
+}
+
+function setScript($conn, $id, $scriptId, $course, $reviewId) {
+	if($stmt = $conn->prepare("UPDATE reviews SET submission_id = ? WHERE id = ? AND course = ? AND review_id = ?")){
+		$stmt->bind_param("iiii", $scriptId, $id, $course, $reviewId);
+		$stmt->execute();
+		unset($stmt);
+	}
+}
+
+function getScript($conn, $id, $course, $reviewid) {
+	if($stmt    = $conn->prepare("SELECT * FROM reviews LEFT JOIN scripts ON scripts.script_id = reviews.submission_id WHERE submission_type = 1 AND id = ? AND course = ? AND review_id = ? ")) {
+		$stmt->bind_param("iii", $id, $course, $reviewid);
+		$stmt->execute();
+		$result = $stmt->get_result();
+		if ($result->num_rows > 0) {
+			if ($row = $result->fetch_assoc()) {
+				return $row;
+			}
+		}
+		$stmt->free_result();
+	} else {
+		die($conn->error);
+	}
+	return null;
+}
+
 function getCode($conn, $id, $course, $reviewid) {
-	if($stmt    = $conn->prepare("SELECT link FROM reviews WHERE id = ? AND course = ? AND review_id = ?")) {
+	if($stmt    = $conn->prepare("SELECT link FROM links WHERE user = ? AND course = ? AND review_id = ?")) {
 		$stmt->bind_param("iii", $id, $course, $reviewid);
 		$stmt->execute();
 		$result = $stmt->get_result();
@@ -795,5 +828,43 @@ function getLoginsOfLastTwoWeeks($conn) {
 }
 
 
+////////////////////////////////////////////////////////////
+///						SCRIPTS							 ///
+////////////////////////////////////////////////////////////
+
+function getScriptForUserAndId($conn, $script) {
+	if($stmt    = $conn->prepare("SELECT * FROM scripts WHERE script_id = ?")) {
+		$stmt->bind_param("i", $script);
+		$stmt->execute();
+		$result = $stmt->get_result();
+		if ($result->num_rows > 0) {
+			if ($row = $result->fetch_assoc()) {
+				return $row;
+			}
+		}
+		$stmt->free_result();
+	} else {
+		die($conn->error);
+	}
+	return null;
+}
+
+function getScriptsForUser($conn, $user) {
+	$ret = array();
+	if($stmt    = $conn->prepare("SELECT * FROM scripts WHERE user = ?")) {
+		$stmt->bind_param("i", $user);
+		$stmt->execute();
+		$result = $stmt->get_result();
+		if ($result->num_rows > 0) {
+			while ($row = $result->fetch_assoc()) {
+				$ret[] = $row;
+			}
+		}
+		$stmt->free_result();
+	} else {
+		die($conn->error);
+	}
+	return $ret;
+}
 
 ?>

@@ -506,8 +506,26 @@ include $filePath. 'check_auth.php';
 	  		<div class="admin-cart">
 			<?php
 		    if(isset($_POST['link-set']) && isset($_POST['link'])) {
-		    	setCode($conn, $_SESSION['info']['user_id'], $_POST['link'], $course, $reviewId);
-		    	echo "<p class=\"green-text lighten-2\">Vielen Dank dass du den Link zu deinem Code eingegeben hast!</p>";
+
+		    	$json = json_decode($_POST['link'], JSON_UNESCAPED_UNICODE);
+		    	$payload = htmlspecialchars(trim($json['payload']));
+		    	$subType = intval($json['type']);
+
+				setSubmissionType($conn, $_SESSION['info']['user_id'], $subType, $course, $reviewId);
+
+		    	switch ($subType) {
+		    		case 0:
+		    			setCode($conn, $_SESSION['info']['user_id'], $payload, $course, $reviewId);
+		    			echo "<p class=\"green-text lighten-2\">Vielen Dank dass du den Link zu deinem Code eingegeben hast!</p>";
+		    			break;
+		    		case 1:
+		    			setScript($conn, $_SESSION['info']['user_id'], intval($payload), $course, $reviewId);
+		    			echo "<p class=\"green-text lighten-2\">Vielen Dank dass du ein Programm ausgewählt hast!</p>";
+		    			break;
+		    		
+		    		default:
+		    			break;
+		    	}
 		    }
 	    	?>
 			<h3>Link zu deinem Code bearbeiten</h3>
@@ -515,13 +533,37 @@ include $filePath. 'check_auth.php';
 			Hier kannst du nur den Link für das <mark>aktuelle Review</mark> ändern, um Abgaben im Nachhinein nicht zu verfälschen. <br>
 			Bitte gib den richtigen Link zu deinem Code ein, damit für dich ein Review verfasst werden kann!
 			</span>
-			<form action="" method="post" class="form-horizontal">
-				<input id="link-set-link" class="form-control" name="link" type="text" placeholder="Link" value=<?php echo "\"". getCode($conn, $_SESSION['info']['user_id'], $course, $reviewId)."\"";?>>
-				
+
+			<div class="set-link-wrapper text-center">
+				<div class="btn-group" data-toggle="buttons" id="set-link-radio">
+				  <label class="btn btn-primary active">
+				    <input type="radio" id="option1" value="1" autocomplete="off" checked>Link
+				  </label>
+				  <label class="btn btn-primary">
+				    <input type="radio" id="option2" value="2" autocomplete="off">Programm
+				  </label>
+				</div>
+
+				<input id="link-set-link" class="form-control set-link-type" name="link" type="text" placeholder="Link">
+
+				<div id="set-link-script" class="form-group row text-left set-link-type" style="display: none;">
+					<label for="set-link-script-select" class="col-xs-2 col-form-label">Programm</label>
+					<div class="col-xs-10">
+						<select class="form-control" id="set-link-script-select">
+							<?php
+							$scripts = getScriptsForUser($conn, $_SESSION["info"]["user_id"]);
+							foreach ($scripts as $script) {
+								echo '<option data-id="' . $script["script_id"] . '">' . $script["name"] . '</option>';
+							}
+							?>
+						</select>
+					</div>
+				</div>
+
 				<button class="btn btn-success" name="link-set" id="link-set-button">
 					<i class="fa fa-paper-plane" aria-hidden="true"></i> Link absenden
 				</button>
-			</form>
+			</div>
 			</div>
 		</div>
 	</div>
@@ -760,27 +802,53 @@ include $filePath. 'check_auth.php';
 	</div>
 	</div>
 </body>
-<script type="text/javascript">	
-	$('#link-set-button').click(function(event){
-		event.preventDefault();
-	    var link = $('#link-set-link').val();
-	    $.ajax
-	    ({ 
-	        url: "index.php",
-	        data: {
-	        	"link-set": null,
-	        	"link": link,
-	        	"course": <?php echo $course;?>,
-	        	"review": <?php echo $reviewId;?>
-	    	},
-	        type: 'post',
-	        success: function(result) {
-	           	toastr.success('Link wurde erfolgreich geändert!', 'Geschafft!');
-	        },
-	        error: function(error) {
-	           	toastr.error(error, 'Fehler');
-	        }
-    	});
+<script type="text/javascript">
+	$(document).ready(function() {
+		var show = $('#link-set-link');
+		$('#link-set-button').click(function(event){
+			event.preventDefault();
+			var json = {};
+		    if(show.attr("id") === "link-set-link") {
+		    	json.type = 0;
+		    	json.payload = show.val();
+		    } else if(show.attr("id") === "set-link-script") {
+		    	json.type = 1;
+		    	json.payload = show.find('select').find(':selected').data('id');
+		    }
+		    $.ajax
+		    ({ 
+		        url: "index.php",
+		        data: {
+		        	"link-set": null,
+		        	"link": JSON.stringify(json),
+		        	"course": <?php echo $course;?>,
+		        	"review": <?php echo $reviewId;?>
+		    	},
+		        type: 'post',
+		        success: function(result) {
+		           	toastr.success('Link wurde erfolgreich geändert!', 'Geschafft!');
+		        },
+		        error: function(error) {
+		           	toastr.error(error, 'Fehler');
+		        }
+	    	});
+		});
+		$('#set-link-radio label').click(function() {
+			const th = $(this);
+			setTimeout(function() {
+				var checked = $('#set-link-radio .active').find('input').val() - 1;
+				th.blur();
+				if (checked == 0) {
+					show = $('#link-set-link');
+				} else if(checked == 1) {
+					show = $('#set-link-script');
+				}
+
+				show.css("display", "block");
+				$('.set-link-type').not(show).css("display", "none");
+
+			}, 5);
+		});
 	});
 </script>
 
