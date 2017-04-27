@@ -4,7 +4,7 @@ include '../../config.php';
 $filePath = $IS_LOCAL ? "../../" : "../../../info/";
 include $filePath. 'review.php';
 
-include $filePath. "header.php";
+include $filePath. 'check_auth.php';
 
 $conn = new mysqli($cfg['db_host'], $cfg['db_user'], $cfg['db_password'], $cfg['db_name']);
 
@@ -12,9 +12,14 @@ if ($conn->connect_error) {
     die("Database connection failed: " . $conn->connect_error);
 }
 
-$admin = (isset($_SESSION['info']['user_level']) && $_SESSION['info']['user_level'] === 1);
+if(isset($_POST['save-code']) && isset($_POST['code'])) {
 
-include $filePath. 'check_auth.php';
+    $id = createScript($conn, $_SESSION["info"]["user_id"], $_POST['code']);
+    echo $id;
+    exit;
+
+}
+
 ?>
 
 <!DOCTYPE html>
@@ -30,6 +35,8 @@ include $filePath. 'check_auth.php';
     <script src="http://www.codeskulptor.org/js/numeric-1.2.6.min.js"></script>
     <script src="http://www.codeskulptor.org/skulpt/skulpt.min.js"></script>
     <script src="http://www.codeskulptor.org/skulpt/skulpt-stdlib.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="https:////cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.min.css">
     <script src="lib/codemirror.js"></script>
 	<link rel="stylesheet" href="lib/codemirror.css">
 	<link rel="stylesheet" href="theme/monokai.css">
@@ -88,27 +95,7 @@ include $filePath. 'check_auth.php';
         </div>
     </div>
 
-    <div class="modal fade" id="save-modal" tabindex="-1" role="dialog" aria-labelledby="set-link-modal-label">
-      <div class="modal-dialog" role="document">
-        <div class="modal-content">
-          <div class="modal-header">
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-            <h4 class="modal-title" id="set-link-modal-label">Speichern</h4>
-          </div>
-          <div class="modal-body">
-              <span>Bitte wähle einen passenden Namen für dein Programm</span>
-          </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-default" data-dismiss="modal">Abbrechen</button>
-            <button type="button" id="save-modal-agree" class="btn btn-warning" name="save-modal-agree" data-toggle="modal" data-target="save-modal">
-                Speichern
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <script src="codeskulptor.js"></script>
+        <script src="codeskulptor.js"></script>
     <script type="text/javascript">
         setTimeout(function() {
             $('#loader-wrapper').fadeOut(3000, function() {
@@ -116,8 +103,36 @@ include $filePath. 'check_auth.php';
             });
         }, 3000);
 
+        var savedCode = null;
+
+        function saveCode() {
+            var code = editor.getValue();
+
+            if(code == savedCode) {
+                toastr.warning("Du hast dieses Programm ohne Änderungen bereits gespeichert!", "Fehler!")
+                return;
+            }
+
+            $.ajax({ 
+                url: location.protocol + '//' + location.host + location.pathname,
+                data: {
+                    "save-code": null,
+                    "code": code
+                },
+                type: 'post',
+                success: function(result) {
+                    toastr.success('Das Script mit der ID ' + result + " wurde gespeichert!", 'Geschafft!');
+                    history.pushState(null, null, "?id=" + result);
+                    savedCode = code;
+                },
+                error: function(error) {
+                    toastr.error(error, 'Fehler!');
+                }
+            });
+        }
+
         $('#save-button').click(function() {
-            $('#save-modal').modal().modal('open');
+            saveCode();
         });
 
     </script>

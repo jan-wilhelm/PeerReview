@@ -264,6 +264,26 @@ function setScript($conn, $id, $scriptId, $course, $reviewId) {
 	}
 }
 
+function createScript($conn, $id, $script) {
+	if($stmt = $conn->prepare('INSERT INTO scripts (user, script, last_modified) VALUES ( ?, ?, NOW() )')){
+		$stmt->bind_param("is", $id, $script);
+		$stmt->execute();
+
+		$stmt = $conn->prepare("SELECT LAST_INSERT_ID() AS `id`");
+		$stmt->execute();
+		$result = $stmt->get_result();
+		if ($result->num_rows > 0) {
+			if ($row = $result->fetch_assoc()) {
+				return $row['id'];
+			}
+		}
+		unset($stmt);
+	} else {
+		die($conn->error);
+	}
+	return -1;
+}
+
 function getScript($conn, $id, $course, $reviewid) {
 	if($stmt    = $conn->prepare("SELECT * FROM reviews LEFT JOIN scripts ON scripts.script_id = reviews.submission_id WHERE submission_type = 1 AND id = ? AND course = ? AND review_id = ? ")) {
 		$stmt->bind_param("iii", $id, $course, $reviewid);

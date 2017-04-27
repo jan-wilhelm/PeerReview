@@ -17,7 +17,7 @@ function printError(text) {
 }
 
 function runCode() {
-    var prog = editor.getValue();   
+    var prog = editor.getValue();
     reset();
     Sk.pre = "output";
     Sk.configure({
