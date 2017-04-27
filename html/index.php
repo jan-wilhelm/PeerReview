@@ -547,6 +547,7 @@ include $filePath. 'check_auth.php';
 				<input id="link-set-link" class="form-control set-link-type" name="link" type="text" placeholder="Link">
 
 				<div id="set-link-script" class="form-group row text-left set-link-type" style="display: none;">
+					<a class="btn btn-primary pull-right" href="<?php echo $ROOT_SITE . "script";?>">Neues Script</a>
 					<label for="set-link-script-select" class="col-xs-2 col-form-label">Programm</label>
 					<div class="col-xs-10">
 						<select class="form-control" id="set-link-script-select">

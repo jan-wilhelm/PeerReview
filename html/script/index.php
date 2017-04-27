@@ -12,9 +12,9 @@ if ($conn->connect_error) {
     die("Database connection failed: " . $conn->connect_error);
 }
 
-if(isset($_POST['save-code']) && isset($_POST['code'])) {
+if(isset($_POST['save-code']) && isset($_POST['code']) && isset($_POST['code-name'])) {
 
-    $id = createScript($conn, $_SESSION["info"]["user_id"], $_POST['code']);
+    $id = createScript($conn, $_SESSION["info"]["user_id"], $_POST['code'], htmlspecialchars(trim($_POST['code-name'])));
     echo $id;
     exit;
 
@@ -73,6 +73,7 @@ if(isset($_POST['save-code']) && isset($_POST['code'])) {
             <ul>
                 <li id="run-button"><i class="fa fa-play-circle" aria-hidden="true"></i></li>
                 <li id="save-button"><i class="fa fa-floppy-o" aria-hidden="true"></i></li>
+                <li><a href="<?php echo $ROOT_SITE;?>"><i class="fa fa-home" aria-hidden="true"></i></a></li>
             </ul>
         </div>
         <div class="left">
@@ -93,9 +94,34 @@ if(isset($_POST['save-code']) && isset($_POST['code'])) {
                 <pre id="debugout"></pre>
             </div>
         </div>
+        <div class="modal fade" id="save-modal" tabindex="-1" role="dialog" aria-labelledby="save-modal-label">
+          <div class="modal-dialog" role="document">
+            <div class="modal-content">
+              <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="save-modal-label">Programm speichern</h4>
+              </div>
+              <div class="modal-body">
+
+
+                <form class="form-horizontal">
+                  <label class="sr-only" for="code-name">Name des Programms</label>
+                  <input type="text" class="form-control" id="code-name" placeholder="Mein Programm">
+                </form>
+
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Abbrechen</button>
+                <button type="button" id="save-agree" class="btn btn-warning" data-toggle="modal" data-target="#set-link-modal">
+                    Speichern
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
     </div>
 
-        <script src="codeskulptor.js"></script>
+    <script src="codeskulptor.js"></script>
     <script type="text/javascript">
         setTimeout(function() {
             $('#loader-wrapper').fadeOut(3000, function() {
@@ -117,7 +143,8 @@ if(isset($_POST['save-code']) && isset($_POST['code'])) {
                 url: location.protocol + '//' + location.host + location.pathname,
                 data: {
                     "save-code": null,
-                    "code": code
+                    "code": code,
+                    "code-name": $('#code-name').val()
                 },
                 type: 'post',
                 success: function(result) {
@@ -131,9 +158,14 @@ if(isset($_POST['save-code']) && isset($_POST['code'])) {
             });
         }
 
-        $('#save-button').click(function() {
+        $('#save-agree').click(function() {
+            $('#save-modal').modal('toggle');
             saveCode();
         });
+
+        $('#save-button').click(function() {
+            $('#save-modal').modal().modal("open");
+        })
 
     </script>
 </body>

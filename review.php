@@ -264,9 +264,9 @@ function setScript($conn, $id, $scriptId, $course, $reviewId) {
 	}
 }
 
-function createScript($conn, $id, $script) {
-	if($stmt = $conn->prepare('INSERT INTO scripts (user, script, last_modified) VALUES ( ?, ?, NOW() )')){
-		$stmt->bind_param("is", $id, $script);
+function createScript($conn, $id, $script, $name) {
+	if($stmt = $conn->prepare('INSERT INTO scripts (user, script, name, last_modified) VALUES ( ?, ?, ?, NOW() )')){
+		$stmt->bind_param("iss", $id, $script, $name);
 		$stmt->execute();
 
 		$stmt = $conn->prepare("SELECT LAST_INSERT_ID() AS `id`");
