@@ -779,6 +779,27 @@ function getNumberOfCoursesTotal($conn) {
 }
 
 /**
+ * Get the total amount of written reviews
+ * @param  mysqli $conn The MySQL connection
+ * @return int       The amount
+ */
+function getTotalNumberOfWrittenReviews($conn) {
+	if($stmt = $conn->prepare("select count(*) as 'count' from reviews where review is not null")) {
+		$stmt->execute();
+		$result = $stmt->get_result();
+		if ($result->num_rows > 0) {
+			if ($row = $result->fetch_assoc()) {
+				return $row['count'];
+			}
+		}
+		$stmt->free_result();
+	} else {
+		echo $conn->error;
+	}
+	return 0;
+}
+
+/**
  * Get all courses of a specific user
  * @param  mysqli $conn The MySQL connection
  * @param  int $id   The ID of the user

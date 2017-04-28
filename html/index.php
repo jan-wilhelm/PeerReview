@@ -205,8 +205,12 @@ include $filePath. 'check_auth.php';
 				</span>
 			</div>
 			<div class="tiles_col col-md-2 col-sm-4 col-xs-6">
-				<span class="tiles_desc">Users</span>
-				<span class="tiles_number">1.509</span>
+				<span class="tiles_desc">Geschriebene Reviews</span>
+				<span class="tiles_number">
+					<?php
+						echo getTotalNumberOfWrittenReviews($conn);
+					?>
+				</span>
 			</div>
 		</div>
 
@@ -444,7 +448,7 @@ include $filePath. 'check_auth.php';
 				const link = $this.attr('href');
 
 				if(!$('#edit-user-modal').length) {
-					
+
 					$('.container-fluid').append('<div class="modal fade" id="edit-user-modal" tabindex="-1" role="dialog" aria-labelledby="edit-user-modal-label"> <div class="modal-dialog" role="document"><div class="modal-content"><div class="modal-header"> <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button><h4 class="modal-title" id="set-link-modal-label">Benutzer bearbeiten</h4></div><div class="modal-body"></div><div class="modal-footer"><button type="button" class="btn btn-default" data-dismiss="modal">Abbrechen</button></div></div></div></div>');
 				}
 				$('#edit-user-modal .modal-body').load(link + " .element", function( response, status, xhr ) {
