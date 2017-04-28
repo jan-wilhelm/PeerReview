@@ -98,14 +98,21 @@ $target = array(
 		<div class="panel-body">
   		<div class="edit-el">
   			<h4>Link zum Code</h4>
-		<?php
-			$code = getCode($conn, $target['id'], $course, $reviewId);
-			if(is_null($code) or empty($code)) {
-				echo "<span class=\"red-text darken-4\">".$target["name"]." hat noch keinen Link angegeben</span>";
-    	    } else {
-				echo "<span>Link zum Code von ".$target["name"].": <a class=\"red-text darken-4\" href=\"".$code."\" target=\"_blank\">Hier klicken</a></span>";
-    	    }
-		?>
+			<?php
+
+				$script = getScript($conn,$_GET['id'], $course, $reviewId);
+				$code = is_null($script) ? getCode($conn,$_GET['id'], $course, $reviewId) : $script;
+
+				if(is_null($code) or empty($code)) {
+					echo "<span class=\"red-text darken-4\">".$target["name"]." hat noch keinen Link angegeben</span>";
+	    	    } else {
+	    	    	if(isset($code["script"])) {
+						echo "<span>Link zum Code von ".$target["name"].": <a class=\"red-text darken-4\" href=\"" . $ROOT_SITE . "script/?id=" . $code["script_id"] ."\" target=\"_blank\">Hier klicken</a></span>";
+	    	    	} else {
+						echo "<span>Link zum Programm von ".$target["name"].": <a class=\"red-text darken-4\" href=\"".$code."\" target=\"_blank\">Hier klicken</a></span>";
+	    	    	}
+	    	    }
+			?>
 		</div>
 		<div class="edit-el">
   			<h4>Reviews für <?php echo $target["name"]; ?></h4>
