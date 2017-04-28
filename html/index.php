@@ -367,19 +367,16 @@ include $filePath. 'check_auth.php';
 						</span>
 						<div class="row" id="edit_users_row">
 							<?php
-							$idx = 0;
 							foreach (getUsersOfCourseApartFromAdmin($conn, $course) as $users) {					?>
 								<div class="col-md-4 col-xs-12">
 	    							<span class="pull-left clickable">
 	    								<i class="fa fa-pencil" aria-hidden="true"></i>
-
 		    							<?php
 		    							echo "<a class=\"blue-text\" href=\"user.php?id=$users&course=$course\">".getName($conn, $users)."</a>"
 		    							?>
 	    							</span>
 								</div>
 								<?php
-								$idx = $idx + 1;
 							}
 							?>
 						</div>
@@ -393,6 +390,11 @@ include $filePath. 'check_auth.php';
 		</div>
 		</div>
 		</body>
+		<?php
+		if($admin) { ?>
+			<script type="text/javascript" src="./js/review_creator.js"></script>
+			<?php
+		}?>
 		<script type="text/javascript">
 			const ctx = $('#logins_chart');
 			const options = {
@@ -434,7 +436,7 @@ include $filePath. 'check_auth.php';
 			    labels: times
 			};
 
-			$(function() {
+			$(document).ready(function() {
 				var loginsChart = new Chart(ctx, {
 				    type: 'line',
 				    data: data,
@@ -458,12 +460,7 @@ include $filePath. 'check_auth.php';
 				
 			});
 		</script>
-
 		<?php
-		if($admin) { ?>
-			<script type="text/javascript" src="./js/review_creator.js"></script>
-			<?php
-		}
 		echo "</html>";
 		exit();
 	}
