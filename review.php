@@ -284,6 +284,14 @@ function createScript($conn, $id, $script, $name) {
 	return -1;
 }
 
+/**
+ * Get the script MySQL object selected by a certain user in a certain review for a certain course
+ * @param  mysqli $conn     The MySQL connection
+ * @param  int $id       The user id
+ * @param  int $course   The course id
+ * @param  int $reviewid The review id
+ * @return array(object)           The MySQL object
+ */
 function getScript($conn, $id, $course, $reviewid) {
 	if($stmt    = $conn->prepare("SELECT * FROM reviews LEFT JOIN scripts ON scripts.script_id = reviews.submission_id WHERE submission_type = 1 AND id = ? AND course = ? AND review_id = ? ")) {
 		$stmt->bind_param("iii", $id, $course, $reviewid);
@@ -301,6 +309,14 @@ function getScript($conn, $id, $course, $reviewid) {
 	return null;
 }
 
+/**
+ * Get the link to a code by a user, a course and a review id
+ * @param  mysqli $conn     The MySQL connection
+ * @param  int $id       The user id
+ * @param  int $course   The course id
+ * @param  int $reviewid The review id
+ * @return string           The link
+ */
 function getCode($conn, $id, $course, $reviewid) {
 	if($stmt    = $conn->prepare("SELECT link FROM links WHERE user = ? AND course = ? AND review_id = ?")) {
 		$stmt->bind_param("iii", $id, $course, $reviewid);
@@ -318,6 +334,13 @@ function getCode($conn, $id, $course, $reviewid) {
 	return "";
 }
 
+/**
+ * Get the IDs of all the reviews a certain user has participated in
+ * @param  mysqli $conn   The MySQL connection
+ * @param  int $id     The user id
+ * @param  int $course The course id
+ * @return array(int)         An array of review IDs
+ */
 function getAllReviewIDsOfUser($conn, $id, $course) {
 	$ret = array();
 	if($stmt    = $conn->prepare("SELECT review_id FROM reviews WHERE id = ? AND course = ? GROUP BY review_id")) {
@@ -336,6 +359,12 @@ function getAllReviewIDsOfUser($conn, $id, $course) {
 	return $ret;
 }
 
+/**
+ * Get an array of all review ids of a certain course
+ * @param  mysqli $conn   The MySQL connection
+ * @param  int $course The course id
+ * @return array(int)         An array containing all the review ids of this course
+ */
 function getAllReviewIDsOfCourse($conn, $course) {
 	$ret = array();
 	if($stmt    = $conn->prepare("SELECT id FROM review_schemes WHERE course = ?")) {
@@ -516,7 +545,13 @@ function getCourseName($conn, $course) {
 	return "";
 }
 
-
+/**
+ * Checks whether a certain user is part of a certain course
+ * @param  mysqli  $conn   The MySQL connection
+ * @param  int  $id     The user's id
+ * @param  int  $course The course id
+ * @return boolean         Returns true if he is in the course, false otherwise
+ */
 function isUserInCourse($conn, $id, $course) {
 	if($stmt = $conn->prepare("SELECT 1 from courses WHERE id = ? AND course = ?")) {
 		$stmt->bind_param("ii", $id, $course);
@@ -532,6 +567,13 @@ function isUserInCourse($conn, $id, $course) {
 	return false;
 }
 
+/**
+ * Get the JSON formatted object of the review scheme for a given course and a review id
+ * @param  mysqli $conn     The MySQL connection
+ * @param  int $course   The course id
+ * @param  int $reviewId The review id
+ * @return string           The name of the review
+ */
 function getReviewSchemeForID($conn, $course, $reviewId) {
 	setUTF8($conn);
 	if($stmt = $conn->prepare("SELECT * FROM review_schemes WHERE course = ? AND id = ?")) {
@@ -550,6 +592,12 @@ function getReviewSchemeForID($conn, $course, $reviewId) {
 	return "";
 }
 
+/**
+ * Get the name of a review by its id
+ * @param  mysqli $conn     The MySQL connection
+ * @param  int $reviewId The review id
+ * @return string           The name
+ */
 function getReviewNameForID($conn, $reviewId) {
 	setUTF8($conn);
 	if($stmt = $conn->prepare("SELECT * FROM review_schemes WHERE id = ?")) {
@@ -568,6 +616,13 @@ function getReviewNameForID($conn, $reviewId) {
 	return "";
 }
 
+/**
+ * Adds a new review scheme to the given course. This will call
+ * @see @getNewReviewId
+ * @param mysqli $conn   The MySQL connection
+ * @param int $course The id of the course
+ * @param string $review The JSON formatted object of the review scheme
+ */
 function addReviewScheme($conn, $course, $review) {
 	setUTF8($conn);
 	if($stmt = $conn->prepare("INSERT INTO review_schemes (course, review_scheme, name, id) VALUES (?,?,?,?)")) {
@@ -580,6 +635,12 @@ function addReviewScheme($conn, $course, $review) {
 	}
 }
 
+/**
+ * Creates a course with the given name and the given signin key
+ * @param  mysqli $conn       The MySQL connection
+ * @param  string $courseName The name
+ * @param  string $key        The key
+ */
 function createCourse($conn, $courseName, $key) {
 	setUTF8($conn);
 	if($stmt = $conn->prepare("INSERT INTO course_data (signin_key, name) VALUES(?,?)")) {
@@ -589,6 +650,15 @@ function createCourse($conn, $courseName, $key) {
 	}
 }
 
+/**
+ * Handles a modification of a review
+ * @param mysqli $conn     The MySQL connection
+ * @param int $id       The id of the person who will get the review
+ * @param int $autor    The id of the author of the review
+ * @param int $course   The id of the course
+ * @param string $review   The review itself as a JSON formatted object
+ * @param int $reviewid The review ID
+ */
 function setReview($conn, $id, $autor, $course, $review, $reviewid) {
 	setUTF8($conn);
 	if($stmt = $conn->prepare("UPDATE reviews SET review = ?, modified = NOW() WHERE id = ? AND course = ? AND code_reviewer = ? AND review_id = ?")) {
@@ -598,6 +668,12 @@ function setReview($conn, $id, $autor, $course, $review, $reviewid) {
 	}
 }
 
+/**
+ * Changes the name of the course to a certain name
+ * @param mysqli $conn   The MySQL connection
+ * @param int $course The course id
+ * @param string $name   The name
+ */
 function setCourseName($conn, $course, $name) {
 	setUTF8($conn);
 	if($stmt = $conn->prepare("UPDATE course_data SET name = ? WHERE course = ?")) {
@@ -607,6 +683,12 @@ function setCourseName($conn, $course, $name) {
 	}
 }
 
+/**
+ * Adds an user with the given user id to the given course
+ * @param mysqli $conn   The MySQL connection
+ * @param int $id     The user id
+ * @param int $course The course id
+ */
 function addUserToCourse($conn, $id, $course) {
 	if($stmt = $conn->prepare("INSERT INTO courses (id, course) VALUES (?,?)")) {
 		$stmt->bind_param("ii", $id, $course);
@@ -619,6 +701,13 @@ function addUserToCourse($conn, $id, $course) {
 	return true;
 }
 
+/**
+ * Handle the action when a user passes in a key in "signup.php"
+ * @param  mysqli $conn The MySQL connection
+ * @param  int $id   The id of the user
+ * @param  string $key  The signup string of the user
+ * @return int       An int representing the result of the action
+ */
 function handleKeyTyped($conn, $id, $key) {
 	$course = getCourseByKey($conn, $key);
 	if($course == "") {
@@ -634,6 +723,12 @@ function handleKeyTyped($conn, $id, $key) {
 	}
 }
 
+/**
+ * Get all reviews of one course which got modified during the last 24 hours
+ * @param  mysqli $conn   The MySQL connection
+ * @param  int $course The course id
+ * @return int         The number of modified reviews
+ */
 function getReviewsOfToday($conn, $course) {
 	if($stmt = $conn->prepare("SELECT DATE(`reviews`.`modified`) AS `date`, COUNT(*) AS `count` FROM `reviews` WHERE course = ? AND `reviews`.`modified` BETWEEN DATE_SUB(NOW(), INTERVAL 1 MONTH) AND NOW() GROUP BY `date` ORDER BY `date`")) {
 		$stmt->bind_param("i", $course);
@@ -873,7 +968,13 @@ function getLoginsOfLastTwoWeeks($conn) {
 ///						SCRIPTS							 ///
 ////////////////////////////////////////////////////////////
 
-function getScriptForUserAndId($conn, $script) {
+/**
+ * Get the whole script object for the given script id
+ * @param  mysqli $conn   The MySQL connection
+ * @param  int $script The script id
+ * @return array         An array representing the MySQL object of the script
+ */
+function getScriptForScriptId($conn, $script) {
 	if($stmt    = $conn->prepare("SELECT * FROM scripts WHERE script_id = ?")) {
 		$stmt->bind_param("i", $script);
 		$stmt->execute();
@@ -890,6 +991,12 @@ function getScriptForUserAndId($conn, $script) {
 	return null;
 }
 
+/**
+ * Get all script objects of a given user
+ * @param  mysqli $conn The MySQL connection
+ * @param  int $user The user's id
+ * @return array(array)       An array of arrays which represent the different MySQL objects for the scripts
+ */
 function getScriptsForUser($conn, $user) {
 	$ret = array();
 	if($stmt    = $conn->prepare("SELECT * FROM scripts WHERE user = ?")) {

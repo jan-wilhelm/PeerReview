@@ -79,7 +79,7 @@ if(isset($_POST['save-code']) && isset($_POST['code']) && isset($_POST['code-nam
         <div class="left">
             <textarea id="code"><?php
                 if(isset($_GET['id'])) {
-                    $script = getScriptForUserAndId($conn, intval($_GET['id']));
+                    $script = getScriptForScriptId($conn, intval($_GET['id']));
                     echo $script['script'];
                 }
             ?></textarea>
