@@ -28,13 +28,15 @@ index.php:
 	Ich habe erstmal fürs Programmieren eine Weiterleitung an /?course=1 gemacht, da ich alle Funktionen eh nur an diesem Kurs teste.
 	  Siehe Deploy Weiterleitungen
 
-  ✔ UI: @done (17-04-22 13:31)
+  ☐ UI:
 	✔ Das "Review verfassen" Panel richtig anzeigen lassen @done (17-04-08 17:22)
 	  ✔ Von materialize auf Bootstrap migrieren @done (17-04-08 17:22)
 		Ich habe mich entschieden, keine "collapsible" zu nutzen, sondern die Daten wie schon bei dem "Edit users" panel einfach alle untereinander in einer Liste ausgeben zu lassen.
 	✔ Wenn course und review gesetzt sind, muss ein jumbotron angezeigt werden @created(17-04-13 15:10) @done (17-04-13 15:16)
 	✔ Erstelle panel für den Signin Key, damit der Lehrer ihn verteilen kann @done (17-04-22 13:30)
 		Panel findet man in coursesettings.php
+	☐	Neues Slide menu für Handy erstellen
+		☐	Siehe Link auf iPhone
 
   ✔ Aufbau: @done (17-04-22 13:31)
 	✔ Die Panels "Benutzer bearbeiten", "Neuen Nutzer erstellen" und "Neues Review erstellen" sollte ich am besten auf die index Seite verschieben, die auch angezeigt wird, wenn keine ReviewID gesetzt ist. @created(17-04-12 22:16) @done (17-04-13 15:09)
