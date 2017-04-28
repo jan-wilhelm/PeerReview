@@ -442,9 +442,9 @@ include $filePath. 'check_auth.php';
 				e.preventDefault();
 			    var $this = $(this);
 				const link = $this.attr('href');
-				console.log(link);
+
 				if(!$('#edit-user-modal').length) {
-					console.log("appending modal");
+					
 					$('.container-fluid').append('<div class="modal fade" id="edit-user-modal" tabindex="-1" role="dialog" aria-labelledby="edit-user-modal-label"> <div class="modal-dialog" role="document"><div class="modal-content"><div class="modal-header"> <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button><h4 class="modal-title" id="set-link-modal-label">Benutzer bearbeiten</h4></div><div class="modal-body"></div><div class="modal-footer"><button type="button" class="btn btn-default" data-dismiss="modal">Abbrechen</button></div></div></div></div>');
 				}
 				$('#edit-user-modal .modal-body').load(link + " .element", function( response, status, xhr ) {

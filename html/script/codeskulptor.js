@@ -53,7 +53,7 @@ $(function() {
 });
 
 function foldFunc(cm, pos) {
-    console.log("gutter click", pos);
+    
     var A1 = editor.getCursor().line;
     editor.foldCode(pos, {
         rangeFinder: CodeMirror.fold.indent,
