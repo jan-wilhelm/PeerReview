@@ -23,6 +23,7 @@ if ($conn->connect_error) {
 }
 
 include $filePath. 'check_auth.php';
+include $filePath. 'profile_picture.php';
 
 
 ?>
@@ -69,9 +70,54 @@ include $filePath. 'check_auth.php';
 		    });
 		});
 	</script>
+
+	<header class="cd-main-header">
+		<a class="cd-logo"><img src="img/cd-logo.svg" alt="Logo"></a>
+
+		<a href="#0" class="cd-nav-trigger"><span></span></a>
+
+		<nav class="cd-nav">
+			<ul class="cd-top-nav">
+				<li><a href="script">Scripts</a></li>
+				<li class="has-children account">
+					<a href="#0"><?php
+				  		$path = getPicName($_SESSION["info"]["user_id"], $IS_LOCAL, $ROOT_SITE);
+				  		echo '<img src="'.$path.'" alt="Avatar">'; ?>
+						Account
+					</a>
+					<ul>
+						<li><a href="settings.php">Einstellungen</a></li>
+						<li><a href="logout.php">Logout</a></li>
+					</ul>
+				</li>
+			</ul>
+		</nav>
+	</header> <!-- .cd-main-header -->
+
 	<div class="container-fluid">
 		<div class="row">
-			<?php include $filePath . "sidenav.php";
+			<div class="sidebar cd-main-content">
+				<nav class="cd-side-nav">
+					<ul class="nav nav-sidebar">
+						<li class="cd-label">Main</li>
+						<li class="has-children overview">
+							<a href="index.php">Kurse</a>
+							<ul>
+								<?php
+									$courses = getCoursesOfUser($conn, $_SESSION['info']['user_id']);
+									foreach ($courses as $course) {
+										echo '<li><a href="?course='.$course.'">'.getCourseName($conn, $course).'</a></li>';
+									}
+								?>
+							</ul>
+						</li>
+						<li class="has-children">
+							<a href="signup.php">In Kurs eintragen</a>
+						</li>
+					</ul>
+				</nav>
+			</div>
+			<?php
 			$course = $_GET['course'];
 			?>
 	
