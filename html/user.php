@@ -101,15 +101,15 @@ $target = array(
 			<?php
 
 				$script = getScript($conn,$_GET['id'], $course, $reviewId);
-				$code = is_null($script) ? getCode($conn,$_GET['id'], $course, $reviewId) : $script;
-
+				$code = is_null($script["script"]) ? getCode($conn,$_GET['id'], $course, $reviewId) : $script;
+				
 				if(is_null($code) or empty($code)) {
 					echo "<span class=\"red-text darken-4\">".$target["name"]." hat noch keinen Link angegeben</span>";
 	    	    } else {
 	    	    	if(isset($code["script"])) {
-						echo "<span>Link zum Code von ".$target["name"].": <a class=\"red-text darken-4\" href=\"" . $ROOT_SITE . "script/?id=" . $code["script_id"] ."\" target=\"_blank\">Hier klicken</a></span>";
+						echo "<span>Link zum Programm von ".$target["name"].": <a class=\"red-text darken-4\" href=\"" . $ROOT_SITE . "script/?id=" . $code["script_id"] ."\" target=\"_blank\">Hier klicken</a></span>";
 	    	    	} else {
-						echo "<span>Link zum Programm von ".$target["name"].": <a class=\"red-text darken-4\" href=\"".$code."\" target=\"_blank\">Hier klicken</a></span>";
+						echo "<span>Link zum Code von ".$target["name"].": <a class=\"red-text darken-4\" href=\"". $code ."\" target=\"_blank\">Hier klicken</a></span>";
 	    	    	}
 	    	    }
 			?>

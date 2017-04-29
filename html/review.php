@@ -33,7 +33,7 @@ $script = getScript($conn,$_GET['id'], $course, $reviewId);
 $target = array(
 	"id" => $_GET['id'],
 	"name" => getName($conn,$_GET['id']),
-	"code" => is_null($script) ? getCode($conn,$_GET['id'], $course, $reviewId) : $script
+	"code" => is_null($script["script"]) ? getCode($conn,$_GET['id'], $course, $reviewId) : $script
 );
 
 include $filePath. "header.php";
@@ -105,9 +105,9 @@ include $filePath. "header.php";
 								echo "<span class=\"red-text darken-4\">".$target["name"]." hat noch keinen Link angegeben</span>";
 				    	    } else {
 				    	    	if(isset($target["code"]["script"])) {
-									echo "<span>Link zum Code von ".$target["name"].": <a class=\"red-text darken-4\" href=\"" . $ROOT_SITE . "script/?id=" . $target["code"]["script_id"] ."\" target=\"_blank\">Hier klicken</a></span>";
+									echo "<span>Link zum Programm von ".$target["name"].": <a class=\"red-text darken-4\" href=\"" . $ROOT_SITE . "script/?id=" . $target["code"]["script_id"] ."\" target=\"_blank\">Hier klicken</a></span>";
 				    	    	} else {
-									echo "<span>Link zum Programm von ".$target["name"].": <a class=\"red-text darken-4\" href=\"".$target["code"]."\" target=\"_blank\">Hier klicken</a></span>";
+									echo "<span>Link zum Code von ".$target["name"].": <a class=\"red-text darken-4\" href=\"".$target["code"]."\" target=\"_blank\">Hier klicken</a></span>";
 				    	    	}
 				    	    }
 							?>
