@@ -17,8 +17,16 @@
 <?php
 	require '../../config.php';
 
+	if(!isset($_SESSION["info"])) {
+		$_SESSION['info'] = array();
+	}
+
+	if(isset($_GET["ref"])) {
+		$_SESSION["info"]["ref"] = rawurldecode($_GET["ref"]);
+	}
 
 	if (isset($_POST['login-submit'])) {
+		echo $_SESSION["info"]["ref"];
 		if (isset($_POST['name']) && isset($_POST['pass'])) {
 			$name = $_POST['name'];
 			$pass = $_POST['pass'];
@@ -41,7 +49,6 @@
 					if ($pass == $row["password"]) {
 						// is_auth is important here because we will test this to make sure they can view other pages
 						// that are needing credentials.
-						$_SESSION['info'] = array();
 						$_SESSION['info']['is_auth'] = true;
 						$_SESSION['info']['user_id'] = $row['id'];
 						$_SESSION['info']['name'] = $row['name'];
@@ -58,8 +65,15 @@
 							$stmt->execute();
 							unset($stmt);
 						}
+
+						if(isset($_SESSION["info"]["ref"])) {
+							$ref = $_SESSION['info']['ref'];
+							header("Location: $ref");
+							exit;
+						}
+
 						// Once the sessions variables have been set, redirect them to the landing page / home page.
-						header('Location: '. $ROOT_SITE);
+						header('Location: '. $ROOT_SITE . "aa");
 						exit;
 					} else {
 						$error = "Ungültiger Name oder Password. Bitte nochmal versuchen!";
@@ -97,7 +111,7 @@ if (!isset($_SESSION["is_auth"])) {
                 echo "<p class=\"element red-text darken-4\">$error</p>";
             }
         ?>
-		<form class="element" method ="post" action="">
+		<form class="element" method="post" action="">
 			<h4 class="section-heading"><span>Peer Review Login</span></h4>
 			<div class="row">
 				<div class="column">
@@ -112,8 +126,7 @@ if (!isset($_SESSION["is_auth"])) {
 				</div>
 			</div>
 			<br/>
-			<input type="submit" value="Anmelden" class="btn waves-effect waves-light red lighten-1" name="login-submit">
-			
+			<button type="submit" class="btn waves-effect waves-light red lighten-1" name="login-submit">Anmelden</button>
 		</form>
 	</div>
 <?php
