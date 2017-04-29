@@ -15,9 +15,13 @@ if ($conn->connect_error) {
 $admin = (isset($_SESSION['info']['user_level']) && $_SESSION['info']['user_level'] === 1);
 
 include $filePath. 'check_auth.php';
+include $filePath. 'profile_picture.php';
+
 ?>
 
 <body>
+	<script type="text/javascript" src="js/sidenav.js"></script>
+	<script type="text/javascript" src="js/jquery.menu-aim.js"></script>
 	<script type="text/javascript">
 		$(function() {
 
@@ -47,25 +51,66 @@ include $filePath. 'check_auth.php';
 		});
 	</script>
 	<script type="text/javascript" src="./js/panel.js"></script>
-  <div class="container-fluid">
-  <div class="row">
-    <div class="col-md-3 sidebar">
-	  <div class="brand">
-	  Peer Review
-	  </div>
-	  <ul class="nav nav-sidebar">
-    	<li><a href="<?php echo $ROOT_SITE; ?>">Deine Kurse</a></li>
-	    <?php
-	    if(isset($_GET['course']) && $admin) {;
-	    ?>
-	    	<li><a href="coursesettings.php?course=<?php echo $_GET['course']; ?>">Kurseinstellungen</a></li>
-	    <?php
-		}
-	    ?>
-	    <li><a href="settings.php">Profil</a></li>
-	    <li><a href="logout.php">Logout</a></li>
-	  </ul>
-	</div>
+
+	<header class="cd-main-header">
+		<a class="cd-logo"><img src="img/cd-logo.svg" alt="Logo"></a>
+
+		<a href="#0" class="cd-nav-trigger"><span></span></a>
+
+		<nav class="cd-nav">
+			<ul class="cd-top-nav">
+				<li><a href="script">Scripts</a></li>
+				<li class="has-children account">
+					<a href="#0"><?php
+				  		$path = getPicName($_SESSION["info"]["user_id"], $IS_LOCAL, $ROOT_SITE);
+				  		echo '<img src="'.$path.'" alt="Avatar">'; ?>
+						Account
+					</a>
+					<ul>
+						<li><a href="settings.php">Einstellungen</a></li>
+						<li><a href="logout.php">Logout</a></li>
+					</ul>
+				</li>
+			</ul>
+		</nav>
+	</header> <!-- .cd-main-header -->
+
+  	<div class="container-fluid">
+	  <div class="row">
+	    <div class="sidebar cd-main-content">
+			<nav class="cd-side-nav">
+				<ul class="nav nav-sidebar">
+					<li class="cd-label">Main</li>
+					<li class="has-children overview">
+						<a href="index.php">Kurse</a>
+						<ul>
+							<?php
+								$courses = getCoursesOfUser($conn, $_SESSION['info']['user_id']);
+								foreach ($courses as $course) {
+									echo '<li><a href="?course='.$course.'">'.getCourseName($conn, $course).'</a></li>';
+								}
+							?>
+						</ul>
+					</li>
+					<li class="has-children">
+						<a href="signup.php">In Kurs eintragen</a>
+					</li>
+				</ul>
+
+				<?php
+				if($admin && isset($_GET["course"])) { ?>
+				<ul class="nav nav-sidebar">
+					<li class="cd-label">Admin</li>
+					<li class="has-children">
+						<a href="coursesettings.php?course=<?php echo $_GET["course"];?>">Kurseinstellungen</a>
+					</li>
+				</ul>
+				<?php
+				}
+				?>
+
+			</nav>
+		</div>
 
     <div class="right-col">
 
@@ -79,7 +124,6 @@ include $filePath. 'check_auth.php';
 				<div class="admin-cart">
 					<h3>Deine Kurse</h3>
 					<?php
-					$courses = getCoursesOfUser($conn, $_SESSION['info']['user_id']);
 					echo '<ul class="list-group">';
 					foreach ($courses as $course) {
 						echo '<li class="list-group-item">Kurs ';
@@ -102,7 +146,7 @@ include $filePath. 'check_auth.php';
 					<div class="admin-cart">
 						<h3>Neuen Kurs erstellen</h3>
 						<div id="create_course_group" class="centered">
-							<span>Hier kannst du einen neuen Kurs erstellen. Bitte wählen den Namen des Kurses sorgfältig!<br>Die Schüler, die diesem Kurs beitreten sollen, benötigen dafür einen <code>SignUp-Key</code>. Diesen findest du in der Seite dines Kurses unter <mark>Kurseinstellungen</mark>.Gib ihnen diesen 6-stelligen Code, damit diese ihn unter <a href="signup.php">diesem Link</a> benutzen können.</span>
+							<span>Hier kannst du einen neuen Kurs erstellen. Bitte wählen den Namen des Kurses sorgfältig!<br>Die Schüler, die diesem Kurs beitreten sollen, benötigen dafür einen <code>SignUp-Key</code>. Diesen findest du in der Seite deines Kurses unter <mark>Kurseinstellungen</mark>. Gib ihnen diesen 6-stelligen Code, damit diese ihn unter <a href="signup.php">diesem Link</a> benutzen können.</span>
 							<?php
 							if(isset($_POST['create-course'])) {
 								$error = 0;

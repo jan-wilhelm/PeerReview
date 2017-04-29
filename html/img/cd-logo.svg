@@ -1,0 +1,18 @@
+<svg width="140" height="23" xmlns="http://www.w3.org/2000/svg">
+ <!-- Created with Method Draw - http://github.com/duopixel/Method-Draw/ -->
+
+ <g>
+  <title>background</title>
+  <rect fill="#fff" id="canvas_background" height="25" width="142" y="-1" x="-1"/>
+  <g display="none" overflow="visible" y="0" x="0" height="100%" width="100%" id="canvasGrid">
+   <rect fill="url(#gridpattern)" stroke-width="0" y="0" x="0" height="100%" width="100%"/>
+  </g>
+ </g>
+ <g>
+  <title>Layer 1</title>
+  <rect stroke="#000" id="svg_3" height="30.837911" width="61.899286" y="-2.67129" x="86.145209" stroke-opacity="null" stroke-width="0" fill="#141414"/>
+  <text font-weight="bold" stroke="#000" transform="matrix(0.523369969709897,0,0,0.566616952419281,4.271009023156636,7.624832993373275) " xml:space="preserve" text-anchor="start" font-family="Arvo, sans-serif" font-size="24" id="svg_1" y="14.496109" x="100.327825" stroke-width="0" fill="#1784c7">Peer</text>
+  <text font-weight="bold" stroke="#000" transform="matrix(0.523369969709897,0,0,0.566616952419281,4.271009023156636,7.624832993373275) " xml:space="preserve" text-anchor="start" font-family="Arvo, sans-serif" font-size="24" id="svg_2" y="14.496109" x="161.811461" stroke-width="0" fill="#ffffff">Review</text>
+  <path stroke="#000" id="svg_4" d="m36.517364,7.567475l0,0c0,-0.852359 0.848322,-1.543332 1.894781,-1.543332l0.861264,0l0,0l4.134068,0l7.751376,0c0.502528,0 0.984473,0.1626 1.339814,0.452031c0.355339,0.289431 0.554968,0.681984 0.554968,1.0913l0,3.85833l0,0l0,2.314997l0,0c0,0.852359 -0.848322,1.543332 -1.894781,1.543332l-7.751376,0l-5.40065,3.924334l1.266582,-3.924334l-0.861264,0c-1.046458,0 -1.894781,-0.690973 -1.894781,-1.543332l0,0l0,-2.314997l0,0l-0.000001,-3.85833z" stroke-opacity="null" stroke-width="0" fill="#141414"/>
+ </g>
+</svg>
