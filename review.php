@@ -1,5 +1,9 @@
 <?php
 
+/**
+ * Helper function to enable UTF-8 searching
+ * @param mysqli $conn The MySQL connection
+ */
 function setUTF8($conn) {
 	if($stmt = $conn->prepare("SET NAMES utf8")) {
 		$stmt->execute();
@@ -7,6 +11,14 @@ function setUTF8($conn) {
 	}
 }
 
+/**
+ * Get all review written FOR a certain user
+ * @param  mysqli $conn     The MySQL connection
+ * @param  int $course   The course id
+ * @param  int $id       The user id
+ * @param  int $reviewid The review id
+ * @return array(MySQLObject)           An array of MySQLObjects representing all the reviews for the user
+ */
 function getReviewsFor($conn, $course, $id, $reviewid) {
 	$ret = array();
 	setUTF8($conn);
@@ -26,6 +38,14 @@ function getReviewsFor($conn, $course, $id, $reviewid) {
 	return $ret;
 }
 
+/**
+ * Get all reviews written by a certain user
+ * @param  mysqli $conn     The MySQL connection
+ * @param  int $course   The course id
+ * @param  int $id       The user id
+ * @param  int $reviewid The review id
+ * @return array(MySQLObject)           An array of review objects
+ */
 function getReviewsBy($conn, $course, $id, $reviewid) {
 	$ret = array();
 	setUTF8($conn);
@@ -46,6 +66,15 @@ function getReviewsBy($conn, $course, $id, $reviewid) {
 	return $ret;
 }
 
+/**
+ * Get the whole MySQL review object for a pair of users and targets
+ * @param  mysqli $conn     The MySQL connection
+ * @param  int $id       The target's id
+ * @param  int $autor    The author's id
+ * @param  int $course   The course id
+ * @param  int $reviewid The review id
+ * @return MySQLObject           The MySQL object with all the data
+ */
 function getReview($conn, $id, $autor, $course, $reviewid) {
 	setUTF8($conn);
 	if($stmt = $conn->prepare("SELECT * FROM reviews WHERE id = ? and code_reviewer = ? AND course = ? AND review_id = ?")) {
@@ -65,6 +94,13 @@ function getReview($conn, $id, $autor, $course, $reviewid) {
 	return array();
 }
 
+/**
+ * Get all users whose name contains a certain search name
+ * @param  mysqli $conn   The MySQL connection
+ * @param  string $name   The name to search for
+ * @param  int $course The course id
+ * @return array(array)         An array of arrays in the format (id => XX, name => XX)
+ */
 function getUsersLike($conn, $name, $course) {
 	$ret = array();
 	$param = strtolower("%".$name."%");
@@ -85,6 +121,11 @@ function getUsersLike($conn, $name, $course) {
 	return $ret;
 }
 
+/**
+ * Get all users in the whole database
+ * @param  mysqli $conn The MySQL connection
+ * @return array(int)       An array of user IDs
+ */
 function getUsers($conn) {
 	$ret = array();
 	if($stmt    = $conn->prepare("SELECT id FROM users")) {
@@ -102,6 +143,11 @@ function getUsers($conn) {
 	return $ret;
 }
 
+/**
+ * Get a new review ID
+ * @param  mysqli $conn The MySQL connection
+ * @return int       A new review id
+ */
 function getNewReviewId($conn) {
 	if($stmt    = $conn->prepare("SELECT MAX(id) + 1 AS `new_id` FROM review_schemes")) {
 		$stmt->execute();
@@ -122,6 +168,12 @@ function getNewReviewId($conn) {
 	return random_int(0, 100);
 }
 
+/**
+ * Get ALL user of a course
+ * @param  mysqli $conn   The MySQL connection
+ * @param  int $course The course id
+ * @return array(int)         An array of user IDs
+ */
 function getUsersOfCourse($conn, $course) {
 	$ret = array();
 	if($stmt    = $conn->prepare("SELECT id FROM users WHERE EXISTS (select 1 from courses where id = users.id and course = ?)")) {
@@ -140,6 +192,12 @@ function getUsersOfCourse($conn, $course) {
 	return $ret;
 }
 
+/**
+ * Selects all users of a course which are not teachers
+ * @param  mysqli $conn   The MySQL connection
+ * @param  int $course The course id
+ * @return array(int)         An array of user IDs
+ */
 function getUsersOfCourseApartFromAdmin($conn, $course) {
 	$ret = array();
 	if($stmt    = $conn->prepare("SELECT id FROM users WHERE EXISTS (select 1 from courses where id = users.id and course = ?) AND level != 1")) {
@@ -158,6 +216,12 @@ function getUsersOfCourseApartFromAdmin($conn, $course) {
 	return $ret;
 }
 
+/**
+ * Select all users of a course in a random order
+ * @param  mysqli $conn   The MySQL connection
+ * @param  int $course The course id
+ * @return array(int)         An array of user ids
+ */
 function getUsersForReviews($conn, $course) {
 	$ret = array();
 	if($stmt    = $conn->prepare("SELECT id FROM users WHERE level != 1 AND EXISTS (select 1 from courses where id = users.id and course = ?) ORDER BY RAND()")) {
@@ -176,6 +240,13 @@ function getUsersForReviews($conn, $course) {
 	return $ret;
 }
 
+/**
+ * Set N review targets for each user of the course, where N is the limit
+ * @param mysqli $conn     The MySQL connection
+ * @param int $course   The course id
+ * @param int $limit    The limit, how much targets every user should see
+ * @param int $reviewId The review id
+ */
 function setTargets($conn, $course, $limit, $reviewId) {
 	$us = getUsersForReviews($conn, $course);
 	shuffle($us);
@@ -195,6 +266,14 @@ function setTargets($conn, $course, $limit, $reviewId) {
 	return true;
 }
 
+/**
+ * Get all review targets for a certain user
+ * @param  mysqli $conn     The MySQL connection
+ * @param  int $id       The user id
+ * @param  int $course   The course id
+ * @param  int $reviewid The review id
+ * @return array(array)           An array containing an array in the format (name => XX, id => XX)
+ */
 function getReviewTargets($conn, $id, $course, $reviewid) {
 	$ret = array();
 	if($stmt   = $conn->prepare("SELECT * FROM reviews WHERE code_reviewer = ? AND course = ? AND review_id = ?")) {
@@ -213,6 +292,14 @@ function getReviewTargets($conn, $id, $course, $reviewid) {
 	return $ret;
 }
 
+/**
+ * Set a user as one review target for another user
+ * @param mysqli $conn     The MySQL connection
+ * @param int $id       The user id
+ * @param int $tar      The target's user id
+ * @param int $course   The course id
+ * @param int $reviewid The review id
+ */
 function setReviewTarget($conn, $id, $tar, $course, $reviewid) {
 	if($stmt = $conn->prepare("INSERT INTO reviews (id, code_reviewer, course, review_id) VALUES (?,?,?,?)")) {
 		$stmt->bind_param("iiii", $id, $tar, $course, $reviewid);
@@ -225,10 +312,22 @@ function setReviewTarget($conn, $id, $tar, $course, $reviewid) {
 	return true;
 }
 
+/**
+ * Check if a string starts with a certain substring
+ * @param  string $haystack The string which should have a certain beginning
+ * @param  string $needle   The beginning of the string to check for
+ * @return boolean           True if the haystack starts with the needle, False otherwise
+ */
 function startsWith($haystack, $needle) {
      return (substr($haystack, 0, strlen($needle)) === $needle);
 }
 
+/**
+ * Check if a string ends with a certain substring
+ * @param  string $haystack The string which should have a certain end
+ * @param  string $needle   The end of the string to check for
+ * @return boolean           True if the haystack ends with the needle, False otherwise
+ */
 function endsWith($haystack, $needle) {
     $length = strlen($needle);
     if ($length == 0) {
@@ -237,6 +336,14 @@ function endsWith($haystack, $needle) {
     return (substr($haystack, -$length) === $needle);
 }
 
+/**
+ * Sanitize and insert the link for a user
+ * @param mysqli $conn     The MySQL connection
+ * @param int $id       The user id
+ * @param string $code     The link to the user's code
+ * @param int $course   The course id
+ * @param int $reviewId The review id
+ */
 function setCode($conn, $id, $code, $course, $reviewId) {
 	if(!startsWith(strtolower($code), "http://")) {
 		$code = "http://" . $code;
@@ -248,6 +355,17 @@ function setCode($conn, $id, $code, $course, $reviewId) {
 	}
 }
 
+/**
+ * Change the submission type for a user in a review of a course.
+ * Format:
+ * 		0 => Submission is a link
+ * 		1 => Submission is a script
+ * @param mysqli $conn     The MySQL connection
+ * @param int $id       The user id
+ * @param int $type     The type (@see Format)
+ * @param int $course   The course id
+ * @param int $reviewId The review id
+ */
 function setSubmissionType($conn, $id, $type, $course, $reviewId) {
 	if($stmt = $conn->prepare("UPDATE reviews SET submission_type = ? WHERE id = ? AND course = ? AND review_id = ?")){
 		$stmt->bind_param("iiii", $type, $id, $course, $reviewId);
@@ -256,6 +374,14 @@ function setSubmissionType($conn, $id, $type, $course, $reviewId) {
 	}
 }
 
+/**
+ * Update the submission of a user to a certain script id
+ * @param mysqli $conn     The MySQL connection
+ * @param int $id       The user id
+ * @param int $scriptId The script id
+ * @param int $course   The course id
+ * @param int $reviewId The review id
+ */
 function setScript($conn, $id, $scriptId, $course, $reviewId) {
 	if($stmt = $conn->prepare("UPDATE reviews SET submission_id = ? WHERE id = ? AND course = ? AND review_id = ?")){
 		$stmt->bind_param("iiii", $scriptId, $id, $course, $reviewId);
@@ -264,6 +390,14 @@ function setScript($conn, $id, $scriptId, $course, $reviewId) {
 	}
 }
 
+/**
+ * Create a script for a user with a name
+ * @param  mysqli $conn   The MySQL connection
+ * @param  int $id     The user id
+ * @param  string $script The code of the script
+ * @param  string $name   The name of the script
+ * @return int         The new Script ID
+ */
 function createScript($conn, $id, $script, $name) {
 	if($stmt = $conn->prepare('INSERT INTO scripts (user, script, name, last_modified) VALUES ( ?, ?, ?, NOW() )')){
 		$stmt->bind_param("iss", $id, $script, $name);
