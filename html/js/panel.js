@@ -1,13 +1,1 @@
-$(document).on('click', '.panel-heading', function(e){
-    var $this = $(this);
-	if(!$this.hasClass('panel-collapsed')) {
-		$this.parent('.panel').children('.panel-body').slideUp();
-		$this.addClass('panel-collapsed');
-	} else {
-		$this.parent('.panel').children('.panel-body').slideDown();
-		$this.removeClass('panel-collapsed');
-	}
-})
-$(function () {
-	$('.panel').children('.panel-body').css("display", "none");
-});
+$(document).on("click",".panel-heading",function(a){var b=$(this);b.hasClass("panel-collapsed")?(b.parent(".panel").children(".panel-body").slideDown(),b.removeClass("panel-collapsed")):(b.parent(".panel").children(".panel-body").slideUp(),b.addClass("panel-collapsed"))}),$(function(){$(".panel").children(".panel-body").css("display","none")});

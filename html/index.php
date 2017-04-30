@@ -20,8 +20,6 @@ include $filePath. 'profile_picture.php';
 ?>
 
 <body>
-	<script type="text/javascript" src="js/sidenav.js"></script>
-	<script type="text/javascript" src="js/jquery.menu-aim.js"></script>
 	<script type="text/javascript">
 		$(function() {
 
