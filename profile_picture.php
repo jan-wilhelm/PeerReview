@@ -5,10 +5,11 @@
 		if($local) {
 			return __DIR__ . "/html/assets/users/".$user."/avatar/";
 		} else {
-			$p = explode("/", __DIR__);
-			array_pop($p);
-			$p = implode("/", $p);
-			return $p . "/html/info/assets/users/".$user."/avatar/";
+			//$p = explode("/", __DIR__);
+			//array_pop($p);
+			//$p = implode("/", $p);
+			//return $p . "/html/info/assets/users/".$user."/avatar/";
+			return "./assets/users/{$user}/avatar/";
 		}
 	}
 

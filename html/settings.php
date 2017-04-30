@@ -75,10 +75,13 @@ include $filePath. 'profile_picture.php';
 							<h3>Upload</h3>
 							<?php
 							if(!empty( $_FILES )) {
-								$uploaddir = getPath($_SESSION['info']['user_id'], $IS_LOCAL);
+								$uploaddir = "./assets/users/". $_SESSION['info']['user_id'] . "/avatar/";
 
 								if(!is_dir($uploaddir)) {
-									mkdir($uploaddir, 777, true);
+									if (!@mkdir($uploaddir, 0777, true)) {
+									    $error = error_get_last();
+									    echo $error['message'];
+									}
 								}
 
 								$uploadfile = $uploaddir . basename($_FILES['avatarimage']['name']);
