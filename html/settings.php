@@ -46,27 +46,27 @@ include $filePath. 'profile_picture.php';
 
 	<div class="container-fluid">
 		<div class="row">
-		    <div class="sidebar cd-main-content">
-				<nav class="cd-side-nav">
-					<ul class="nav nav-sidebar">
-						<li class="cd-label">Main</li>
-						<li class="has-children overview">
-							<a href="index.php">Kurse</a>
-							<ul>
-								<?php
-									$courses = getCoursesOfUser($conn, $_SESSION['info']['user_id']);
-									foreach ($courses as $course) {
-										echo '<li><a href="?course='.$course.'">'.getCourseName($conn, $course).'</a></li>';
-									}
-								?>
-							</ul>
-						</li>
-						<li class="has-children">
-							<a href="signup.php">In Kurs eintragen</a>
-						</li>
-					</ul>
-				</nav>
-			</div>
+	    <div class="sidebar cd-main-content">
+			<nav class="cd-side-nav">
+				<ul class="nav nav-sidebar">
+					<li class="cd-label">Main</li>
+					<li class="has-children overview">
+						<a href="index.php"><i class="fa fa-users" aria-hidden="true"></i>Kurse</a>
+						<ul>
+							<?php
+								$courses = getCoursesOfUser($conn, $_SESSION['info']['user_id']);
+								foreach ($courses as $course) {
+									echo '<li><a href="?course='.$course.'">'.getCourseName($conn, $course).'</a></li>';
+								}
+							?>
+						</ul>
+					</li>
+					<li>
+						<a href="signup.php"><i class="fa fa-user-plus" aria-hidden="true"></i>In Kurs eintragen</a>
+					</li>
+				</ul>
+			</nav>
+		</div>
 
 			<div class="right-col">
 				<div class="row equal">

@@ -80,7 +80,7 @@ include $filePath. 'profile_picture.php';
 				<ul class="nav nav-sidebar">
 					<li class="cd-label">Main</li>
 					<li class="has-children overview">
-						<a href="index.php">Kurse</a>
+						<a href="index.php"><i class="fa fa-users" aria-hidden="true"></i>Kurse</a>
 						<ul>
 							<?php
 								$courses = getCoursesOfUser($conn, $_SESSION['info']['user_id']);
@@ -90,8 +90,8 @@ include $filePath. 'profile_picture.php';
 							?>
 						</ul>
 					</li>
-					<li class="has-children">
-						<a href="signup.php">In Kurs eintragen</a>
+					<li>
+						<a href="signup.php"><i class="fa fa-user-plus" aria-hidden="true"></i>In Kurs eintragen</a>
 					</li>
 				</ul>
 
@@ -99,8 +99,8 @@ include $filePath. 'profile_picture.php';
 				if($admin && isset($_GET["course"])) { ?>
 				<ul class="nav nav-sidebar">
 					<li class="cd-label">Admin</li>
-					<li class="has-children">
-						<a href="coursesettings.php?course=<?php echo $_GET["course"];?>">Kurseinstellungen</a>
+					<li>
+						<a href="coursesettings.php?course=<?php echo $_GET["course"];?>"><i class="fa fa-cogs" aria-hidden="true"></i>Kurseinstellungen</a>
 					</li>
 				</ul>
 				<?php

@@ -1,1 +1,124 @@
-jQuery(document).ready(function(){function j(){return window.getComputedStyle(document.querySelector(".cd-main-content"),"::before").getPropertyValue("content").replace(/'/g,"").replace(/"/g,"")}function k(){var a=j();"mobile"==a&&0==e.parents(".cd-side-nav").length?(l(),e.appendTo(c),f.removeClass("is-hidden").prependTo(c)):("tablet"==a||"desktop"==a)&&e.parents(".cd-side-nav").length>0&&(l(),f.insertAfter(b.find(".cd-logo")),e.appendTo(b.find(".cd-nav"))),m(a),h=!1}function l(){e.detach(),f.detach()}function m(a){"desktop"==a&&$(".has-children.selected").removeClass("selected")}function n(){if("mobile"!=j()){var d=c.outerHeight(),e=$(window).height(),f=a.outerHeight();$(window).scrollTop()+e>d&&f-d!=0?c.addClass("is-fixed").css("bottom",0):c.removeClass("is-fixed").attr("style","")}i=!1}var a=$(".cd-main-content"),b=$(".cd-main-header"),c=$(".cd-side-nav"),d=$(".cd-nav-trigger"),e=$(".cd-top-nav"),f=$(".cd-search"),g=$(".account"),h=!1;k(),$(window).on("resize",function(){h||(window.requestAnimationFrame?window.requestAnimationFrame(k):setTimeout(k,300),h=!0)});var i=!1;n(),d.on("click",function(a){a.preventDefault(),$([c,d]).toggleClass("nav-is-visible")}),$(".has-children > a").on("click",function(a){var b=j(),d=$(this);"mobile"!=b&&"tablet"!=b||(a.preventDefault(),d.parent("li").hasClass("selected")?d.parent("li").removeClass("selected"):(c.find(".has-children.selected").removeClass("selected"),g.removeClass("selected"),d.parent("li").addClass("selected")))}),g.children("a").on("click",function(a){var b=j();$(this);"desktop"==b&&(a.preventDefault(),g.toggleClass("selected"),c.find(".has-children.selected").removeClass("selected"))}),$(document).on("click",function(a){$(a.target).is(".has-children a")||(c.find(".has-children.selected").removeClass("selected"),g.removeClass("selected"))}),c.children("ul").menuAim({activate:function(a){$(a).addClass("hover")},deactivate:function(a){$(a).removeClass("hover")},exitMenu:function(){return c.find(".hover").removeClass("hover"),!0},submenuSelector:".has-children"})});
+jQuery(document).ready(function(){
+	//cache DOM elements
+	var mainContent = $('.cd-main-content'),
+		header = $('.cd-main-header'),
+		sidebar = $('.cd-side-nav'),
+		sidebarTrigger = $('.cd-nav-trigger'),
+		topNavigation = $('.cd-top-nav'),
+		searchForm = $('.cd-search'),
+		accountInfo = $('.account');
+
+	//on resize, move search and top nav position according to window width
+	var resizing = false;
+	moveNavigation();
+	$(window).on('resize', function(){
+		if( !resizing ) {
+			(!window.requestAnimationFrame) ? setTimeout(moveNavigation, 300) : window.requestAnimationFrame(moveNavigation);
+			resizing = true;
+		}
+	});
+
+	//on window scrolling - fix sidebar nav
+	var scrolling = false;
+	checkScrollbarPosition();
+
+	//mobile only - open sidebar when user clicks the hamburger menu
+	sidebarTrigger.on('click', function(event){
+		event.preventDefault();
+		$([sidebar, sidebarTrigger]).toggleClass('nav-is-visible');
+	});
+
+	//click on item and show submenu
+	$('.has-children > a').on('click', function(event){
+		var mq = checkMQ(),
+			selectedItem = $(this);
+		if( mq == 'mobile' || mq == 'tablet' ) {
+			event.preventDefault();
+			if( selectedItem.parent('li').hasClass('selected')) {
+				selectedItem.parent('li').removeClass('selected');
+			} else {
+				sidebar.find('.has-children.selected').removeClass('selected');
+				accountInfo.removeClass('selected');
+				selectedItem.parent('li').addClass('selected');
+			}
+		}
+	});
+
+	//click on account and show submenu - desktop version only
+	accountInfo.children('a').on('click', function(event){
+		var mq = checkMQ(),
+			selectedItem = $(this);
+		if( mq == 'desktop') {
+			event.preventDefault();
+			accountInfo.toggleClass('selected');
+			sidebar.find('.has-children.selected').removeClass('selected');
+		}
+	});
+
+	$(document).on('click', function(event){
+		if( !$(event.target).is('.has-children a') ) {
+			sidebar.find('.has-children.selected').removeClass('selected');
+			accountInfo.removeClass('selected');
+		}
+	});
+
+	//on desktop - differentiate between a user trying to hover over a dropdown item vs trying to navigate into a submenu's contents
+	sidebar.children('ul').menuAim({
+        activate: function(row) {
+        	$(row).addClass('hover');
+        },
+        deactivate: function(row) {
+        	$(row).removeClass('hover');
+        },
+        exitMenu: function() {
+        	sidebar.find('.hover').removeClass('hover');
+        	return true;
+        },
+        submenuSelector: ".has-children",
+    });
+
+	function checkMQ() {
+		//check if mobile or desktop device
+		return window.getComputedStyle(document.querySelector('.cd-main-content'), '::before').getPropertyValue('content').replace(/'/g, "").replace(/"/g, "");
+	}
+
+	function moveNavigation(){
+  		var mq = checkMQ();
+        
+        if ( mq == 'mobile' && topNavigation.parents('.cd-side-nav').length == 0 ) {
+        	detachElements();
+			topNavigation.appendTo(sidebar);
+			searchForm.removeClass('is-hidden').prependTo(sidebar);
+		} else if ( ( mq == 'tablet' || mq == 'desktop') &&  topNavigation.parents('.cd-side-nav').length > 0 ) {
+			detachElements();
+			searchForm.insertAfter(header.find('.cd-logo'));
+			topNavigation.appendTo(header.find('.cd-nav'));
+		}
+		checkSelected(mq);
+		resizing = false;
+	}
+
+	function detachElements() {
+		topNavigation.detach();
+		searchForm.detach();
+	}
+
+	function checkSelected(mq) {
+		//on desktop, remove selected class from items selected on mobile/tablet version
+		if( mq == 'desktop' ) $('.has-children.selected').removeClass('selected');
+	}
+
+	function checkScrollbarPosition() {
+		var mq = checkMQ();
+		
+		if( mq != 'mobile' ) {
+			var sidebarHeight = sidebar.outerHeight(),
+				windowHeight = $(window).height(),
+				mainContentHeight = mainContent.outerHeight(),
+				scrollTop = $(window).scrollTop();
+
+			( ( scrollTop + windowHeight > sidebarHeight ) && ( mainContentHeight - sidebarHeight != 0 ) ) ? sidebar.addClass('is-fixed').css('bottom', 0) : sidebar.removeClass('is-fixed').attr('style', '');
+		}
+		scrolling = false;
+	}
+});
