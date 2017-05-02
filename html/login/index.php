@@ -26,7 +26,7 @@
 	}
 
 	if (isset($_POST['login-submit'])) {
-		echo $_SESSION["info"]["ref"];
+		
 		if (isset($_POST['name']) && isset($_POST['pass'])) {
 			$name = $_POST['name'];
 			$pass = $_POST['pass'];
