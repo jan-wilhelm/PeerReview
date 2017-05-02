@@ -103,7 +103,6 @@ function foldFunc(cm, pos) {
 }
 
 function changed(cm, obj) {
-	console.log(cm, obj, errorLineNo);
 	if(errorLineNo >= 0) {
 		if(editor.getCursor().line !== errorLineNo) {
 			return;
