@@ -12,9 +12,21 @@ if ($conn->connect_error) {
     die("Database connection failed: " . $conn->connect_error);
 }
 
+if(isset($_GET['id'])) {
+    $_SESSION["info"]["current_script_id"] = intval($_GET['id']);
+}
+
 if(isset($_POST['save-code']) && isset($_POST['code']) && isset($_POST['code-name'])) {
 
-    $id = createScript($conn, $_SESSION["info"]["user_id"], $_POST['code'], htmlspecialchars(trim($_POST['code-name'])));
+    if(isset($_POST['overwrite']) && intval($_POST['overwrite']) == 1 && isset($_SESSION["info"]["current_script_id"])) {
+
+        $id = $_SESSION["info"]["current_script_id"];
+        updateScript($conn, $_SESSION["info"]["user_id"], $id, $_POST['code']);
+
+    } else {
+        $id = createScript($conn, $_SESSION["info"]["user_id"], $_POST['code'], htmlspecialchars(trim($_POST['code-name'])));
+    }
+
     echo $id;
     exit;
 
@@ -103,10 +115,13 @@ if(isset($_POST['save-code']) && isset($_POST['code']) && isset($_POST['code-nam
               </div>
               <div class="modal-body">
 
-
-                <form class="form-horizontal">
-                  <label class="sr-only" for="code-name">Name des Programms</label>
-                  <input type="text" class="form-control" id="code-name" placeholder="Mein Programm">
+                <div class="text-center">
+                    <label for="overwrite-check">Überschreiben?</label>
+                    <input id="overwrite-check" type="checkbox" autocomplete="off" checked>
+                </div>
+                <form class="form-horizontal" id="name-form" style="display: none;">
+                    <label for="code-name">Name des Programms</label>
+                    <input type="text" class="form-control" id="code-name" placeholder="Mein Programm">
                 </form>
 
               </div>
@@ -144,6 +159,7 @@ if(isset($_POST['save-code']) && isset($_POST['code']) && isset($_POST['code-nam
                 data: {
                     "save-code": null,
                     "code": code,
+                    "overwrite": $('#overwrite-check')[0].checked ? 1 : 0,
                     "code-name": $('#code-name').val()
                 },
                 type: 'post',
@@ -164,8 +180,15 @@ if(isset($_POST['save-code']) && isset($_POST['code']) && isset($_POST['code-nam
         });
 
         $('#save-button').click(function() {
+            $('#overwrite-check')[0].checked = true;
+            $('#name-form').css("display", "none");
             $('#save-modal').modal().modal("open");
-        })
+        });
+
+        $('#overwrite-check').click(function() {
+            var display = $(this)[0].checked ? "none" : "block";
+            $('#name-form').css("display", display);
+        });
 
     </script>
 </body>

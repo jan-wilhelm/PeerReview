@@ -391,6 +391,21 @@ function setScript($conn, $id, $scriptId, $course, $reviewId) {
 }
 
 /**
+ * Update the of a certain script
+ * @param mysqli $conn     The MySQL connection
+ * @param int $id       The user id
+ * @param int $scriptId The script id
+ * @param int $script   The code of the script
+ */
+function updateScript($conn, $id, $scriptId, $script) {
+	if($stmt = $conn->prepare("UPDATE scripts SET script = ? WHERE id = ? AND user = ?")){
+		$stmt->bind_param("sii", $script, $scriptId, $id);
+		$stmt->execute();
+		unset($stmt);
+	}
+}
+
+/**
  * Create a script for a user with a name
  * @param  mysqli $conn   The MySQL connection
  * @param  int $id     The user id

@@ -35,6 +35,13 @@
     -webkit-animation: spin 3s linear infinite; /* Chrome, Opera 15+, Safari 5+ */
     animation: spin 3s linear infinite; /* Chrome, Firefox 16+, IE 10+, Opera */
 }
+
+.absolute-centered {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
  
 #loader:after {
     content: "";
@@ -163,4 +170,11 @@ body, html {
 
 .activeline {
     background: #ffa0a0 !important;
+}
+
+.btn span.glyphicon {               
+    opacity: 0;             
+}
+.btn.active span.glyphicon {                
+    opacity: 1;             
 }
