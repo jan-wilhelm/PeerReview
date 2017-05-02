@@ -59,16 +59,9 @@ if(isset($_POST['save-code']) && isset($_POST['code']) && isset($_POST['code-nam
     <script src="addon/fold/foldcode.js"></script>
     <script src="addon/fold/foldgutter.js"></script>
     <script src="addon/fold/brace-fold.js"></script>
-    <script src="addon/fold/xml-fold.js"></script>
     <script src="addon/fold/indent-fold.js"></script>
-    <script src="addon/fold/markdown-fold.js"></script>
     <script src="addon/fold/comment-fold.js"></script>
-    <script src="mode/javascript/javascript.js"></script>
-    <script src="mode/xml/xml.js"></script>
-    <script src="mode/css/css.js"></script>
-    <script src="mode/htmlmixed/htmlmixed.js"></script>
     <script src="mode/python/python.js"></script>
-    <script src="mode/markdown/markdown.js"></script>
 
 	<script src="mode/python/python.js"></script>
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
