@@ -398,8 +398,9 @@ function setScript($conn, $id, $scriptId, $course, $reviewId) {
  * @param int $script   The code of the script
  */
 function updateScript($conn, $id, $scriptId, $script) {
-	if($stmt = $conn->prepare("UPDATE scripts SET script = ? WHERE id = ? AND user = ?")){
+	if($stmt = $conn->prepare("UPDATE scripts SET script = ? WHERE script_id = ? AND user = ?")){
 		$stmt->bind_param("sii", $script, $scriptId, $id);
+		echo $conn->error;
 		$stmt->execute();
 		unset($stmt);
 	}

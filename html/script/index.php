@@ -17,7 +17,7 @@ if(isset($_GET['id'])) {
 }
 
 if(isset($_POST['save-code']) && isset($_POST['code']) && isset($_POST['code-name'])) {
-
+    
     if(isset($_POST['overwrite']) && intval($_POST['overwrite']) == 1 && isset($_SESSION["info"]["current_script_id"])) {
 
         $id = $_SESSION["info"]["current_script_id"];
