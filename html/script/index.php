@@ -26,7 +26,7 @@ if(isset($_POST['save-code']) && isset($_POST['code']) && isset($_POST['code-nam
     } else {
         $id = createScript($conn, $_SESSION["info"]["user_id"], $_POST['code'], htmlspecialchars(trim($_POST['code-name'])));
     }
-
+    $_SESSION["info"]["current_script_id"] = $id;
     echo $id;
     exit;
 
@@ -50,8 +50,8 @@ if(isset($_POST['save-code']) && isset($_POST['code']) && isset($_POST['code-nam
     <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
     <link rel="stylesheet" type="text/css" href="https:////cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.min.css">
     <script src="lib/codemirror.js"></script>
-	<link rel="stylesheet" href="lib/codemirror.css">
-	<link rel="stylesheet" href="theme/monokai.css">
+    <link rel="stylesheet" href="lib/codemirror.css">
+    <link rel="stylesheet" href="theme/monokai.css">
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" type="text/css" href="./css/font-awesome.min.css">
     <link rel="stylesheet" type="text/css" href="./css/font-awesome.min.css">
@@ -63,15 +63,15 @@ if(isset($_POST['save-code']) && isset($_POST['code']) && isset($_POST['code-nam
     <script src="addon/fold/comment-fold.js"></script>
     <script src="mode/python/python.js"></script>
 
-	<script src="mode/python/python.js"></script>
+    <script src="mode/python/python.js"></script>
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
 </head>
 
 <body>
-<!--<div id="loader-wrapper">
+<div id="loader-wrapper">
     <div id="loader"></div>
-</div>-->
+</div>
 
     <div id="container">
         <div class="left" id="buttons">
@@ -146,15 +146,15 @@ if(isset($_POST['save-code']) && isset($_POST['code']) && isset($_POST['code-nam
                 toastr.warning("Du hast dieses Programm ohne Änderungen bereits gespeichert!", "Fehler!")
                 return;
             }
-
-            $.ajax({ 
-                url: location.protocol + '//' + location.host + location.pathname,
-                data: {
+            const data = {
                     "save-code": null,
                     "code": code,
                     "overwrite": $('#overwrite-check')[0].checked ? 1 : 0,
                     "code-name": $('#code-name').val()
-                },
+                };
+            $.ajax({ 
+                url: location.protocol + '//' + location.host + location.pathname,
+                data: data,
                 type: 'post',
                 success: function(result) {
                     toastr.success('Das Script mit der ID ' + result + " wurde gespeichert!", 'Geschafft!');
