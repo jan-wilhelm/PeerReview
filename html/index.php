@@ -57,7 +57,7 @@ include $filePath. 'profile_picture.php';
 
 		<nav class="cd-nav">
 			<ul class="cd-top-nav">
-				<li><a href="script">Scripts</a></li>
+				<li><a href="scripts">Scripts</a></li>
 				<li class="has-children account">
 					<a href="#0"><?php
 				  		$path = getPicName($_SESSION["info"]["user_id"], $IS_LOCAL, $ROOT_SITE);
@@ -492,8 +492,7 @@ include $filePath. 'profile_picture.php';
 				const link = $this.attr('href');
 
 				if(!$('#edit-user-modal').length) {
-
-					$('.container-fluid').append('<div class="modal fade" id="edit-user-modal" tabindex="-1" role="dialog" aria-labelledby="edit-user-modal-label"> <div class="modal-dialog" role="document"><div class="modal-content"><div class="modal-header"> <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button><h4 class="modal-title" id="set-link-modal-label">Benutzer bearbeiten</h4></div><div class="modal-body"></div><div class="modal-footer"><button type="button" class="btn btn-default" data-dismiss="modal">Abbrechen</button></div></div></div></div>');
+					$('.container-fluid').append('<div class="modal fade" id="edit-user-modal" tabindex="-1" role="dialog" aria-labelledby="edit-user-modal-label"> <div class="modal-dialog modal-lg" role="document"><div class="modal-content"><div class="modal-header"> <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button><h4 class="modal-title" id="set-link-modal-label">Benutzer bearbeiten</h4></div><div class="modal-body"></div><div class="modal-footer"><button type="button" class="btn btn-default" data-dismiss="modal">Abbrechen</button></div></div></div></div>');
 				}
 				$('#edit-user-modal .modal-body').load(link + " .element", function( response, status, xhr ) {
 					$('#edit-user-modal').find(".panel-body").css("display", "none");
