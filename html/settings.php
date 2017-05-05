@@ -28,7 +28,7 @@ include $filePath. 'profile_picture.php';
 
 		<nav class="cd-nav">
 			<ul class="cd-top-nav">
-				<li><a href="script">Scripts</a></li>
+				<li><a href="scripts">Scripts</a></li>
 				<li class="has-children account">
 					<a href="#0"><?php
 				  		$path = getPicName($_SESSION["info"]["user_id"], $IS_LOCAL, $ROOT_SITE);

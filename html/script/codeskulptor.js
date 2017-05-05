@@ -1,6 +1,43 @@
 var errorLine = null;
 var errorLineNo = -1;
 
+
+/**
+ * http://stackoverflow.com/questions/5537622/dynamically-loading-css-file-using-javascript-with-callback-without-jquery
+ */
+function loadStyleSheet( path, fn, scope ) {
+   var head = document.getElementsByTagName( 'head' )[0], // reference to document.head for appending/ removing link nodes
+       link = document.createElement( 'link' );           // create the link node
+   link.setAttribute( 'href', path );
+   link.setAttribute( 'rel', 'stylesheet' );
+   link.setAttribute( 'type', 'text/css' );
+   var sheet, cssRules;
+   if ( 'sheet' in link ) {
+      sheet = 'sheet'; cssRules = 'cssRules';
+   }
+   else {
+      sheet = 'styleSheet'; cssRules = 'rules';
+   }
+   var interval_id = setInterval( function() {                     // start checking whether the style sheet has successfully loaded
+          try {
+             if ( link[sheet] && link[sheet][cssRules].length ) { // SUCCESS! our style sheet has loaded
+                clearInterval( interval_id );                      // clear the counters
+                clearTimeout( timeout_id );
+                fn.call( scope || window, true, link );           // fire the callback with success == true
+             }
+          } catch( e ) {} finally {}
+       }, 10 ),                                                   // how often to check if the stylesheet is loaded
+       timeout_id = setTimeout( function() {       // start counting down till fail
+          clearInterval( interval_id );             // clear the counters
+          clearTimeout( timeout_id );
+          head.removeChild( link );                // since the style sheet didn't load, remove the link node from the DOM
+          fn.call( scope || window, false, link ); // fire the callback with success == false
+       }, 8000 );                                 // how long to wait before failing
+
+   head.appendChild( link );  // insert the link node into the DOM and start loading the style sheet
+   return link; // return the link node;
+}
+
 function log(element, text) {
     element.innerHTML = element.innerHTML + text;
 }
@@ -111,6 +148,25 @@ function changed(cm, obj) {
 	}
 }
 
+function getCookie(cname) {
+    var name = cname + "=";
+    var decodedCookie = decodeURIComponent(document.cookie);
+    var ca = decodedCookie.split(';');
+    for(var i = 0; i <ca.length; i++) {
+        var c = ca[i];
+        while (c.charAt(0) == ' ') {
+            c = c.substring(1);
+        }
+        if (c.indexOf(name) == 0) {
+            return c.substring(name.length, c.length);
+        }
+    }
+    return "";
+}
+
+theme = getCookie("scripttheme");
+if(!theme){theme = "monokai";}
+
 var editor = CodeMirror.fromTextArea(document.getElementById("code"), {
     mode: {
         name: "python",
@@ -122,7 +178,7 @@ var editor = CodeMirror.fromTextArea(document.getElementById("code"), {
     indentUnit: 4,
     tabMode: "indent",
     matchBrackets: true,
-    theme: "monokai",
+    theme: theme,
     extraKeys: {
         "Ctrl-R": runCode
     }

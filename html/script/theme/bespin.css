@@ -1,34 +1,57 @@
-/*
-
-    Name:       Bespin
-    Author:     Mozilla / Jan T. Sott
-
-    CodeMirror template by Jan T. Sott (https://github.com/idleberg/base16-codemirror)
-    Original Base16 color scheme by Chris Kempson (https://github.com/chriskempson/base16)
-
-*/
-
-.cm-s-bespin.CodeMirror {background: #28211c; color: #9d9b97;}
-.cm-s-bespin div.CodeMirror-selected {background: #36312e !important;}
-.cm-s-bespin .CodeMirror-gutters {background: #28211c; border-right: 0px;}
-.cm-s-bespin .CodeMirror-linenumber {color: #666666;}
-.cm-s-bespin .CodeMirror-cursor {border-left: 1px solid #797977 !important;}
-
-.cm-s-bespin span.cm-comment {color: #937121;}
-.cm-s-bespin span.cm-atom {color: #9b859d;}
-.cm-s-bespin span.cm-number {color: #9b859d;}
-
-.cm-s-bespin span.cm-property, .cm-s-bespin span.cm-attribute {color: #54be0d;}
-.cm-s-bespin span.cm-keyword {color: #cf6a4c;}
-.cm-s-bespin span.cm-string {color: #f9ee98;}
-
-.cm-s-bespin span.cm-variable {color: #54be0d;}
-.cm-s-bespin span.cm-variable-2 {color: #5ea6ea;}
-.cm-s-bespin span.cm-def {color: #cf7d34;}
-.cm-s-bespin span.cm-error {background: #cf6a4c; color: #797977;}
-.cm-s-bespin span.cm-bracket {color: #9d9b97;}
-.cm-s-bespin span.cm-tag {color: #cf6a4c;}
-.cm-s-bespin span.cm-link {color: #9b859d;}
-
-.cm-s-bespin .CodeMirror-matchingbracket { text-decoration: underline; color: white !important;}
-.cm-s-bespin .CodeMirror-activeline-background { background: #404040; }
+.cm-s-bespin {
+	font-size: 1em;
+	line-height: 1.5em;
+	font-family: inconsolata, monospace;
+	letter-spacing: 0.3px;
+	word-spacing: 1px;
+	background: #28211C;
+	color: #BAAE9E;
+}
+.cm-s-bespin .CodeMirror-lines {
+	padding: 8px 0;
+}
+.cm-s-bespin .CodeMirror-gutters {
+	box-shadow: 1px 0 2px 0 rgba(0, 0, 0, 0.5);
+	-webkit-box-shadow: 1px 0 2px 0 rgba(0, 0, 0, 0.5);
+	background-color: #28211C;
+	padding-right: 10px;
+	z-index: 3;
+	border: none;
+}
+.cm-s-bespin div.CodeMirror-cursor {
+	border-left: 3px solid #BAAE9E;
+}
+.cm-s-bespin .CodeMirror-activeline-background {
+	background: #FFFFFF08;
+}
+.cm-s-bespin .CodeMirror-selected {
+	background: #DDF0FF33;
+}
+.cm-s-bespin .cm-comment {
+	font-style: italic;
+	color: #666666;
+}
+.cm-s-bespin .cm-keyword {
+	color: #5EA6EA;
+}
+.cm-s-bespin .cm-string {
+	color: #54BE0D;
+}
+.cm-s-bespin .cm-property {
+	color: #DAD085;
+}
+.cm-s-bespin .cm-variable-2 {
+	color: #5EA6EA;
+}
+.cm-s-bespin .cm-atom {
+	color: #DAD085;
+}
+.cm-s-bespin .cm-number {
+	color: #DAD085;
+}
+.cm-s-bespin .cm-operator {
+	color: #5EA6EA;
+}
+.cm-s-bespin .CodeMirror-linenumber {
+	color: italic;
+}

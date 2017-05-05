@@ -51,7 +51,7 @@ if(isset($_POST['save-code']) && isset($_POST['code']) && isset($_POST['code-nam
     <link rel="stylesheet" type="text/css" href="https:////cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.min.css">
     <script src="lib/codemirror.js"></script>
     <link rel="stylesheet" href="lib/codemirror.css">
-    <link rel="stylesheet" href="theme/monokai.css">
+    <link rel="stylesheet" href="theme/<?php $theme = isset($_COOKIE["scripttheme"]) ? $_COOKIE["scripttheme"] : "monokai"; echo $theme;?>.css">
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" type="text/css" href="./css/font-awesome.min.css">
     <link rel="stylesheet" type="text/css" href="./css/font-awesome.min.css">
@@ -69,15 +69,17 @@ if(isset($_POST['save-code']) && isset($_POST['code']) && isset($_POST['code-nam
 </head>
 
 <body>
-<div id="loader-wrapper">
+<!--<div id="loader-wrapper">
     <div id="loader"></div>
-</div>
+</div>-->
 
     <div id="container">
         <div class="left" id="buttons">
             <ul>
                 <li id="run-button"><i class="fa fa-play-circle" aria-hidden="true"></i></li>
                 <li id="save-button"><i class="fa fa-floppy-o" aria-hidden="true"></i></li>
+                <li id="theme-button"><i class="fa fa-cog" aria-hidden="true"></i></li>
+                <li><a href="http://www.codeskulptor.org/docs.html#tabs-Python"><i class="fa fa-book" aria-hidden="true"></i></a></li>
                 <li><a href="<?php echo $ROOT_SITE;?>"><i class="fa fa-home" aria-hidden="true"></i></a></li>
             </ul>
         </div>
@@ -99,6 +101,35 @@ if(isset($_POST['save-code']) && isset($_POST['code']) && isset($_POST['code-nam
                 <pre id="debugout"></pre>
             </div>
         </div>
+        <div class="modal fade" id="theme-modal" tabindex="-1" role="dialog" aria-labelledby="theme-modal-label">
+          <div class="modal-dialog" role="document">
+            <div class="modal-content">
+              <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="theme-modal-label">Einstellungen</h4>
+              </div>
+                <div class="modal-body">
+                    <form class="form-horizontal">
+                        <label for="theme-select">Wähle ein Style-Theme aus:</label>
+                        <select class="form-control" id="theme-select">
+
+                        <?php $themes = array('3024-day', '3024-night', 'abcdef', 'all-hallow-eve', 'ambiance-mobile', 'ambiance', 'amy', 'argonaut', 'arona', 'base16-dark', 'base16-light', 'bbedit', 'bespin', 'birds-of-paradise', 'black-pearl-ii', 'black-pearl', 'blackboard-black', 'blackboard', 'bongzilla', 'chanfle', 'chrome-devtools', 'classic-modified', 'clouds-midnight', 'clouds', 'cobalt', 'coda', 'colorforth', 'cssedit', 'cube2media', 'darkpastel', 'dawn', 'demo', 'django-smoothy', 'django', 'dracula', 'duotone-dark', 'duotone-light', 'eclipse', 'eiffel', 'elegant', 'emacs-strict', 'erlang-dark', 'espresso-libre', 'espresso-soda', 'espresso-tutti', 'espresso', 'fade-to-grey', 'fake', 'fantasyscript', 'fluidvision', 'freckle', 'friendship-bracelet', 'github', 'glitterbomb', 'happy-happy-joy-joy-2', 'hopscotch', 'icecoder', 'idle', 'idlefingers', 'iplastic', 'ir_black', 'ir_white', 'isotope', 'johnny', 'juicy', 'krtheme', 'kuroir', 'lazy', 'lesser-dark', 'liquibyte', 'lowlight', 'mac-classic', 'made-of-code', 'magicwb-(amiga)', 'material', 'mbo', 'mdn-like', 'merbivore-soft', 'merbivore', 'midnight', 'monoindustrial', 'monokai-bright', 'monokai-fannonedition', 'monokai-sublime', 'monokai', 'mreq', 'neat', 'neo', 'night', 'nightlion', 'notebook', 'oceanic-muted', 'oceanic', 'panda-syntax', 'paraiso-dark', 'paraiso-light', 'pastel-on-dark', 'pastels-on-dark', 'pastie', 'plasticcodewrap', 'prospettiva', 'putty', 'rails-envy', 'railscasts', 'rdark', 'rhuk', 'rubyblue', 'ryan-light', 'seti', 'sidewalkchalk', 'slush-&-poppies', 'smoothy', 'solarized-(dark)', 'solarized-(light)', 'solarized', 'spacecadet', 'spectacular', 'summer-sun', 'summerfruit', 'sunburst', 'swyphs-ii', 'tango', 'text-ex-machina', 'the-matrix', 'tomorrow-night-blue', 'tomorrow-night-bright', 'tomorrow-night-eighties', 'tomorrow-night', 'tomorrow', 'toulousse-lautrec', 'toy-chest', 'ttcn', 'tubster', 'twilight', 'venom', 'vibrant-fin', 'vibrant-ink', 'vibrant-tango', 'xq-dark', 'xq-light', 'yeti', 'zenburn', 'zenburnesque');
+
+                            foreach ($themes as $option) {
+                                echo '<option' . ($option==$theme ? " selected" : "") . '>' . $option . "</option>";
+                            }
+                        ?>
+                        </select>
+                    </form>
+
+                </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Abbrechen</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
         <div class="modal fade" id="save-modal" tabindex="-1" role="dialog" aria-labelledby="save-modal-label">
           <div class="modal-dialog" role="document">
             <div class="modal-content">
@@ -177,6 +208,39 @@ if(isset($_POST['save-code']) && isset($_POST['code']) && isset($_POST['code-nam
             $('#name-form').css("display", "none");
             $('#save-modal').modal().modal("open");
         });
+
+        $('#theme-button').click(function() {
+            $('#theme-modal').modal().modal('open');
+        });
+
+        function errorLoadingTheme(name) {
+            toastr.error("Theme " + name + " konnte nicht geladen werden.");
+        }
+
+        function setCookie(cname, cvalue, exdays) {
+            var d = new Date();
+            d.setTime(d.getTime() + (exdays*24*60*60*1000));
+            var expires = "expires="+ d.toUTCString();
+            document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/";
+        }
+
+        $('#theme-select').change(function(){
+            const name = $('#theme-select')[0].value;
+            try {
+                loadStyleSheet( '<?php echo $ROOT_SITE;?>script/theme/' + name + ".css", function( success, link ) {
+                    if ( success ) {
+                        editor.setOption("theme", name);
+                        toastr.success("Theme " + name + " wurde ausgewählt und gespeichert!");
+                        setCookie("scripttheme", name, 30);
+                    } else {
+                        errorLoadingTheme(name);
+                    }
+                });
+            } catch(e) {
+                errorLoadingTheme(name);
+            }
+        });
+
 
         $('#overwrite-check').click(function() {
             var display = $(this)[0].checked ? "none" : "block";
