@@ -7,7 +7,7 @@
   <meta name="description" content="">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <?php
-  $p = startsWith($filePath, '../../') ? '..' : '.';
+  $p = $ROOT_SITE;
   ?>
 
   <link rel="stylesheet" type="text/css" href="https:////cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.min.css">
@@ -18,13 +18,13 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.5.0/Chart.bundle.min.js"></script>
 
-  <link rel="stylesheet" type="text/css" href="<?php echo $p."/"; ?>style.min.css">
-  <link rel="stylesheet" type="text/css" href="<?php echo $p."/"; ?>css/font-awesome.min.css">
-  <link rel="stylesheet" type="text/css" href="<?php echo $p."/"; ?>css/font-awesome.min.css">
-  <link rel="stylesheet" type="text/css" href="<?php echo $p."/"; ?>css/colors.css">
-  <script type="text/javascript" src="<?php echo $p."/"; ?>js/jquery.easypiechart.min.js"></script>
-  <script type="text/javascript" src="<?php echo $p."/"; ?>js/sidenav.js"></script>
-  <script type="text/javascript" src="<?php echo $p."/"; ?>js/jquery.menu-aim.js"></script>
+  <link rel="stylesheet" type="text/css" href="<?php echo $p; ?>style.min.css">
+  <link rel="stylesheet" type="text/css" href="<?php echo $p; ?>css/font-awesome.min.css">
+  <link rel="stylesheet" type="text/css" href="<?php echo $p; ?>css/font-awesome.min.css">
+  <link rel="stylesheet" type="text/css" href="<?php echo $p; ?>css/colors.css">
+  <script type="text/javascript" src="<?php echo $p; ?>js/jquery.easypiechart.min.js"></script>
+  <script type="text/javascript" src="<?php echo $p; ?>js/sidenav.js"></script>
+  <script type="text/javascript" src="<?php echo $p; ?>js/jquery.menu-aim.js"></script>
 
   <?php
   $relativeFilePath = $p . "/";
