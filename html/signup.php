@@ -30,7 +30,7 @@ include $filePath. "header.php";
 					break;
 				case -1:
 					$error = true;
-					$msg = 'Fehler beim Eintragen in den Kurs!<br/>Kontaktiere den Administrator: <a href="mailto:jan.b.h.wilhelm@gmx.de?subject=Fehler%20im%20ReviewSystem">E-Mail</a>';
+					$msg = 'Fehler beim Eintragen in den Kurs!<br/>Kontaktiere den Administrator: <a href="mailto:jan.b.h.wilhelm@gmx.de?subject=Fehler%20im%20ReviewSystem%20beim%20Signup">E-Mail</a>';
 					break;
 				default:
 					$courseId = getCourseByKey($conn, trim($_POST['course-key']));
@@ -46,10 +46,10 @@ include $filePath. "header.php";
 		} else {?>
 			<form action="" method="post" class="form-horizontal sign-up-course-form center-align absolute-centered">
 				<h3 class="center">Für Kurs eintragen</h4>
-				<span>Hier kannst du dich mit einem <code>Berechtigungsschlüssel</code> in einen Kurs eintragen. Wenn dir dieser Schlüssel nicht bekannt ist, frage bitte deinem Lehrer danach.</span>
+				<span>Hier kannst du dich mit einem <code>Berechtigungsschlüssel</code> in einen Kurs eintragen. Wenn dir dieser Schlüssel nicht bekannt ist, frage bitte deinen Lehrer danach.</span>
 				<input name="course-key" type="text" placeholder="Key" class="center form-control">
 				<br/>
-				<input type="submit" value="Eintragen" class="btn waves-effect waves-light" name="sign-up">
+				<input type="submit" value="Eintragen" class="btn btn-info" name="sign-up">
 			</form>
 		<?php
 		}

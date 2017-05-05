@@ -638,6 +638,9 @@ label {
   .cd-main-content::before {
     content: 'desktop';
   }
+  .cd-side-nav .action-btn a:hover {
+    background-color: #1a93de;
+  }
 }
 
 /* -------------------------------- 
@@ -1167,4 +1170,13 @@ Sidebar
     opacity: 1;
     visibility: visible;
   }
+}
+
+.btn i {
+  margin-right: 8px;
+}
+
+.btn-center {
+  display: block;
+  margin: auto;
 }
