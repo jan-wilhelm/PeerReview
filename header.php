@@ -27,7 +27,7 @@
   <script type="text/javascript" src="<?php echo $p; ?>js/jquery.menu-aim.js"></script>
 
   <?php
-  $relativeFilePath = $p . "/";
+  $relativeFilePath = $p;
   ?>
 
 </head>
