@@ -19,7 +19,6 @@ $(document).ready(function() {
 	    editableText.focus();
 	    // setup the blur event for this new textarea
 	    editableText.blur(editableTextBlurred);
-	    console.log("div clicked");
 	}
 
 	function editableTextBlurred() {
