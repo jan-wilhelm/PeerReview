@@ -534,10 +534,10 @@ function getAllReviewIDsOfCourse($conn, $course) {
 }
 
 /**
- * Get the name of a course by its ID
+ * Get the name of a user by its ID
  * @param  mysqli $conn The MySQL connection
- * @param  int $id   The ID of the course
- * @return string       The name of the course
+ * @param  int $id   The ID of the user
+ * @return string       The name of the user
  */
 function getName($conn, $id) {
 	setUTF8($conn);

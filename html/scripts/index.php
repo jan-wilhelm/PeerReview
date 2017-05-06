@@ -5,6 +5,7 @@ $filePath = $IS_LOCAL ? "../../" : "../../../info/";
 include $filePath. 'review.php';
 
 include $filePath. "header.php";
+include $filePath. "mailer.php";
 
 $conn = new mysqli($cfg['db_host'], $cfg['db_user'], $cfg['db_password'], $cfg['db_name']);
 

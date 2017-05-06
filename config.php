@@ -20,4 +20,6 @@ $IS_LOCAL = true;
 
 $ROOT_SITE = "/";
 
+$SENDMAILPATH = $IS_LOCAL ? "E:/xampp/htdocs/swiftmail/swift_required.php" : "/vendor/swiftmailer/swiftmailer/lib/swift_required.php";
+
 ?>

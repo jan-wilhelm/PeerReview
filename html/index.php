@@ -342,46 +342,32 @@ include $filePath. 'profile_picture.php';
 			</div>
 			<?php
 			if($admin) {?>
-				<div class="col-md-6 col-sm-12">
-					<div class="admin-cart">
-						<h3>Neuen Nutzer erstellen</h3>
+			<div class="col-md-6 col-sm-12">
+				<div class="admin-cart">
+					<h3>Benutzer bearbeiten</h3>
+					<span>
+						Hier kannst du alle Benutzer dieses Kurses bearbeiten, und<mark> ihre geschriebenen Reviews lesen</mark>.<br>Klicke einfach auf einen bestimmten Nutzer und wähle das passende Review aus!
+					</span>
+					<div class="row" id="edit_users_row">
 						<?php
-						if (isset($_POST['user-create'])) {
-							if (!isset($_POST['username']) || !isset($_POST['password'])) {
-								echo "<span>Fülle bitte das gesamte Formular aus!</span>";
-							} else {
-								$stmt          = $conn->prepare("SELECT name FROM users WHERE name = ?");
-								$new_user_name = htmlspecialchars(trim($_POST['username']));
-								$stmt->bind_param("s", $new_user_name);
-								$stmt->execute();
-								$result = $stmt->get_result();
-								$found  = false;
-								if ($result->num_rows > 0) {
-									if ($row = $result->fetch_assoc()) {
-										$found = true;
-									}
-								}
-								if (!$found) {
-									$stmt = $conn->prepare("INSERT INTO users (name, password) VALUES (?, ?)");
-									$new_user_pass  = $_POST['password'];
-									$stmt->bind_param("ss", $new_user_name, $new_user_pass);
-									$stmt->execute();
-									echo "<span class=\"alert alert-success\">Benutzer <i>$new_user_name</i> wurde erstellt!</span>";
-								} else {
-									echo "<span class=\"alert alert-danger\"><strong>Fehler</strong>: Ein Benutzer mit dem Namen $new_user_name existiert bereits.</span>";
-								}
-							}
-							}?>
-						<form action="" method="post" class="form-horizontal">
-							<input class="form-control" name="username" type="text" placeholder="Username">
-							<input class="form-control" name="password" type="text" placeholder="Password" value="<?php echo randomPassword(8); ?>">
-							<button class="btn btn-primary" name="user-create">Benutzer erstellen</button>
-						</form>
+						foreach (getUsersOfCourseApartFromAdmin($conn, $course) as $users) {					?>
+							<div class="col-md-4 col-xs-12">
+    							<span class="pull-left clickable">
+    								<i class="fa fa-pencil" aria-hidden="true"></i>
+	    							<?php
+	    							echo "<a class=\"blue-text\" href=\"user.php?id=$users&course=$course\">".getName($conn, $users)."</a>"
+	    							?>
+    							</span>
+							</div>
+							<?php
+						}
+						?>
 					</div>
 				</div>
 			</div>
+		</div>
 			<div class="row equal">
-				<div class="col-md-6">
+				<div class="col-xs-12">
 					<div class="admin-cart">
 						<h3>Neues Review erstellen</h3>
 						<span>Hier kannst du ein neues Review erstellen! Füge einzelne Abschnitte des Reviews über die Schaltfläche <code>"Neuer Abschnitt"</code> hinzu. Innerhalb dieses Abschnittes kannst du über den Knopf <code>"Neue Kategorie"</code> eine neue Unterkategorie dieses Abschnittes hinzufügen.<br>Um die <mark>Platzhalter und einzelnen Werte zu ändern</mark>, klicke sie einfach an, gebe einen passenden Wert ein und klicke woanders hin, um den Wert zu übernehmen.</span>
@@ -401,31 +387,10 @@ include $filePath. 'profile_picture.php';
 						<button type="button" class="btn btn-primary" id="create_review_button">Review erstellen</button>
 					</div>
 				</div>
-				<div class="col-md-6 col-sm-12">
-					<div class="admin-cart">
-						<h3>Benutzer bearbeiten</h3>
-						<span>
-							Hier kannst du alle Benutzer dieses Kurses bearbeiten, und<mark> ihre geschriebenen Reviews lesen</mark>.<br>Klicke einfach auf einen bestimmten Nutzer und wähle das passende Review aus!
-						</span>
-						<div class="row" id="edit_users_row">
-							<?php
-							foreach (getUsersOfCourseApartFromAdmin($conn, $course) as $users) {					?>
-								<div class="col-md-4 col-xs-12">
-	    							<span class="pull-left clickable">
-	    								<i class="fa fa-pencil" aria-hidden="true"></i>
-		    							<?php
-		    							echo "<a class=\"blue-text\" href=\"user.php?id=$users&course=$course\">".getName($conn, $users)."</a>"
-		    							?>
-	    							</span>
-								</div>
-								<?php
-							}
-							?>
-						</div>
-					</div>
-				</div>
 			</div>	
 			<?php
+			} else {
+				echo "</div>";
 			}
 			?>
 		</div>
