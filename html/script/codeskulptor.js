@@ -53,7 +53,7 @@ function readBuiltInFile(file) {
 }
 
 function printError(text) {
-    log( document.getElementById("debugout"), text);
+    log( document.getElementById("output"), "<span class=\"error-line\">" + text + "</span><br>");
 }
 
 function runCode() {
@@ -85,7 +85,7 @@ function runCode() {
                 e.args.v[0] = e.args.v[0].sq$concat(new Sk.builtin.str(" ('" + o + "')"))
             } catch (x) {}
         }
-        var i = "On line " + e.lineno + ": " + e.tp$name + ": " + e;
+        var i = "Error on line " + e.lineno + ": " + e.tp$name + ": " + e;
         printError(i);
 
         var n = (Sk.currLineNo);
@@ -119,17 +119,37 @@ function runCode() {
 function reset() {
     var mypre = document.getElementById("output");
     mypre.innerHTML = '';
-    var mypre = document.getElementById("debugout");
-    mypre.innerHTML = '';
     if(errorLine)
     	editor.removeLineClass(errorLine, "background", "activeline");
     errorLineNo = -1;
 }
 
 $(function() {
-    $('#run-button').click(function() {
+
+	function stopClick() {
+    	$(this).find("i").toggleClass("fa-play-circle").toggleClass("fa-stop-circle");
+    	$(this).unbind().click(runClick);
+        if (Sk.simplegui) {
+            Sk.simplegui.cleanup();
+            Sk.simplegui = undefined
+        }
+        if (Sk.simpleplot) {
+            Sk.simpleplot.cleanup();
+            Sk.simpleplot = undefined
+        }
+        if (Sk.maps) {
+            Sk.maps.cleanup();
+            Sk.maps = undefined
+        }
+	}
+
+	function runClick() {
+    	$(this).find("i").toggleClass("fa-play-circle").toggleClass("fa-stop-circle");
+    	$(this).unbind().click(stopClick);
         runCode();
-    });
+	}
+
+    $('#run-button').click(runClick);
 });
 
 function foldFunc(cm, pos) {

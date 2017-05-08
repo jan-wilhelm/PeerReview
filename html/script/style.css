@@ -160,7 +160,7 @@ body, html {
     color: #fff;
 }
 
-#debugout {
+.error-line {
     color: #FF80AB;
 }
 
