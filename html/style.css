@@ -200,6 +200,8 @@ h3 .small {
     text-transform: uppercase;
     color: #73879C;
     font-size: 20px;
+    padding-bottom: 7px;
+    border-bottom: 1px solid #e8e8e8;
 }
 
 .admin-cart .alert {
@@ -1179,4 +1181,53 @@ Sidebar
 .btn-center {
   display: block;
   margin: auto;
+}
+
+.timeline {
+  margin: 0;
+  padding: 0;
+}
+
+.timeline-item {
+  padding: 5px 15px;
+  position: relative;
+  color: rgba(0, 0, 0, 0.7);
+  border-left: 3px solid #e8e8e8;
+  border-bottom: 1px solid #e8e8e8;
+}
+
+.timeline-item h4 {
+  color: #5A738E;
+  margin-bottom: 2px;
+}
+
+.timeline-item .timeline-date {
+  font-style: italic;
+  color: #aab6aa;
+  font-weight: 400;
+  margin-bottom: 5px;
+}
+
+.timeline-item::after {
+  width: 14px;
+  height: 14px;
+  display: block;
+  top: 20px;
+  position: absolute;
+  left: -8.5px;
+  border-radius: 14px;
+  content: '';
+  border: 3px solid #d2d3d2;
+  background: #F5F5F5;
+}
+
+.timeline .timeline-item:last-child {
+  border-image: -webkit-linear-gradient(to bottom, #e8e8e8 50% , transparent) 1 100%;
+  border-image: -moz-linear-gradient(to bottom, #e8e8e8 50% , transparent) 1 100%;
+  border-image: -o-linear-gradient(to bottom, #e8e8e8 50% , transparent) 1 100%;
+  border-image: linear-gradient(to bottom, #e8e8e8 50% , transparent) 1 100%;
+}
+
+.progress-bar {
+  background-color: #1A6BBB;
 }
