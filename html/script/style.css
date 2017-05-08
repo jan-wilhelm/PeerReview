@@ -146,16 +146,24 @@ body, html {
     max-height: 100%;
 }
 
-#console, #debug {
+#console, #scripts {
     height: 45%;
     max-height: 45%;
     overflow-y: hidden;
 }
 
-#output, #debugout {
+#output, .scripts-wrapper{
     max-height: 90%;
     height: 90%;
     overflow-y: scroll;
+}
+
+.scripts-wrapper {
+    margin: 0;
+    padding: 20px;
+}
+
+#output {
     background-color: #002B36;
     color: #fff;
 }
