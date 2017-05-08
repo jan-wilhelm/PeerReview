@@ -58,7 +58,7 @@ function isExpired($conn, $id, $key) {
 }
 
 function copyData($conn, $id, $key) {
-	if($stmt = $conn->prepare("INSERT INTO users(name, email, password) SELECT name, mail, password FROM signup_confirmations WHERE id = ? AND signup_key = ?")) {
+	if($stmt = $conn->prepare("INSERT INTO users(name, email, password, created_at) SELECT name, mail, password, NOW() FROM signup_confirmations WHERE id = ? AND signup_key = ?")) {
 		$stmt->bind_param("is", $id, $key);
 		$stmt->execute();
 	} else {
