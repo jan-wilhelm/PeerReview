@@ -103,7 +103,7 @@ if(isset($_POST['save-code']) && isset($_POST['code']) && isset($_POST['code-nam
 					echo '<ul class="list-group">';
 					$scripts = getScriptsForUser($conn, $_SESSION["info"]["user_id"]);
 					foreach ($scripts as $script) {
-						echo '<li class="list-group-item"><a href="">' . $script["name"] . '</a> (' . $script["last_modified"] . ')</li>';
+						echo '<li class="list-group-item"><a href="?id=' . $script["script_id"] . '">' . $script["name"] . '</a> (' . $script["last_modified"] . ')</li>';
 					}
 					echo '</ul>';
 					?>
@@ -217,9 +217,27 @@ if(isset($_POST['save-code']) && isset($_POST['code']) && isset($_POST['code-nam
 			saveCode();
 		});
 
+		function findGetParameter(parameterName) {
+		    var result = null,
+		        tmp = [];
+		    var items = location.search.substr(1).split("&");
+		    for (var index = 0; index < items.length; index++) {
+		        tmp = items[index].split("=");
+		        if (tmp[0] === parameterName) result = decodeURIComponent(tmp[1]);
+		    }
+		    return result;
+		}
+
 		$('#save-button').click(function() {
-			$('#overwrite-check')[0].checked = true;
-			$('#name-form').css("display", "none");
+			if(findGetParameter("id")) {
+				$('#overwrite-check')[0].checked = true;
+				$('#name-form').css("display", "none");
+				$('#overwrite-check').parent("div").css("display", "block");
+			} else {
+				$('#overwrite-check')[0].checked = false;
+				$('#overwrite-check').parent("div").css("display", "none");
+				$('#name-form').css("display", "block");
+			}
 			$('#save-modal').modal().modal("open");
 		});
 
