@@ -100,8 +100,8 @@
 							unset($stmt);
 						}
 
-						if($stmt = $conn->prepare("INSERT INTO login_history (for_date, user) VALUES (NOW(),?)")) {
-							$stmt->bind_param("i", $row['id']);
+						if($stmt = $conn->prepare("INSERT INTO login_history (for_date, user, with_ip) VALUES (NOW(), ?, ?)")) {
+							$stmt->bind_param("is", $row['id'], $_SERVER['REMOTE_ADDR']);
 							$stmt->execute();
 							unset($stmt);
 						}
