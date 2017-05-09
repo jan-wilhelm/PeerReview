@@ -1112,6 +1112,59 @@ function getLoginsOfLastTwoWeeks($conn) {
 	}
 	return $ret;
 }
+////////////////////////////////////////////////////////////
+///						STATISTICS						 ///
+////////////////////////////////////////////////////////////
+
+/**
+ * Get the n newest reviews for a specific user
+ * @param  mysqli $conn  The MySQL connection
+ * @param  int $user  The user id
+ * @param  int $limit The limit, how many reviews you want to retrieve from the database
+ * @return array        An array containing the n last reviews
+ */
+function getLastReviewsForUser($conn, $user, $limit) {
+	$ret = array();
+	if($stmt    = $conn->prepare("SELECT * FROM reviews WHERE id = ? ORDER BY modified DESC LIMIT ?")) {
+		$stmt->bind_param("ii", $user, $limit);
+		$stmt->execute();
+		$result = $stmt->get_result();
+		if ($result->num_rows > 0) {
+			while ($row = $result->fetch_assoc()) {
+				$ret[] = $row;
+			}
+		}
+		$stmt->free_result();
+	} else {
+		die($conn->error);
+	}
+	return $ret;
+}
+
+/**
+ * Get the n newest reviews in all courses for a user
+ * @param  mysqli $conn  The MySQL connection
+ * @param  int $user  The user id
+ * @param  int $limit The limit, how many reviews you want to retrieve from the database
+ * @return array        An array containing the n last reviews
+ */
+function getLastReviewsForAdmin($conn, $user, $limit) {
+	$ret = array();
+	if($stmt    = $conn->prepare("SELECT * FROM reviews WHERE EXISTS(SELECT 1 FROM courses WHERE courses.course = reviews.course AND courses.id = ?) ORDER BY modified DESC LIMIT ?")) {
+		$stmt->bind_param("ii", $user, $limit);
+		$stmt->execute();
+		$result = $stmt->get_result();
+		if ($result->num_rows > 0) {
+			while ($row = $result->fetch_assoc()) {
+				$ret[] = $row;
+			}
+		}
+		$stmt->free_result();
+	} else {
+		die($conn->error);
+	}
+	return $ret;
+}
 
 
 ////////////////////////////////////////////////////////////

@@ -428,7 +428,7 @@ include $filePath. 'profile_picture.php';
 			    	<?php
 					$times = array();
 					foreach ($data as $time => $logins) {
-						$dt = new DateTime(((string) $time));
+						$dt = new DateTime( ((string) $time)) ;
 						$times[] = "'".$dt->format('d.m')."'";
 					}
 					echo implode(",", $times);
@@ -705,15 +705,15 @@ include $filePath. 'profile_picture.php';
 								    <!-- body -->
 									<div class="panel-body indigo lighten-5">
 										<h4 class="green-text lighten-2">
-											<?php
+										<?php
 
-											$points = 0;
-											$rev = json_decode($rv['review'], JSON_UNESCAPED_UNICODE);
-											for ($i=0; $i < sizeof($rev); $i++) { 
-												foreach($rev[$i]['reviews'] as $p) { 
-													$points = $points + $p['points'];
-												}
+										$points = 0;
+										$rev = json_decode($rv['review'], JSON_UNESCAPED_UNICODE);
+										for ($i=0; $i < sizeof($rev); $i++) { 
+											foreach($rev[$i]['reviews'] as $p) { 
+												$points = $points + $p['points'];
 											}
+										}
 											echo $points." von ".$max_points." Punkten (".((int)(100 * $points / $max_points))."%)";?>	
 										</h4>
 										<?php
