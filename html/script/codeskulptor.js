@@ -71,7 +71,8 @@ function runCode() {
         Sk.importMainWithBody("<stdin>", false, prog);
     }
     catch(e) {
-        if (e instanceof Sk.builtin.ParseError || e instanceof Sk.builtin.SyntaxError || e instanceof Sk.builtin.IndentationError || e instanceof Sk.builtin.TokenError) {
+        if (e instanceof Sk.builtin.ParseError || e instanceof Sk.builtin.SyntaxError || e instanceof Sk.builtin.IndentationError 
+            || e instanceof Sk.builtin.TokenError) {
             try {
                 if (e.args.v[2] !== undefined) {
                     Sk.currLineNo = e.args.v[2]
@@ -109,6 +110,10 @@ function runCode() {
             Sk.maps.cleanup();
             Sk.maps = undefined
         }
+    } finally {
+        if(!Sk.simplegui && !Sk.simpleplot && !Sk.maps) {
+            $('#run-button').click();
+        }
     }
 
     var end = new Date().getTime();
@@ -124,48 +129,58 @@ function reset() {
     errorLineNo = -1;
 }
 
+function stopClick() {
+    $(this).find("i").toggleClass("fa-play-circle").toggleClass("fa-stop-circle");
+    $(this).unbind().click(runClick);
+    if (Sk.simplegui) {
+        Sk.simplegui.cleanup();
+        Sk.simplegui = undefined
+    }
+    if (Sk.simpleplot) {
+        Sk.simpleplot.cleanup();
+        Sk.simpleplot = undefined
+    }
+    if (Sk.maps) {
+        Sk.maps.cleanup();
+        Sk.maps = undefined
+    }
+}
+
+function runClick() {
+    $(this).find("i").toggleClass("fa-play-circle").toggleClass("fa-stop-circle");
+    $(this).unbind().click(stopClick);
+    runCode();
+}
+
 $(function() {
-
-	function stopClick() {
-    	$(this).find("i").toggleClass("fa-play-circle").toggleClass("fa-stop-circle");
-    	$(this).unbind().click(runClick);
-        if (Sk.simplegui) {
-            Sk.simplegui.cleanup();
-            Sk.simplegui = undefined
-        }
-        if (Sk.simpleplot) {
-            Sk.simpleplot.cleanup();
-            Sk.simpleplot = undefined
-        }
-        if (Sk.maps) {
-            Sk.maps.cleanup();
-            Sk.maps = undefined
-        }
-	}
-
-	function runClick() {
-    	$(this).find("i").toggleClass("fa-play-circle").toggleClass("fa-stop-circle");
-    	$(this).unbind().click(stopClick);
-        runCode();
-	}
-
     $('#run-button').click(runClick);
 });
 
 function foldFunc(cm, pos) {
-    editor.foldCode(pos, {
+    cm.foldCode(pos, {
         rangeFinder: CodeMirror.fold.indent,
         scanUp: true
     });
 }
 
+function isValidAutoCompletionCharacter(char) {
+    return char.match(/^[a-z0-9_ ]+$/i);
+}
+
 function changed(cm, obj) {
 	if(errorLineNo >= 0) {
-		if(editor.getCursor().line !== errorLineNo) {
-			return;
-		}
-    	editor.removeLineClass(errorLine, "background", "activeline");
+        if(cm.getCursor().line + 1 !== errorLineNo) {
+            return;
+        }
+    	cm.removeLineClass(errorLine, "background", "activeline");
 	}
+
+    if(obj.origin == "+input") {
+        if(!isValidAutoCompletionCharacter(obj.text[0])) {
+            return;
+        }
+        CodeMirror.commands.autocomplete(cm);
+    }
 }
 
 function getCookie(cname) {
@@ -187,6 +202,10 @@ function getCookie(cname) {
 theme = getCookie("scripttheme");
 if(!theme){theme = "monokai";}
 
+CodeMirror.commands.autocomplete = function(cm) {
+     CodeMirror.showHint(cm, CodeMirror.pythonHint);
+}
+
 var editor = CodeMirror.fromTextArea(document.getElementById("code"), {
     mode: {
         name: "python",
@@ -200,8 +219,10 @@ var editor = CodeMirror.fromTextArea(document.getElementById("code"), {
     matchBrackets: true,
     theme: theme,
     extraKeys: {
-        "Ctrl-R": runCode
-    }
+        "Ctrl-R": runCode,
+        "Ctrl-Space": "autocomplete"
+    },
+    autoCloseBrackets: {explode: true}
 });
 
 editor.on("gutterClick", foldFunc);

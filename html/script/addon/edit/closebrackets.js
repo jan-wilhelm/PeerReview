@@ -68,6 +68,7 @@
   }
 
   function handleEnter(cm) {
+    console.log("handleEnter");
     var conf = getConfig(cm);
     var explode = conf && getOption(conf, "explode");
     if (!explode || cm.getOption("disableInput")) return CodeMirror.Pass;

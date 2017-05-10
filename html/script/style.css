@@ -190,3 +190,7 @@ body, html {
 .btn.active span.glyphicon {                
     opacity: 1;             
 }
+
+div.CodeMirror span.CodeMirror-matchingbracket {
+    font-weight: 700;
+}

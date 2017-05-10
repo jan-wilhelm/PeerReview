@@ -55,12 +55,17 @@ if(isset($_POST['save-code']) && isset($_POST['code']) && isset($_POST['code-nam
 	<link rel="stylesheet" href="style.css">
 	<link rel="stylesheet" type="text/css" href="./css/font-awesome.min.css">
 	<link rel="stylesheet" type="text/css" href="./css/font-awesome.min.css">
+	<link rel="stylesheet" href="addon/hint/show-hint.css">
 
 	<script src="addon/fold/foldcode.js"></script>
 	<script src="addon/fold/foldgutter.js"></script>
 	<script src="addon/fold/brace-fold.js"></script>
 	<script src="addon/fold/indent-fold.js"></script>
 	<script src="addon/fold/comment-fold.js"></script>
+	<script src="addon/hint/python-hint.js"></script>
+	<script src="addon/hint/show-hint.js"></script>
+	<script src="addon/edit/matchbrackets.js"></script>
+	<script src="addon/edit/closebrackets.js"></script>
 	<script src="mode/python/python.js"></script>
 
 	<script src="mode/python/python.js"></script>
