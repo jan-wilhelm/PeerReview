@@ -189,42 +189,9 @@ include $filePath. 'profile_picture.php';
 
 				  	<div class="col-md-6 col-sm-12">
 				  		<div class="admin-cart">
+		  					<span>Informatik AG 10. Klasse</span>
 							<div class="progress">
 								<div class="progress-bar" role="progressbar" style="width: 72%"></div>
-							</div>
-
-							<div class="user-card">
-								<div class="user-pic-wrapper">
-									<img src="https://www.xing.com/image/9_0_2_f13ec55ff_11604536_1/gunnar-wilhelm-foto.1024x1024.jpg" class="user-pic">
-								</div>
-								<div class="user-body">
-									<h1 class="user-name">Gunnar Wilhelm</h1>
-									<span class="user-role"><i class="fa fa-thumb-tack" aria-hidden="true"></i>Schüler</span>
-									<span class="user-role"><i class="fa fa-calendar" aria-hidden="true"></i>Beigetreten am 04.05.2017</span>
-									<span class="user-role"><i class="fa fa-users" aria-hidden="true"></i>Kurse Informatik AG 10. Klasse, Deutsch 10a</span>
-								</div>
-							</div>
-							<div class="user-card">
-								<div class="user-pic-wrapper">
-									<img src="https://assets.entrepreneur.com/content/16x9/822/20150406145944-dos-donts-taking-perfect-linkedin-profile-picture-selfie-mobile-camera-2.jpeg" class="user-pic">
-								</div>
-								<div class="user-body">
-									<h1 class="user-name">Katja Schmidt</h1>
-									<span class="user-role"><i class="fa fa-thumb-tack" aria-hidden="true"></i>Lehrer</span>
-									<span class="user-role"><i class="fa fa-calendar" aria-hidden="true"></i>Beigetreten am 04.05.2017</span>
-									<span class="user-role"><i class="fa fa-users" aria-hidden="true"></i>Kurse Informatik AG 10. Klasse, Deutsch 10a</span>
-								</div>
-							</div>
-							<div class="user-card">
-								<div class="user-pic-wrapper">
-									<img src="/assets/avatar.png" class="user-pic">
-								</div>
-								<div class="user-body">
-									<h1 class="user-name">Max Mustermann</h1>
-									<span class="user-role"><i class="fa fa-thumb-tack" aria-hidden="true"></i>Schüler</span>
-									<span class="user-role"><i class="fa fa-calendar" aria-hidden="true"></i>Beigetreten am 04.05.2017</span>
-									<span class="user-role"><i class="fa fa-users" aria-hidden="true"></i>Kurse Informatik AG 10. Klasse, Deutsch 10a</span>
-								</div>
 							</div>
 						</div>
 					</div>
