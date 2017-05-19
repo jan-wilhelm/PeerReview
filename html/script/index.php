@@ -29,7 +29,10 @@ if(isset($_POST['save-code']) && isset($_POST['code']) && isset($_POST['code-nam
 	$_SESSION["info"]["current_script_id"] = $id;
 	echo $id;
 	exit;
+}
 
+if(isset($_GET['id'])) {
+	$script = getScriptForScriptId($conn, intval($_GET['id']));
 }
 
 ?>
@@ -56,7 +59,9 @@ if(isset($_POST['save-code']) && isset($_POST['code']) && isset($_POST['code-nam
 	<link rel="stylesheet" type="text/css" href="./css/font-awesome.min.css">
 	<link rel="stylesheet" type="text/css" href="./css/font-awesome.min.css">
 	<link rel="stylesheet" href="addon/hint/show-hint.css">
-
+	<?php if(isset($script)) {
+		echo "<title>{$script["name"]}</title>";
+	}?>
 	<script src="addon/fold/foldcode.js"></script>
 	<script src="addon/fold/foldgutter.js"></script>
 	<script src="addon/fold/brace-fold.js"></script>
@@ -90,11 +95,11 @@ if(isset($_POST['save-code']) && isset($_POST['code']) && isset($_POST['code-nam
 		</div>
 		<div class="left">
 			<textarea id="code"><?php
-				if(isset($_GET['id'])) {
-					$script = getScriptForScriptId($conn, intval($_GET['id']));
+				if(isset($script)) {
 					echo $script['script'];
 				}
-			?></textarea>
+				?>
+			</textarea>
 		</div>
 		<div id="right">
 			<div id="console">
