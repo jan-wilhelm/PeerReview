@@ -181,7 +181,7 @@ body, html {
 }
 
 .activeline {
-    background: #ffa0a0 !important;
+    background: rgba(255, 60, 60, 0.5) !important;
 }
 
 .btn span.glyphicon {               
