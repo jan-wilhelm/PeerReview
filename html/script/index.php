@@ -176,114 +176,44 @@ if(isset($_POST['save-code']) && isset($_POST['code']) && isset($_POST['code-nam
 
 	<script src="codeskulptor.js"></script>
 	<script type="text/javascript">
-		setTimeout(function() {
-			$('#loader-wrapper').fadeOut(3000, function() {
-				$(this).remove();
-			});
-		}, 3000);
-
-		var savedCode = null;
-
-		function saveCode() {
-			var code = editor.getValue();
-
-			if(code == savedCode) {
-				toastr.warning("Du hast dieses Programm ohne Änderungen bereits gespeichert!", "Fehler!")
-				return;
-			}
-			var codeName = $('#code-name').val().trim();
-			if(codeName === "") {
-				codeName = "Neues Script";
-			}
-
-			const data = {
-					"save-code": null,
-					"code": code,
-					"overwrite": $('#overwrite-check')[0].checked ? 1 : 0,
-					"code-name": codeName
-				};
-			$.ajax({ 
-				url: location.protocol + '//' + location.host + location.pathname,
-				data: data,
-				type: 'post',
-				success: function(result) {
-					toastr.success('Das Script mit der ID ' + result + " wurde gespeichert!", 'Geschafft!');
-					history.pushState(null, null, "?id=" + result);
-					savedCode = code;
-				},
-				error: function(error) {
-					toastr.error(error, 'Fehler!');
-				}
-			});
-		}
-
-		$('#save-agree').click(function() {
-			$('#save-modal').modal('toggle');
-			saveCode();
-		});
-
-		function findGetParameter(parameterName) {
-		    var result = null,
-		        tmp = [];
-		    var items = location.search.substr(1).split("&");
-		    for (var index = 0; index < items.length; index++) {
-		        tmp = items[index].split("=");
-		        if (tmp[0] === parameterName) result = decodeURIComponent(tmp[1]);
-		    }
-		    return result;
-		}
-
-		$('#save-button').click(function() {
-			if(findGetParameter("id")) {
-				$('#overwrite-check')[0].checked = true;
-				$('#name-form').css("display", "none");
-				$('#overwrite-check').parent("div").css("display", "block");
-			} else {
-				$('#overwrite-check')[0].checked = false;
-				$('#overwrite-check').parent("div").css("display", "none");
-				$('#name-form').css("display", "block");
-			}
-			$('#save-modal').modal().modal("open");
-		});
 
 		$('#theme-button').click(function() {
-			$('#theme-modal').modal().modal('open');
+		    $('#theme-modal').modal().modal('open');
 		});
 
 		function errorLoadingTheme(name) {
-			toastr.error("Theme " + name + " konnte nicht geladen werden.");
+		    toastr.error("Theme " + name + " konnte nicht geladen werden.");
 		}
 
 		function setCookie(cname, cvalue, exdays) {
-			var d = new Date();
-			d.setTime(d.getTime() + (exdays*24*60*60*1000));
-			var expires = "expires="+ d.toUTCString();
-			document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/";
+		    var d = new Date();
+		    d.setTime(d.getTime() + (exdays*24*60*60*1000));
+		    var expires = "expires="+ d.toUTCString();
+		    document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/";
 		}
 
 		$('#theme-select').change(function(){
-			const name = $('#theme-select')[0].value;
-			try {
-				loadStyleSheet( '<?php echo $ROOT_SITE;?>script/theme/' + name + ".css", function( success, link ) {
-					if ( success ) {
-						editor.setOption("theme", name);
-						toastr.success("Theme " + name + " wurde ausgewählt und gespeichert!");
-						setCookie("scripttheme", name, 30);
-					} else {
-						errorLoadingTheme(name);
-					}
-				});
-			} catch(e) {
-				errorLoadingTheme(name);
-			}
+		    const name = $('#theme-select')[0].value;
+		    try {
+		        loadStyleSheet( '<?php echo $ROOT_SITE;?>script/theme/' + name + ".css", function( success, link ) {
+		            if ( success ) {
+		                editor.setOption("theme", name);
+		                toastr.success("Theme " + name + " wurde ausgewählt und gespeichert!");
+		                setCookie("scripttheme", name, 30);
+		            } else {
+		                errorLoadingTheme(name);
+		            }
+		        });
+		    } catch(e) {
+		        errorLoadingTheme(name);
+		    }
 		});
 
 
 		$('#overwrite-check').click(function() {
-			var display = $(this)[0].checked ? "none" : "block";
-			$('#name-form').css("display", display);
+		    var display = $(this)[0].checked ? "none" : "block";
+		    $('#name-form').css("display", display);
 		});
-
 	</script>
 </body>
 

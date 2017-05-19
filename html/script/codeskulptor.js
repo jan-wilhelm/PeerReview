@@ -206,6 +206,10 @@ CodeMirror.commands.autocomplete = function(cm) {
      CodeMirror.showHint(cm, CodeMirror.pythonHint);
 }
 
+function saveCodeWithKey() {
+    saveCode(1);
+}
+
 var editor = CodeMirror.fromTextArea(document.getElementById("code"), {
     mode: {
         name: "python",
@@ -220,10 +224,87 @@ var editor = CodeMirror.fromTextArea(document.getElementById("code"), {
     theme: theme,
     extraKeys: {
         "Ctrl-R": runCode,
-        "Ctrl-Space": "autocomplete"
+        "Ctrl-Space": "autocomplete",
+        "Ctrl-S": saveCodeWithKey
     },
     autoCloseBrackets: {explode: true}
 });
 
 editor.on("gutterClick", foldFunc);
 editor.on("change", changed);
+
+setTimeout(function() {
+    $('#loader-wrapper').fadeOut(2000, function() {
+        $(this).remove();
+    });
+}, 2000);
+
+var savedCode = null;
+
+function saveCode(overwrite, suc, err) {
+    var code = editor.getValue();
+
+    if(code == savedCode) {
+        toastr.warning("Du hast dieses Programm ohne Änderungen bereits gespeichert!", "Fehler!")
+        return;
+    }
+    var codeName = $('#code-name').val().trim();
+    if(codeName === "") {
+        codeName = "Neues Script";
+    }
+
+    const data = {
+            "save-code": null,
+            "code": code,
+            "overwrite": overwrite,
+            "code-name": codeName
+        };
+    $.ajax({ 
+        url: location.protocol + '//' + location.host + location.pathname,
+        data: data,
+        type: 'post',
+        success: function(result) {
+            toastr.success('Das Script mit der ID ' + result + " wurde gespeichert!", 'Geschafft!');
+            history.pushState(null, null, "?id=" + result);
+            savedCode = code;
+            if(suc != undefined) {
+                suc();
+            }
+        },
+        error: function(error) {
+            toastr.error(error, 'Fehler!');
+            if(err != undefined) {
+                err();
+            }
+        }
+    });
+}
+
+$('#save-agree').click(function() {
+    $('#save-modal').modal('toggle');
+    saveCode( $('#overwrite-check')[0].checked ? 1 : 0 );
+});
+
+function findGetParameter(parameterName) {
+    var result = null,
+        tmp = [];
+    var items = location.search.substr(1).split("&");
+    for (var index = 0; index < items.length; index++) {
+        tmp = items[index].split("=");
+        if (tmp[0] === parameterName) result = decodeURIComponent(tmp[1]);
+    }
+    return result;
+}
+
+$('#save-button').click(function() {
+    if(findGetParameter("id")) {
+        $('#overwrite-check')[0].checked = true;
+        $('#name-form').css("display", "none");
+        $('#overwrite-check').parent("div").css("display", "block");
+    } else {
+        $('#overwrite-check')[0].checked = false;
+        $('#overwrite-check').parent("div").css("display", "none");
+        $('#name-form').css("display", "block");
+    }
+    $('#save-modal').modal().modal("open");
+});
