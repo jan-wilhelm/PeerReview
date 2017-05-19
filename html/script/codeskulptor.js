@@ -56,64 +56,58 @@ function printError(text) {
     log( document.getElementById("output"), "<span class=\"error-line\">" + text + "</span><br>");
 }
 
+function handleException(e) {
+    if (e instanceof Sk.builtin.ParseError || e instanceof Sk.builtin.SyntaxError || e instanceof Sk.builtin.IndentationError || e instanceof Sk.builtin.TokenError) {
+        try {
+            if (e.args.v[2] !== undefined) {
+                Sk.currLineNo = e.args.v[2]
+            }
+            if (e.args.v[1] !== undefined) {
+                Sk.currFilename = e.args.v[1].v
+            }
+            var t = e.args.v[3][0][1];
+            var r = e.args.v[3][1][1];
+            var o = e.args.v[3][2].substring(t, r);
+            e.args.v[0] = e.args.v[0].sq$concat(new Sk.builtin.str(" ('" + o + "')"))
+        } catch (e) {}
+    }
+    var i = e.tp$name + ": " + e;
+    printError(i);
+
+    var n = (Sk.currLineNo);
+
+    if(n) {
+        errorLine = editor.addLineClass(n - 1, "background", "activeline");
+        errorLineNo = n;
+        editor.setCursor(n - 1);
+        editor.focus();
+    }
+    $('#run-button').click();
+}
+
 function runCode() {
     var prog = editor.getValue();
     reset();
-    Sk.pre = "output";
-    Sk.configure({
-        output: printOutput,
-        read: readBuiltInFile,
-        error: printError
-    });
-    printOutput("Starting script...\n");
-    var start = new Date().getTime();
+    prog = prog.replace(/\t/g, "    ");
     try {
+        Sk.pre = "output";
+        Sk.currLineNo = undefined;
+        Sk.currColNo = undefined;
+        Sk.currFilename = undefined;
+        Sk.setExecLimit(5e3);
+        Sk.configure({
+            output: printOutput,
+            read: readBuiltInFile,
+            error: handleException
+        });
+        printOutput("Starting script...\n");
+        var start = new Date().getTime();
         Sk.importMainWithBody("<stdin>", false, prog);
-    }
-    catch(e) {
-        if (e instanceof Sk.builtin.ParseError || e instanceof Sk.builtin.SyntaxError || e instanceof Sk.builtin.IndentationError 
-            || e instanceof Sk.builtin.TokenError) {
-            try {
-                if (e.args.v[2] !== undefined) {
-                    Sk.currLineNo = e.args.v[2]
-                }
-                if (e.args.v[1] !== undefined) {
-                    Sk.currFilename = e.args.v[1].v
-                }
-                var t = e.args.v[3][0][1];
-                var r = e.args.v[3][1][1];
-                var o = e.args.v[3][2].substring(t, r);
-                e.args.v[0] = e.args.v[0].sq$concat(new Sk.builtin.str(" ('" + o + "')"))
-            } catch (x) {}
-        }
-        var i = "Error on line " + e.lineno + ": " + e.tp$name + ": " + e;
-        printError(i);
-
-        var n = (Sk.currLineNo);
-
-        if(n) {
-	        errorLine = editor.addLineClass(n - 1, "background", "activeline");
-	        errorLineNo = n;
-	        editor.setCursor(n - 1);
-	        editor.focus();
-        }
-
-        if (Sk.simplegui) {
-            Sk.simplegui.cleanup();
-            Sk.simplegui = undefined
-        }
-        if (Sk.simpleplot) {
-            Sk.simpleplot.cleanup();
-            Sk.simpleplot = undefined
-        }
-        if (Sk.maps) {
-            Sk.maps.cleanup();
-            Sk.maps = undefined
-        }
-    } finally {
         if(!Sk.simplegui && !Sk.simpleplot && !Sk.maps) {
             $('#run-button').click();
         }
+    } catch(e) {
+        handleException(e);
     }
 
     var end = new Date().getTime();
