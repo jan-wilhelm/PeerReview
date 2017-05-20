@@ -19,12 +19,15 @@ if(isset($_GET['id'])) {
 if(isset($_POST['save-code']) && isset($_POST['code']) && isset($_POST['code-name'])) {
 	
 	if(isset($_POST['overwrite']) && intval($_POST['overwrite']) == 1 && isset($_SESSION["info"]["current_script_id"])) {
-
 		$id = $_SESSION["info"]["current_script_id"];
-		updateScript($conn, $_SESSION["info"]["user_id"], $id, $_POST['code']);
+
+		if(userOwnsScript($conn, $_SESSION["info"]["user_id"], $id)) {
+			updateScript($conn, $_SESSION["info"]["user_id"], $id, $_POST['code']);
+		}
 
 	} else {
-		$id = createScript($conn, $_SESSION["info"]["user_id"], $_POST['code'], htmlspecialchars(trim($_POST['code-name'])));
+		$id = createScript($conn, $_SESSION["info"]["user_id"], htmlspecialchars(trim($_POST['code-name'])));
+		updateScript($conn, $_SESSION["info"]["user_id"], $id, $_POST['code']);
 	}
 	$_SESSION["info"]["current_script_id"] = $id;
 	echo $id;
@@ -32,7 +35,15 @@ if(isset($_POST['save-code']) && isset($_POST['code']) && isset($_POST['code-nam
 }
 
 if(isset($_GET['id'])) {
-	$script = getScriptForScriptId($conn, intval($_GET['id']));
+	if(isset($_GET["v"])) {
+		$version = intval($_GET["v"]);
+		$script = getScriptForScriptId($conn, intval($_GET['id']), $version);
+		if(is_null($script) || empty($script)) {
+			$script = getNewestScriptForScriptId($conn, intval($_GET['id']));
+		}
+	} else {
+		$script = getNewestScriptForScriptId($conn, intval($_GET['id']));
+	}
 }
 
 ?>
@@ -98,8 +109,7 @@ if(isset($_GET['id'])) {
 				if(isset($script)) {
 					echo $script['script'];
 				}
-				?>
-			</textarea>
+				?></textarea>
 		</div>
 		<div id="right">
 			<div id="console">

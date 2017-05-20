@@ -390,18 +390,53 @@ function setScript($conn, $id, $scriptId, $course, $reviewId) {
 	}
 }
 
+function getNewestVersionForScriptAndUser($conn, $user, $scriptId) {
+	if($stmt    = $conn->prepare("SELECT * FROM scripts LEFT JOIN (SELECT version, id FROM script_versions WHERE script_versions.id = ? ORDER BY version DESC LIMIT 1) AS versions ON (scripts.script_id = versions.id) WHERE scripts.user = ?")) {
+		$stmt->bind_param("ii", $scriptId, $user);
+		$stmt->execute();
+		$result = $stmt->get_result();
+		if ($result->num_rows > 0) {
+			if ($row = $result->fetch_assoc()) {
+				return $row["version"];
+			}
+		}
+		$stmt->free_result();
+	} else {
+		die($conn->error);
+	}
+	return 0;
+}
+function userOwnsScript($conn, $user, $scriptId) {
+	if($stmt    = $conn->prepare("SELECT * FROM scripts WHERE user = ? AND script_id = ?")) {
+		$stmt->bind_param("ii", $user, $scriptId);
+		$stmt->execute();
+		$result = $stmt->get_result();
+		if ($result->num_rows > 0) {
+			if ($row = $result->fetch_assoc()) {
+				return True;
+			}
+		}
+		$stmt->free_result();
+	} else {
+		die($conn->error);
+	}
+	return False;
+}
+
 /**
- * Update the of a certain script
+ * Update the code of a certain script
+ * Attention: Only call this when you know that the user owns this script!
  * @param mysqli $conn     The MySQL connection
- * @param int $id       The user id
  * @param int $scriptId The script id
  * @param int $script   The code of the script
  */
 function updateScript($conn, $id, $scriptId, $script) {
-	if($stmt = $conn->prepare("UPDATE scripts SET script = ?, last_modified = NOW() WHERE script_id = ? AND user = ?")){
-		$stmt->bind_param("sii", $script, $scriptId, $id);
-		echo $conn->error;
+	// increment version
+	$version = getNewestVersionForScriptAndUser($conn, $id, $scriptId) + 1;
+	if($stmt = $conn->prepare("INSERT INTO script_versions (id, version, last_modified, script) VALUES (?, ?, NOW(), ?) ")){
+		$stmt->bind_param("iis", $scriptId, $version, $script);
 		$stmt->execute();
+		echo $conn->error;
 		unset($stmt);
 	}
 }
@@ -410,13 +445,12 @@ function updateScript($conn, $id, $scriptId, $script) {
  * Create a script for a user with a name
  * @param  mysqli $conn   The MySQL connection
  * @param  int $id     The user id
- * @param  string $script The code of the script
  * @param  string $name   The name of the script
  * @return int         The new Script ID
  */
-function createScript($conn, $id, $script, $name) {
-	if($stmt = $conn->prepare('INSERT INTO scripts (user, script, name, last_modified) VALUES ( ?, ?, ?, NOW() )')){
-		$stmt->bind_param("iss", $id, $script, $name);
+function createScript($conn, $id, $name) {
+	if($stmt = $conn->prepare('INSERT INTO scripts (user, name) VALUES (?, ?)')){
+		$stmt->bind_param("is", $id, $name);
 		$stmt->execute();
 
 		$stmt = $conn->prepare("SELECT LAST_INSERT_ID() AS `id`");
@@ -1176,9 +1210,32 @@ function getLastReviewsForAdmin($conn, $user, $limit) {
  * @param  int $script The script id
  * @return array         An array representing the MySQL object of the script
  */
-function getScriptForScriptId($conn, $script) {
-	if($stmt    = $conn->prepare("SELECT * FROM scripts WHERE script_id = ?")) {
-		$stmt->bind_param("i", $script);
+function getScriptForScriptId($conn, $script, $version) {
+	if($stmt    = $conn->prepare("SELECT * FROM scripts LEFT JOIN script_versions AS versions ON scripts.script_id = versions.id WHERE scripts.script_id = ? AND versions.version <= ? ORDER BY versions.version DESC LIMIT 1")) {
+		$stmt->bind_param("ii", $script, $version);
+		$stmt->execute();
+		$result = $stmt->get_result();
+		if ($result->num_rows > 0) {
+			if ($row = $result->fetch_assoc()) {
+				return $row;
+			}
+		}
+		$stmt->free_result();
+	} else {
+		die($conn->error);
+	}
+	return null;
+}
+
+/**
+ * Get the whole script object for the given script id
+ * @param  mysqli $conn   The MySQL connection
+ * @param  int $scriptId The script id
+ * @return array         An array representing the MySQL object of the script
+ */
+function getNewestScriptForScriptId($conn, $scriptId) {
+	if($stmt    = $conn->prepare("SELECT * FROM scripts INNER JOIN (SELECT * FROM script_versions WHERE id = ? ORDER BY version DESC LIMIT 1) AS versions ON scripts.script_id = versions.id")) {
+		$stmt->bind_param("i", $scriptId);
 		$stmt->execute();
 		$result = $stmt->get_result();
 		if ($result->num_rows > 0) {
@@ -1201,7 +1258,7 @@ function getScriptForScriptId($conn, $script) {
  */
 function getScriptsForUser($conn, $user) {
 	$ret = array();
-	if($stmt    = $conn->prepare("SELECT * FROM scripts WHERE user = ?")) {
+	if($stmt    = $conn->prepare("select * from scripts s inner join (select last_modified, id, max(version) as version from script_versions group by id) aux on aux.id = s.script_id inner join script_versions v on v.id = aux.id and v.version = aux.version where user = ?")) {
 		$stmt->bind_param("i", $user);
 		$stmt->execute();
 		$result = $stmt->get_result();
