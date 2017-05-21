@@ -194,3 +194,11 @@ body, html {
 div.CodeMirror span.CodeMirror-matchingbracket {
     font-weight: 700;
 }
+
+.panel-heading {
+    cursor: pointer;
+}
+
+.panel-heading i {
+    margin-right: 10px;
+}

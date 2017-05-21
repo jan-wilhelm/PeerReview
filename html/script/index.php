@@ -37,7 +37,7 @@ if(isset($_POST['save-code']) && isset($_POST['code']) && isset($_POST['code-nam
 if(isset($_GET['id'])) {
 	if(isset($_GET["v"])) {
 		$version = intval($_GET["v"]);
-		$script = getScriptForScriptId($conn, intval($_GET['id']), $version);
+		$script = getScriptForScriptIdAndVersion($conn, intval($_GET['id']), $version);
 		if(is_null($script) || empty($script)) {
 			$script = getNewestScriptForScriptId($conn, intval($_GET['id']));
 		}
@@ -83,6 +83,7 @@ if(isset($_GET['id'])) {
 	<script src="addon/edit/matchbrackets.js"></script>
 	<script src="addon/edit/closebrackets.js"></script>
 	<script src="mode/python/python.js"></script>
+	<script type="text/javascript" src="<?php echo $ROOT_SITE;?>js/panel.js"></script>
 
 	<script src="mode/python/python.js"></script>
 	<link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
@@ -120,12 +121,40 @@ if(isset($_GET['id'])) {
 				<h1>Öffne Programm</h1>
 				<div class="scripts-wrapper">
 					<?php
-					echo '<ul class="list-group">';
 					$scripts = getScriptsForUser($conn, $_SESSION["info"]["user_id"]);
-					foreach ($scripts as $script) {
-						echo '<li class="list-group-item"><a href="?id=' . $script["script_id"] . '">' . $script["name"] . '</a> (' . $script["last_modified"] . ')</li>';
+					foreach ($scripts as $script) {?>
+						<div class="panel panel-primary">
+						    <!-- heading -->
+						    <div class="panel-heading panel-collapsed">
+								<span class="pull-left clickable">
+									<i class="fa fa-file-code-o" aria-hidden="true"></i>
+								</span>
+						     	<h3 class="panel-title">
+						     	<?php echo $script["name"];?>
+								</h3>
+						    <!-- end heading -->
+							</div>
+						    <!-- body -->
+							<div class="panel-body indigo lighten-5">
+								<ul class="list-group">
+									<?php
+									foreach(getAllScriptVersionsForScriptId($conn, $script["script_id"]) as $scriptVersion) {
+									?>
+									<li class="list-group-item">
+										<?php
+										echo '<a href="?id=' . $scriptVersion["id"] . '&v=' . $scriptVersion["version"] . '">';
+										echo $script["name"] . " Version " . $scriptVersion["version"] . '</a>';
+										echo ' (' . $scriptVersion["last_modified"] . ')';
+										?>
+									</li>
+									<?php
+									}
+									?>
+								</ul>
+							</div>
+						</div>
+					<?php
 					}
-					echo '</ul>';
 					?>
 				</div>
 			</div>

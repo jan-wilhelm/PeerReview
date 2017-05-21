@@ -1210,7 +1210,7 @@ function getLastReviewsForAdmin($conn, $user, $limit) {
  * @param  int $script The script id
  * @return array         An array representing the MySQL object of the script
  */
-function getScriptForScriptId($conn, $script, $version) {
+function getScriptForScriptIdAndVersion($conn, $script, $version) {
 	if($stmt    = $conn->prepare("SELECT * FROM scripts LEFT JOIN script_versions AS versions ON scripts.script_id = versions.id WHERE scripts.script_id = ? AND versions.version <= ? ORDER BY versions.version DESC LIMIT 1")) {
 		$stmt->bind_param("ii", $script, $version);
 		$stmt->execute();
@@ -1225,6 +1225,30 @@ function getScriptForScriptId($conn, $script, $version) {
 		die($conn->error);
 	}
 	return null;
+}
+
+/**
+ * Get the whole script object for the given script id
+ * @param  mysqli $conn   The MySQL connection
+ * @param  int $scriptId The script id
+ * @return array         An array representing the MySQL object of the script versions
+ */
+function getAllScriptVersionsForScriptId($conn, $scriptId) {
+	$ret = array();
+	if($stmt    = $conn->prepare("SELECT * FROM script_versions WHERE id = ? ORDER BY version DESC")) {
+		$stmt->bind_param("i", $scriptId);
+		$stmt->execute();
+		$result = $stmt->get_result();
+		if ($result->num_rows > 0) {
+			while ($row = $result->fetch_assoc()) {
+				$ret[] = $row;
+			}
+		}
+		$stmt->free_result();
+	} else {
+		die($conn->error);
+	}
+	return $ret;
 }
 
 /**
