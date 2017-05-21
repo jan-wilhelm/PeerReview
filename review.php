@@ -1282,7 +1282,7 @@ function getNewestScriptForScriptId($conn, $scriptId) {
  */
 function getScriptsForUser($conn, $user) {
 	$ret = array();
-	if($stmt    = $conn->prepare("select * from scripts s inner join (select last_modified, id, max(version) as version from script_versions group by id) aux on aux.id = s.script_id inner join script_versions v on v.id = aux.id and v.version = aux.version where user = ?")) {
+	if($stmt    = $conn->prepare("select s.script_id, s.name, s.user, v.version, v.script, v.last_modified from scripts s inner join (select id, max(version) as version from script_versions group by id) aux on aux.id = s.script_id inner join script_versions v on v.id = aux.id and v.version = aux.version where user = ?")) {
 		$stmt->bind_param("i", $user);
 		$stmt->execute();
 		$result = $stmt->get_result();
