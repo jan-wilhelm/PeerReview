@@ -551,7 +551,7 @@ include $filePath. 'profile_picture.php';
 				  </label>
 				</div>
 
-				<input id="link-set-link" class="form-control set-link-type" name="link" type="text" placeholder="Link">
+				<input id="link-set-link" value="<?php echo getCode($conn,$_SESSION["info"]["user_id"], $course, $reviewId); ?>" class="form-control set-link-type" name="link" type="text" placeholder="Link">
 
 				<div id="set-link-script" class="form-group row text-left set-link-type" style="display: none;">
 					<a class="btn btn-primary pull-right" href="<?php echo $ROOT_SITE . "script";?>">Neues Script</a>
